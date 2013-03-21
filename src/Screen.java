@@ -2,26 +2,30 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 
 public class Screen {
 
 	private Robot robot;
 
-	private Rectangle bounds;
+	private Rectangle bounds, originalBounds;
 
 	private int ledNumberLeftRight, ledNumberTop;
 
 	private int squareSizeLeftRight, squareSizeTop;
 
-	private boolean auto;
-
 	public static final int screenAnalysePitch = 1;
+
+	public static final int blackLimit = 2;
 
 	private BufferedImage image;
 
-	public Screen(Rectangle bounds, int ledNumberLeftRight, int ledNumberTop, boolean auto) {
+	public Screen(Rectangle bounds, int ledNumberLeftRight, int ledNumberTop) {
 		super();
 		try {
 			robot = new Robot();
@@ -29,17 +33,68 @@ public class Screen {
 			e.printStackTrace();
 		}
 		this.bounds = bounds;
+		this.originalBounds = bounds;
 		this.ledNumberLeftRight = ledNumberLeftRight;
 		this.ledNumberTop = ledNumberTop;
-		this.auto = auto;
+		init();
+	}
+
+	public void init() {
+		System.out.println("Init");
+		int current = 0;
+		int red = 0;
+		int green = 0;
+		int blue = 0;
+		int y = 0;
+		int x = 0;
+
+		// Get original image
+		BufferedImage original = getScreenCapture(originalBounds);
+
+		// Detect top
+		for (; y < original.getHeight() / 4; y++) {
+			current = original.getRGB(original.getWidth() / 2, y);
+			red = (current & 0x00ff0000) >> 16;
+			green = (current & 0x0000ff00) >> 8;
+			blue = current & 0x000000ff;
+			if (red > blackLimit || blue > blackLimit || green > blackLimit) {
+				break;
+			}
+		}
+		if (y == original.getHeight() / 4) {
+			y = 0;
+		}
+
+		// Detect left
+		for (; x < original.getWidth() / 4; x++) {
+			current = original.getRGB(x, original.getHeight() / 2);
+			red = (current & 0x00ff0000) >> 16;
+			green = (current & 0x0000ff00) >> 8;
+			blue = current & 0x000000ff;
+			if (red > blackLimit || blue > blackLimit || green > blackLimit) {
+				break;
+			}
+		}
+		if (x == original.getWidth() / 4) {
+			x = 0;
+		}
+
+		// New capture zone
+		bounds = new Rectangle(originalBounds.x + x, originalBounds.y + y, (int) originalBounds.getWidth() - (2 * x), (int) originalBounds.getHeight() - (2 * y));
+
+		// Calculating squareSize
 		squareSizeLeftRight = (int) (bounds.getHeight() / ledNumberLeftRight);
 		squareSizeTop = (int) (bounds.getWidth() / ledNumberTop);
+	}
+
+	public BufferedImage getScreenCapture(Rectangle bounds) {
+		return robot.createScreenCapture(bounds);
 	}
 
 	// L > T > R
 	public List<Color> getColors() {
 		List<Color> result = new ArrayList<Color>();
-		image = robot.createScreenCapture(bounds);
+		image = getScreenCapture(bounds);
 
 		// Left from bottom to top
 		for (int y = image.getHeight() - squareSizeLeftRight; y > 0; y -= squareSizeLeftRight) {
@@ -52,7 +107,7 @@ public class Screen {
 		}
 
 		// Right from top to bottom
-		for (int y = squareSizeLeftRight; (y + squareSizeLeftRight) < image.getHeight(); y += squareSizeLeftRight) {
+		for (int y = squareSizeLeftRight; y + squareSizeLeftRight < image.getHeight(); y += squareSizeLeftRight) {
 			result.add(getColor(image.getWidth() - squareSizeLeftRight, y, squareSizeLeftRight, squareSizeLeftRight));
 		}
 
@@ -65,8 +120,8 @@ public class Screen {
 		int green = 0;
 		int blue = 0;
 		int nbPixel = 0;
-		for (int posX = 0; posX < width; posX += screenAnalysePitch) {
-			for (int posY = 0; posY < height; posY += screenAnalysePitch) {
+		for (int posX = 0; posX < width && posX + x < image.getWidth(); posX += screenAnalysePitch) {
+			for (int posY = 0; posY < height && posY + y < image.getHeight(); posY += screenAnalysePitch) {
 				current = image.getRGB(x + posX, y + posY);
 				red += (current & 0x00ff0000) >> 16;
 				green += (current & 0x0000ff00) >> 8;
@@ -75,6 +130,14 @@ public class Screen {
 			}
 		}
 		return new Color(red / nbPixel, green / nbPixel, blue / nbPixel);
+	}
+
+	public void saveImage(BufferedImage image, File file) {
+		try {
+			ImageIO.write(image, "png", file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

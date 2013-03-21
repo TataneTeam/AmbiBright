@@ -1,34 +1,48 @@
 import java.awt.Color;
+import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.util.List;
 
 public class Ambi extends Thread {
 
+	private int ledCountLeftRight = 14;
+	private int ledCountTop = 24;
+	private String arduinoConf = "COM5";
+	private Screen screen;
+
+	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop, String arduinoConf) {
+		super();
+		this.ledCountLeftRight = ledCountLeftRight;
+		this.ledCountTop = ledCountTop;
+		this.arduinoConf = arduinoConf;
+		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
+		screen = new Screen(bounds, ledCountLeftRight, ledCountTop);
+	}
+
 	public void run() {
-		//ArduinoSender arduino = new ArduinoSender("COM5");
-		Rectangle bounds = new Rectangle(0, 0, 1920, 1080);
-		Screen screen = new Screen(bounds, 14, 24, false);
-		AmbiFrame af = new AmbiFrame(14,24);
+		ArduinoSender arduino = new ArduinoSender(arduinoConf);
+		AmbiFrame af = new AmbiFrame(ledCountLeftRight, ledCountTop);
+		int count = 0;
 		try {
 			while (true) {
-			
-				List<Color> colors = screen.getColors();
-				//arduino.write(getArray(colors));
-				for(int i = 0; i < 14; i++){
-					af.setColor(13 -i, 0, colors.get(i));
-				}
-				for(int i = 1; i < 24; i++){
-					af.setColor(0, i, colors.get(i + 13));
-				}
-				for(int i = 1; i < 14; i++){
-					af.setColor(i, 23, colors.get(i + 36));
-				}
 				sleep(10);
+				List<Color> colors = screen.getColors();
+				if (colors.size() != 2 * ledCountLeftRight + ledCountTop - 2) {
+					System.out.println("Error: " + colors.size());
+					continue;
+				}
+				arduino.write(getArray(colors));
+				af.refresh(colors);
+				count++;
+				if (count == 100) {
+					screen.init();
+					count = 0;
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		//	arduino.close();
+			arduino.close();
 		}
 	}
 
@@ -37,20 +51,19 @@ public class Ambi extends Thread {
 		result[0] = 'A';
 		result[1] = 'd';
 		result[2] = 'a';
-		result[3] = (byte) ((colors.size() ) >> 8);
-		result[4] = (byte) ((colors.size() ) & 0xff);
+		result[3] = (byte) ((colors.size() - 1) >> 8);
+		result[4] = (byte) ((colors.size() - 1) & 0xff);
 		result[5] = (byte) (result[3] ^ result[4] ^ 0x55);
 		int i = 6;
 		for (Color color : colors) {
-			result[i++] = (byte) color.getRed() ;
-			result[i++] = (byte) color.getGreen() ;
-			result[i++] = (byte) color.getBlue() ;
+			result[i++] = (byte) color.getRed();
+			result[i++] = (byte) color.getGreen();
+			result[i++] = (byte) color.getBlue();
 		}
 		return result;
 	}
-	
 
 	public static void main(String[] args) {
-		new Ambi().start();
+		new Ambi(1, 14, 24, "COM5").start();
 	}
 }
