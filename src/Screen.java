@@ -97,17 +97,17 @@ public class Screen {
 		image = getScreenCapture(bounds);
 
 		// Left from bottom to top
-		for (int y = image.getHeight() - squareSizeLeftRight; y > 0; y -= squareSizeLeftRight) {
+		for (int y = image.getHeight() - squareSizeLeftRight; y >= 0; y -= squareSizeLeftRight) {
 			result.add(getColor(0, y, squareSizeLeftRight, squareSizeLeftRight));
 		}
 
 		// Top from left to right
-		for (int x = squareSizeTop; x < image.getWidth(); x += squareSizeTop) {
+		for (int x = squareSizeTop - 1 ; x + squareSizeTop < image.getWidth()  ; x += squareSizeTop) {
 			result.add(getColor(x, 0, squareSizeTop, squareSizeTop));
 		}
 
 		// Right from top to bottom
-		for (int y = squareSizeLeftRight; y + squareSizeLeftRight < image.getHeight(); y += squareSizeLeftRight) {
+		for (int y = squareSizeLeftRight -1; y + squareSizeLeftRight < image.getHeight(); y += squareSizeLeftRight) {
 			result.add(getColor(image.getWidth() - squareSizeLeftRight, y, squareSizeLeftRight, squareSizeLeftRight));
 		}
 
@@ -120,8 +120,8 @@ public class Screen {
 		int green = 0;
 		int blue = 0;
 		int nbPixel = 0;
-		for (int posX = 0; posX < width && posX + x < image.getWidth(); posX += screenAnalysePitch) {
-			for (int posY = 0; posY < height && posY + y < image.getHeight(); posY += screenAnalysePitch) {
+		for (int posX = 0; posX < width && posX + x <image.getWidth(); posX += screenAnalysePitch) {
+			for (int posY = 0; posY < height  && posY + y <image.getHeight(); posY += screenAnalysePitch) {
 				current = image.getRGB(x + posX, y + posY);
 				red += (current & 0x00ff0000) >> 16;
 				green += (current & 0x0000ff00) >> 8;

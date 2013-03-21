@@ -47,7 +47,6 @@ public class AmbiFrame extends JFrame {
 
 	public void setColor(int x, int y, Color color) {
 		cells[x][y].setBackground(color);
-		validate();
 	}
 
 	public void refresh(List<Color> colors) {
