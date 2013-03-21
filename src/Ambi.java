@@ -11,8 +11,9 @@ public class Ambi extends Thread {
 		AmbiFrame af = new AmbiFrame(14,24);
 		try {
 			while (true) {
-				//arduino.write(screen.getArray());
+			
 				List<Color> colors = screen.getColors();
+				//arduino.write(getArray(colors));
 				for(int i = 0; i < 14; i++){
 					af.setColor(13 -i, 0, colors.get(i));
 				}
@@ -27,12 +28,29 @@ public class Ambi extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			//arduino.close();
+		//	arduino.close();
 		}
 	}
+
+	public byte[] getArray(List<Color> colors) {
+		byte[] result = new byte[6 + colors.size() * 3];
+		result[0] = 'A';
+		result[1] = 'd';
+		result[2] = 'a';
+		result[3] = (byte) ((colors.size() ) >> 8);
+		result[4] = (byte) ((colors.size() ) & 0xff);
+		result[5] = (byte) (result[3] ^ result[4] ^ 0x55);
+		int i = 6;
+		for (Color color : colors) {
+			result[i++] = (byte) color.getRed() ;
+			result[i++] = (byte) color.getGreen() ;
+			result[i++] = (byte) color.getBlue() ;
+		}
+		return result;
+	}
+	
 
 	public static void main(String[] args) {
 		new Ambi().start();
 	}
-
 }

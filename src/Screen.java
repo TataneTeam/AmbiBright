@@ -67,36 +67,14 @@ public class Screen {
 		int nbPixel = 0;
 		for (int posX = 0; posX < width; posX += screenAnalysePitch) {
 			for (int posY = 0; posY < height; posY += screenAnalysePitch) {
-				try {
-					current = image.getRGB(x + posX, y + posY);
-					red += (current & 0x00ff0000) >> 16;
-					green += (current & 0x0000ff00) >> 8;
-					blue += current & 0x000000ff;
-					nbPixel++;
-				} catch (Exception e) {
-					System.out.println(image.getWidth() + " " + image.getHeight() + " " + (x + posX) + " " + (y + posY));
-				}
+				current = image.getRGB(x + posX, y + posY);
+				red += (current & 0x00ff0000) >> 16;
+				green += (current & 0x0000ff00) >> 8;
+				blue += current & 0x000000ff;
+				nbPixel++;
 			}
 		}
 		return new Color(red / nbPixel, green / nbPixel, blue / nbPixel);
-	}
-
-	public byte[] getArray() {
-		List<Color> colors = getColors();
-		byte[] result = new byte[6 + colors.size() * 3];
-		result[0] = 'A';
-		result[1] = 'd';
-		result[2] = 'a';
-		result[3] = (byte) ((colors.size() ) >> 8);
-		result[4] = (byte) ((colors.size() ) & 0xff);
-		result[5] = (byte) (result[3] ^ result[4] ^ 0x55);
-		int i = 6;
-		for (Color color : colors) {
-			result[i++] = (byte) color.getRed() ;
-			result[i++] = (byte) color.getGreen() ;
-			result[i++] = (byte) color.getBlue() ;
-		}
-		return result;
 	}
 
 }
