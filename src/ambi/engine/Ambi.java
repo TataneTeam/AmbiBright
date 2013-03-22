@@ -1,6 +1,8 @@
 package ambi.engine;
 
 import java.awt.Color;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -13,6 +15,7 @@ public class Ambi extends Thread {
 	private Screen screen;
 	private boolean stop = false;
 	private int totalLED;
+	private boolean running = false;
 
 	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop) {
 		super();
@@ -23,25 +26,36 @@ public class Ambi extends Thread {
 	public void run() {
 		int count = 0;
 		int currentSecond = -1;
+		int second = Calendar.getInstance().get(Calendar.SECOND);
 		int fps = 0;
 		List<Color> colors;
 		try {
 			while (!stop) {
-				sleep(10);
-				if (Calendar.getInstance().get(Calendar.SECOND) != currentSecond) {
-					AmbiEngineManagement.getAmbiFrame().setFps(fps);
-					fps = 0;
-					currentSecond = Calendar.getInstance().get(Calendar.SECOND);
-				} else {
-					fps++;
+				second = Calendar.getInstance().get(Calendar.SECOND);
+				if (second % 3 == 0) {
+					running = !Factory.isCheckProcess() || shouldRun();
 				}
-				colors = screen.getColors();
-				AmbiEngineManagement.getArduinoSender().write(getArray(colors));
-				AmbiEngineManagement.getAmbiFrame().refresh(colors);
-				count++;
-				if (count == 100) {
-					screen.init();
-					count = 0;
+				if (running) {
+					sleep(10);
+					if (second != currentSecond) {
+						AmbiEngineManagement.getAmbiFrame().setInfo(fps + " FPS");
+						fps = 1;
+						currentSecond = second;
+					} else {
+						fps++;
+					}
+					colors = screen.getColors();
+					AmbiEngineManagement.getArduinoSender().write(getArray(colors));
+					AmbiEngineManagement.getAmbiFrame().refresh(colors);
+					count++;
+					if (count == 100) {
+						screen.init();
+						count = 0;
+					}
+				} else {
+					AmbiEngineManagement.getArduinoSender().write(getStopArray());
+					AmbiEngineManagement.getAmbiFrame().setInfo("Not running");
+					sleep(800);
 				}
 			}
 			AmbiEngineManagement.getArduinoSender().write(getStopArray());
@@ -65,9 +79,9 @@ public class Ambi extends Thread {
 		int g = Factory.getRGB_G();
 		int b = Factory.getRGB_B();
 		for (Color color : colors) {
-			result[i++] = (byte) Math.min(Math.max(color.getRed() + r, 0),255);
-			result[i++] = (byte) Math.min(Math.max(color.getGreen() + g, 0),255);
-			result[i++] = (byte) Math.min(Math.max(color.getBlue() + b, 0),255);
+			result[i++] = (byte) Math.min(Math.max(color.getRed() + r, 0), 255);
+			result[i++] = (byte) Math.min(Math.max(color.getGreen() + g, 0), 255);
+			result[i++] = (byte) Math.min(Math.max(color.getBlue() + b, 0), 255);
 		}
 		return result;
 	}
@@ -84,6 +98,33 @@ public class Ambi extends Thread {
 
 	public boolean isStop() {
 		return stop;
+	}
+
+	public boolean shouldRun() {
+		boolean result = false;
+		String apps = Factory.getProcessList();
+		BufferedReader input = null;
+		try {
+			String line;
+			Process p = Runtime.getRuntime().exec(System.getenv("windir") + "\\system32\\" + "tasklist.exe /FO CSV /NH");
+			input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			while ((line = input.readLine()) != null) {
+				line = line.substring(1, line.indexOf("\","));
+				if (apps.contains(line)) {
+					result = true;
+					break;
+				}
+			}
+
+		} catch (Exception err) {
+			err.printStackTrace();
+		} finally {
+			try {
+				input.close();
+			} catch (Exception e) {
+			}
+		}
+		return result;
 	}
 
 }

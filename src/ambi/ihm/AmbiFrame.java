@@ -68,8 +68,9 @@ public class AmbiFrame extends JFrame {
 		}
 	}
 	
-	public void setFps(int fps){
-		setTitle(Factory.appName + " - Show Frame - " + fps + " FPS");
+	public void setInfo(String string) {
+		setTitle(Factory.appName + " - Show Frame - " + string);
+		
 	}
 
 }

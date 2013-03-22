@@ -19,14 +19,14 @@ import ambi.ressources.Factory;
 public class RGBColorManager extends JPanel {
 
 	private JSlider r, g, b;
-	private int min = -100;
-	private int max = 100;
+	private int min = -150;
+	private int max = 150;
 	private JCheckBox all;
 
 	public RGBColorManager() {
 		setLayout(new GridLayout(5, 1));
 		r = new JSlider(JSlider.HORIZONTAL, min, max, Factory.getRGB_R());
-		r.setPreferredSize(new Dimension(600, r.getPreferredSize().height));
+		r.setPreferredSize(new Dimension(800, r.getPreferredSize().height));
 		g = new JSlider(JSlider.HORIZONTAL, min, max, Factory.getRGB_G());
 		b = new JSlider(JSlider.HORIZONTAL, min, max, Factory.getRGB_B());
 		r.setMajorTickSpacing(10);
@@ -64,6 +64,7 @@ public class RGBColorManager extends JPanel {
 				if (all.isSelected()) {
 					g.setValue(r.getValue());
 					b.setValue(r.getValue());
+					r.requestFocus();
 				}
 			}
 		});

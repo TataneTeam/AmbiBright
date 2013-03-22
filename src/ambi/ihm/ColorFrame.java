@@ -15,6 +15,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import ambi.ressources.Config.Parameters;
 import ambi.ressources.Factory;
 
 public class ColorFrame extends JDialog implements ChangeListener {
@@ -22,9 +23,14 @@ public class ColorFrame extends JDialog implements ChangeListener {
 	private JPanel back;
 	private JColorChooser colorChooser;
 	private RGBColorManager colorManager;
+	private boolean isCheckApp;
 
 	public ColorFrame(Rectangle bounds) {
 		super();
+		
+		isCheckApp = Factory.isCheckProcess();
+		Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, "false");
+		
 		JLayeredPane lpane = new JLayeredPane();
 		add(lpane);
 		setUndecorated(true);
@@ -37,7 +43,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		colorChooser.getSelectionModel().addChangeListener(this);
 		colorChooser.setBorder(BorderFactory.createTitledBorder("Choose background color"));
 		colorChooser.setPreviewPanel(new JPanel());
-		
+
 		colorManager = new RGBColorManager();
 
 		JButton close = new JButton("Save");
@@ -45,6 +51,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
+				Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, isCheckApp  + "");
 				Factory.getConfig().save();
 			}
 		});
@@ -52,18 +59,18 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		int y = 0;
 		lpane.add(back, JLayeredPane.DEFAULT_LAYER);
 		back.setBounds(bounds);
-		
+
 		lpane.add(colorChooser, JLayeredPane.POPUP_LAYER);
-		y =  bounds.y + (bounds.height - colorChooser.getPreferredSize().height) / 2;
-		colorChooser.setBounds(bounds.x + (bounds.width - colorChooser.getPreferredSize().width) / 2,y, colorChooser.getPreferredSize().width, colorChooser.getPreferredSize().height);
-		
+		y = bounds.y + (bounds.height - colorChooser.getPreferredSize().height) / 2;
+		colorChooser.setBounds(bounds.x + (bounds.width - colorChooser.getPreferredSize().width) / 2, y, colorChooser.getPreferredSize().width, colorChooser.getPreferredSize().height);
+
 		lpane.add(colorManager, JLayeredPane.POPUP_LAYER);
 		y += colorChooser.getPreferredSize().height + 20;
 		colorManager.setBounds(bounds.x + (bounds.width - colorManager.getPreferredSize().width) / 2, y, colorManager.getPreferredSize().width, colorManager.getPreferredSize().height);
-	
+
 		lpane.add(Factory.setFont(close), JLayeredPane.POPUP_LAYER);
 		close.setBounds(bounds.x + (bounds.width - close.getPreferredSize().width) / 2, bounds.y + (bounds.height - close.getPreferredSize().height), close.getPreferredSize().width, close.getPreferredSize().height);
-	
+
 		pack();
 		setLocation(bounds.x, bounds.y);
 		setVisible(true);

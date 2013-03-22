@@ -7,11 +7,7 @@ import java.awt.Image;
 import java.awt.MenuItem;
 import java.awt.Rectangle;
 import java.awt.Robot;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 
@@ -76,8 +72,8 @@ public class Factory {
 		return getConfig().get(Parameters.CONFIG_ARDUINO_PORT);
 	}
 
-	public static String getAppList() {
-		return getConfig().get(Parameters.CONFIG_APP_LIST);
+	public static String getProcessList() {
+		return getConfig().get(Parameters.CONFIG_PROCESS_LIST);
 	}
 
 	public static Integer getScreenDevice() {
@@ -102,23 +98,6 @@ public class Factory {
 	
 	public static Integer getRGB_B(){
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_B));
-	}
-
-	public static List<String> getProcessList() {
-		List<String> result = new ArrayList<String>();
-		try {
-			String line;
-			Process p = Runtime.getRuntime().exec(System.getenv("windir") + "\\system32\\" + "tasklist.exe /FO CSV /NH");
-			BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			while ((line = input.readLine()) != null) {
-				result.add(line.substring(1, line.indexOf("\",")));
-			}
-			input.close();
-		} catch (Exception err) {
-			err.printStackTrace();
-		}
-
-		return result;
 	}
 
 	public static Tray getTray() {
@@ -149,5 +128,9 @@ public class Factory {
 
 	public static Rectangle getBounds() {
 		return getBounds(getScreenDevice());
+	}
+	
+	public static boolean isCheckProcess(){
+		return "true".equals(Factory.getConfig().get(Parameters.CONFIG_CHECK_PROCESS).toLowerCase());
 	}
 }

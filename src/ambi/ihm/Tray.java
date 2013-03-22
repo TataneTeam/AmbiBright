@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 
 import ambi.engine.AmbiEngineManagement;
+import ambi.ressources.Config.Parameters;
 import ambi.ressources.Factory;
 
 public class Tray extends TrayIcon {
@@ -31,7 +32,14 @@ public class Tray extends TrayIcon {
 			}
 		});
 		getPopupMenu().add(Factory.setFont(configItem));
-		MenuItem ambiFrame = new MenuItem(" Show AmbiFrame");
+		MenuItem colorFrame = new MenuItem(" Color Frame");
+		colorFrame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new ColorFrame(Factory.getBounds());
+			}
+		});
+		getPopupMenu().add(Factory.setFont(colorFrame));
+		MenuItem ambiFrame = new MenuItem(" Monitoring Frame");
 		ambiFrame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				AmbiEngineManagement.getAmbiFrame().setVisible(true);
@@ -39,13 +47,17 @@ public class Tray extends TrayIcon {
 			}
 		});
 		getPopupMenu().add(Factory.setFont(ambiFrame));
-		MenuItem colorFrame = new MenuItem(" Show ColorFrame");
-		colorFrame.addActionListener(new ActionListener() {
+		MenuItem checkApp = new MenuItem(" Check for Process");
+		checkApp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new ColorFrame(Factory.getBounds());
+				Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, !Factory.isCheckProcess() + "");
+				Factory.getConfig().save();
+				showInfo("Check for process: " + Factory.isCheckProcess());
 			}
 		});
-		getPopupMenu().add(Factory.setFont(colorFrame));
+		getPopupMenu().add(Factory.setFont(checkApp));
+		getPopupMenu().addSeparator();
+
 		MenuItem stop = new MenuItem(" Stop");
 		stop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -60,6 +72,7 @@ public class Tray extends TrayIcon {
 			}
 		});
 		getPopupMenu().add(Factory.setFont(restart));
+
 		getPopupMenu().addSeparator();
 		MenuItem exit = new MenuItem(" Close");
 		exit.addActionListener(new ActionListener() {
@@ -71,7 +84,8 @@ public class Tray extends TrayIcon {
 		getPopupMenu().add(Factory.setFont(exit));
 	}
 
-	public static void main(String[] args) {
-		new Tray();
+	public void showInfo(String text) {
+		displayMessage(Factory.appName, text, TrayIcon.MessageType.INFO);
 	}
+
 }

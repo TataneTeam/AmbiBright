@@ -7,6 +7,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -20,14 +21,15 @@ public class ConfigFrame extends JFrame {
 	private JTextField arduinoSerial, appList;
 	private JComboBox<String> screenDevice;
 	private JComboBox<Integer> ledNbTop, lebNbLeft;
+	private JCheckBox checkApp;
 
 	public ConfigFrame() {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.getImageIcon());
-		setLayout(new GridLayout(6, 2));
+		setLayout(new GridLayout(7, 2));
 
 		arduinoSerial = new JTextField(Factory.getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
-		appList = new JTextField(Factory.getConfig().get(Parameters.CONFIG_APP_LIST));
+		appList = new JTextField(Factory.getConfig().get(Parameters.CONFIG_PROCESS_LIST));
 
 		ledNbTop = new JComboBox<Integer>();
 		lebNbLeft = new JComboBox<Integer>();
@@ -39,7 +41,7 @@ public class ConfigFrame extends JFrame {
 		}
 		ledNbTop.setSelectedIndex(Integer.valueOf(Factory.getConfig().get(Parameters.CONFIG_LED_NB_TOP)));
 		lebNbLeft.setSelectedIndex(Integer.valueOf(Factory.getConfig().get(Parameters.CONFIG_LED_NB_LEFT)));
-
+		
 		screenDevice = new JComboBox<String>();
 		screenDevice.setBorder(null);
 		for (GraphicsDevice device : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
@@ -47,6 +49,9 @@ public class ConfigFrame extends JFrame {
 		}
 		screenDevice.setSelectedIndex(Integer.valueOf(Factory.getConfig().get(Parameters.CONFIG_SCREEN_DEVICE)));
 
+		checkApp = new JCheckBox();
+		checkApp.setSelected(Factory.isCheckProcess());
+		
 		JButton save = new JButton("Save");
 
 		save.addActionListener(new ActionListener() {
@@ -54,8 +59,9 @@ public class ConfigFrame extends JFrame {
 				Factory.getConfig().put(Parameters.CONFIG_LED_NB_LEFT, lebNbLeft.getSelectedIndex() + "");
 				Factory.getConfig().put(Parameters.CONFIG_LED_NB_TOP, ledNbTop.getSelectedIndex() + "");
 				Factory.getConfig().put(Parameters.CONFIG_ARDUINO_PORT, arduinoSerial.getText());
-				Factory.getConfig().put(Parameters.CONFIG_APP_LIST, appList.getText());
+				Factory.getConfig().put(Parameters.CONFIG_PROCESS_LIST, appList.getText());
 				Factory.getConfig().put(Parameters.CONFIG_SCREEN_DEVICE, screenDevice.getSelectedIndex() + "");
+				Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, checkApp.isSelected() + "");
 				Factory.getConfig().save();
 				dispose();
 			}
@@ -72,10 +78,14 @@ public class ConfigFrame extends JFrame {
 
 		add(Factory.setFontBold(new JLabel(" Arduino Serial Port")));
 		add(Factory.setFont(arduinoSerial));
+		
+		add(Factory.setFontBold(new JLabel(" Check for Process")));
+		add(Factory.setFont(checkApp));
+		
 
-		add(Factory.setFontBold(new JLabel(" App list")));
+		add(Factory.setFontBold(new JLabel(" Check for Process list")));
 		add(Factory.setFont(appList));
-
+		
 		add(Factory.setFontBold(new JLabel("")));
 		add(Factory.setFont(save));
 
