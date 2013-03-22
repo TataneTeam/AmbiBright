@@ -3,7 +3,7 @@ package ambi.engine;
 import ambi.ihm.MonitoringFrame;
 import ambi.ressources.Factory;
 
-public class AmbiEngineManagement {
+public class AmbiEngineManager {
 
 	private static MonitoringFrame ambiFrame;
 

@@ -2,7 +2,7 @@ package ambi;
 
 import javax.swing.UIManager;
 
-import ambi.engine.AmbiEngineManagement;
+import ambi.engine.AmbiEngineManager;
 import ambi.ressources.Factory;
 
 public class Launcher {
@@ -13,7 +13,7 @@ public class Launcher {
 		} catch (Exception e) {
 		}
 		Factory.getTray();
-		AmbiEngineManagement.start();
+		AmbiEngineManager.start();
 	}
 
 }

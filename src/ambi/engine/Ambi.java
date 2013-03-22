@@ -29,7 +29,7 @@ public class Ambi extends Thread {
 		int fps = 0;
 		List<Color> colors;
 		try {
-			AmbiEngineManagement.getAmbiFrame().setInfo("Not running");
+			AmbiEngineManager.getAmbiFrame().setInfo("Not running");
 			while (!stop) {
 				second = Calendar.getInstance().get(Calendar.SECOND);
 				if (lastSecondCheck != second && second % 5 == 0) {
@@ -39,26 +39,27 @@ public class Ambi extends Thread {
 				}
 				if (running) {
 					if (second != currentSecond) {
-						AmbiEngineManagement.getAmbiFrame().setInfo(fps + " FPS");
+						AmbiEngineManager.getAmbiFrame().setInfo(fps + " FPS");
 						fps = 1;
 						currentSecond = second;
 					} else {
 						fps++;
 					}
 					colors = screen.getColors();
-					AmbiEngineManagement.getArduinoSender().write(getArray(colors));
-					AmbiEngineManagement.getAmbiFrame().refresh(colors);
+					AmbiEngineManager.getArduinoSender().write(getArray(colors));
+					AmbiEngineManager.getAmbiFrame().refresh(colors);
+					sleep(10);
 				} else {
-					AmbiEngineManagement.getArduinoSender().write(getStopArray());
-					AmbiEngineManagement.getAmbiFrame().setInfo("Not running");
+					AmbiEngineManager.getArduinoSender().write(getStopArray());
+					AmbiEngineManager.getAmbiFrame().setInfo("Not running");
 					sleep(800);
 				}
 			}
-			AmbiEngineManagement.getArduinoSender().write(getStopArray());
+			AmbiEngineManager.getArduinoSender().write(getStopArray());
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			AmbiEngineManagement.getArduinoSender().close();
+			AmbiEngineManager.getArduinoSender().close();
 		}
 	}
 
