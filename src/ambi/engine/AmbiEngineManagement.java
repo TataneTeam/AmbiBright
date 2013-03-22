@@ -1,11 +1,11 @@
 package ambi.engine;
 
-import ambi.ihm.AmbiFrame;
+import ambi.ihm.MonitoringFrame;
 import ambi.ressources.Factory;
 
 public class AmbiEngineManagement {
 
-	private static AmbiFrame ambiFrame;
+	private static MonitoringFrame ambiFrame;
 
 	private static Ambi ambi;
 
@@ -45,9 +45,9 @@ public class AmbiEngineManagement {
 		arduinoSender = null;
 	}
 
-	public static AmbiFrame getAmbiFrame() {
+	public static MonitoringFrame getAmbiFrame() {
 		if (ambiFrame == null) {
-			ambiFrame = new AmbiFrame(Factory.getLedNBLeft(), Factory.getLedNBTop());
+			ambiFrame = new MonitoringFrame(Factory.getLedNBLeft(), Factory.getLedNBTop());
 		}
 		return ambiFrame;
 	}

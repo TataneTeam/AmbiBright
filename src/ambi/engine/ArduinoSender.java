@@ -1,13 +1,13 @@
 package ambi.engine;
+
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
 import java.io.OutputStream;
 
-public class ArduinoSender  {
+import ambi.ressources.Factory;
 
-	private static final int TIME_OUT = 500;
-	private static final int DATA_RATE = 1152000;
+public class ArduinoSender {
 
 	private SerialPort serialPort;
 	private OutputStream output;
@@ -15,8 +15,8 @@ public class ArduinoSender  {
 	public ArduinoSender(String port) {
 		try {
 			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(port);
-			serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
-			serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+			serialPort = (SerialPort) portId.open(this.getClass().getName(), 500);
+			serialPort.setSerialPortParams(Factory.getArduinoDataRate(), SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 			output = serialPort.getOutputStream();
 		} catch (Exception e) {
 			e.printStackTrace();

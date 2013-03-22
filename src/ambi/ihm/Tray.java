@@ -32,6 +32,17 @@ public class Tray extends TrayIcon {
 			}
 		});
 		getPopupMenu().add(Factory.setFont(configItem));
+		MenuItem checkApp = new MenuItem(" Check for Process");
+		checkApp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, !Factory.isCheckProcess() + "");
+				Factory.getConfig().save();
+				showInfo("Check for process: " + Factory.isCheckProcess());
+			}
+		});
+		getPopupMenu().add(Factory.setFont(checkApp));
+		getPopupMenu().addSeparator();
+		
 		MenuItem colorFrame = new MenuItem(" Color Frame");
 		colorFrame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -47,15 +58,6 @@ public class Tray extends TrayIcon {
 			}
 		});
 		getPopupMenu().add(Factory.setFont(ambiFrame));
-		MenuItem checkApp = new MenuItem(" Check for Process");
-		checkApp.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, !Factory.isCheckProcess() + "");
-				Factory.getConfig().save();
-				showInfo("Check for process: " + Factory.isCheckProcess());
-			}
-		});
-		getPopupMenu().add(Factory.setFont(checkApp));
 		getPopupMenu().addSeparator();
 
 		MenuItem stop = new MenuItem(" Stop");

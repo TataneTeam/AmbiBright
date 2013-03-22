@@ -71,6 +71,10 @@ public class Factory {
 	public static String getArduinoSerial() {
 		return getConfig().get(Parameters.CONFIG_ARDUINO_PORT);
 	}
+	
+	public static Integer getArduinoDataRate() {
+		return Integer.valueOf(getConfig().get(Parameters.CONFIG_ARDUINO_DATA_RATE));
+	}
 
 	public static String getProcessList() {
 		return getConfig().get(Parameters.CONFIG_PROCESS_LIST);

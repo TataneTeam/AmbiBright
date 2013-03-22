@@ -13,13 +13,13 @@ import javax.swing.JPanel;
 
 import ambi.ressources.Factory;
 
-public class AmbiFrame extends JFrame {
+public class MonitoringFrame extends JFrame {
 
 	private JPanel[][] cells;
 	int rows, cols,	i;
 
-	public AmbiFrame(int rows, int cols) {
-		super(Factory.appName + " - Show Frame");
+	public MonitoringFrame(int rows, int cols) {
+		super(Factory.appName + " - Monitoring Frame");
 		setIconImage(Factory.getImageIcon());
 		this.rows = rows;
 		this.cols = cols;
