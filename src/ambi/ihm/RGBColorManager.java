@@ -7,6 +7,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -18,14 +19,14 @@ import ambi.ressources.Factory;
 public class RGBColorManager extends JPanel {
 
 	private JSlider r, g, b;
-	private int min = -50;
-	private int max = 50;
+	private int min = -100;
+	private int max = 100;
 	private JCheckBox all;
 
 	public RGBColorManager() {
 		setLayout(new GridLayout(5, 1));
 		r = new JSlider(JSlider.HORIZONTAL, min, max, Factory.getRGB_R());
-		r.setPreferredSize(new Dimension(400, r.getPreferredSize().height));
+		r.setPreferredSize(new Dimension(600, r.getPreferredSize().height));
 		g = new JSlider(JSlider.HORIZONTAL, min, max, Factory.getRGB_G());
 		b = new JSlider(JSlider.HORIZONTAL, min, max, Factory.getRGB_B());
 		r.setMajorTickSpacing(10);
@@ -67,6 +68,7 @@ public class RGBColorManager extends JPanel {
 			}
 		});
 
+		all.setHorizontalAlignment(JLabel.CENTER);
 		add(Factory.setFont(all));
 		add(Factory.setFont(reset));
 		setOpaque(false);
