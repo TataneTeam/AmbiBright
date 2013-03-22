@@ -32,8 +32,11 @@ public class Ambi extends Thread {
 			AmbiEngineManagement.getAmbiFrame().setInfo("Not running");
 			while (!stop) {
 				second = Calendar.getInstance().get(Calendar.SECOND);
-				if (second % 5 == 0) {
+				if (running && second % 20 == 0) {
 					running = !Factory.isCheckProcess() || shouldRun();
+				}else if (!running && second % 10 == 0) {
+					running = !Factory.isCheckProcess() || shouldRun();
+					screen.init();
 				}
 				if (running) {
 					if (second % 15 == 0) {
@@ -112,7 +115,6 @@ public class Ambi extends Thread {
 					break;
 				}
 			}
-
 		} catch (Exception err) {
 			err.printStackTrace();
 		} finally {
