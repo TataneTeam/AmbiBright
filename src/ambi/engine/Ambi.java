@@ -1,12 +1,12 @@
 package ambi.engine;
 
 import java.awt.Color;
-import java.awt.GraphicsEnvironment;
-import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+
+import ambi.ressources.Factory;
 
 public class Ambi extends Thread {
 
@@ -17,8 +17,7 @@ public class Ambi extends Thread {
 	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop) {
 		super();
 		totalLED = ledCountLeftRight * 2 + ledCountTop - 2;
-		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
-		screen = new Screen(bounds, ledCountLeftRight, ledCountTop);
+		screen = new Screen(Factory.getBounds(screenDevice), ledCountLeftRight, ledCountTop);
 	}
 
 	public void run() {

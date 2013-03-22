@@ -2,8 +2,10 @@ package ambi.ressources;
 
 import java.awt.Component;
 import java.awt.Font;
+import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.MenuItem;
+import java.awt.Rectangle;
 import java.awt.Robot;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -127,5 +129,13 @@ public class Factory {
 	public static MenuItem setFont(MenuItem component) {
 		component.setFont(font);
 		return component;
+	}
+	
+	public static Rectangle getBounds(int screenDevice){
+		return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
+	}
+
+	public static Rectangle getBounds() {
+		return getBounds(getScreenDevice());
 	}
 }

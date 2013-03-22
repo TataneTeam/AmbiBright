@@ -39,6 +39,13 @@ public class Tray extends TrayIcon {
 			}
 		});
 		getPopupMenu().add(Factory.setFont(ambiFrame));
+		MenuItem colorFrame = new MenuItem(" Show ColorFrame");
+		colorFrame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new ColorFrame(Factory.getBounds());
+			}
+		});
+		getPopupMenu().add(Factory.setFont(colorFrame));
 		MenuItem stop = new MenuItem(" Stop");
 		stop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
