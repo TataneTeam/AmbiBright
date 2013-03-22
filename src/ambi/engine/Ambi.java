@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import ambi.ressources.Factory;
 
@@ -16,11 +18,13 @@ public class Ambi extends Thread {
 	private boolean stop = false;
 	private int totalLED;
 	private boolean running = false;
+	private Timer timer;
 
 	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop) {
 		super();
 		totalLED = ledCountLeftRight * 2 + ledCountTop - 2;
 		screen = new Screen(Factory.getBounds(screenDevice), ledCountLeftRight, ledCountTop);
+		timer = new Timer();
 	}
 
 	public void run() {
@@ -29,15 +33,10 @@ public class Ambi extends Thread {
 		int fps = 0;
 		List<Color> colors;
 		try {
+			timer.schedule(new CheckProcess(), 5000);
 			AmbiEngineManagement.getAmbiFrame().setInfo("Not running");
 			while (!stop) {
 				second = Calendar.getInstance().get(Calendar.SECOND);
-				if (running && second % 20 == 0) {
-					running = !Factory.isCheckProcess() || shouldRun();
-				}else if (!running && second % 10 == 0) {
-					running = !Factory.isCheckProcess() || shouldRun();
-					screen.init();
-				}
 				if (running) {
 					if (second % 15 == 0) {
 						screen.init();
@@ -59,6 +58,7 @@ public class Ambi extends Thread {
 				}
 			}
 			AmbiEngineManagement.getArduinoSender().write(getStopArray());
+			timer.cancel();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -101,6 +101,7 @@ public class Ambi extends Thread {
 	}
 
 	public boolean shouldRun() {
+		System.out.println("process");
 		boolean result = false;
 		String apps = Factory.getProcessList();
 		BufferedReader input = null;
@@ -124,6 +125,34 @@ public class Ambi extends Thread {
 			}
 		}
 		return result;
+	}
+
+	class CheckProcess extends TimerTask {
+		public void run() {
+			String apps = Factory.getProcessList();
+			BufferedReader input = null;
+			try {
+				String line;
+				Process p = Runtime.getRuntime().exec(System.getenv("windir") + "\\system32\\" + "tasklist.exe /FO CSV /NH");
+				input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				while ((line = input.readLine()) != null) {
+					line = line.substring(1, line.indexOf("\","));
+					if (apps.contains(line)) {
+						running = true;
+						break;
+					}
+				}
+			} catch (Exception err) {
+				err.printStackTrace();
+			} finally {
+				try {
+					input.close();
+				} catch (Exception e) {
+				}
+			}
+			running = false;
+			screen.init();
+		}
 	}
 
 }
