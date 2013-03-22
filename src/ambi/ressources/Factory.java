@@ -1,6 +1,9 @@
 package ambi.ressources;
 
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.Image;
+import java.awt.MenuItem;
 import java.awt.Robot;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -10,9 +13,6 @@ import java.util.List;
 
 import javax.swing.ImageIcon;
 
-import ambi.engine.Ambi;
-import ambi.engine.ArduinoSender;
-import ambi.ihm.AmbiFrame;
 import ambi.ihm.Tray;
 import ambi.ressources.Config.Parameters;
 
@@ -24,16 +24,16 @@ public class Factory {
 
 	public static String configFileName = "AmbiConfig";
 
+	public static String fontName = "Calibri";
+
+	public static Font font = new Font(fontName, Font.PLAIN, 11);
+
+	public static Font fontBold = new Font(fontName, Font.BOLD, 11);
+
 	private static Robot robot;
 
 	private static Config config;
 
-	private static AmbiFrame ambiFrame;
-
-	private static Ambi ambi;
-
-	private static ArduinoSender arduinoSender;
-	
 	private static Tray tray;
 
 	public static Image getImageIcon() {
@@ -90,27 +90,6 @@ public class Factory {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_LED_NB_TOP));
 	}
 
-	public static AmbiFrame getAmbiFrame() {
-		if (ambiFrame == null) {
-			ambiFrame = new AmbiFrame(getLedNBLeft(), getLedNBTop());
-		}
-		return ambiFrame;
-	}
-
-	public static Ambi getAmbi() {
-		if (ambi == null) {
-			ambi = new Ambi(getScreenDevice(), getLedNBLeft(), getLedNBTop());
-		}
-		return ambi;
-	}
-
-	public static ArduinoSender getArduinoSender() {
-		if (arduinoSender == null) {
-			arduinoSender = new ArduinoSender(getArduinoSerial());
-		}
-		return arduinoSender;
-	}
-
 	public static List<String> getProcessList() {
 		List<String> result = new ArrayList<String>();
 		try {
@@ -127,12 +106,26 @@ public class Factory {
 
 		return result;
 	}
-	
-	public static Tray getTray(){
-		if(tray == null){
+
+	public static Tray getTray() {
+		if (tray == null) {
 			tray = new Tray();
 		}
 		return tray;
 	}
 
+	public static Component setFont(Component component) {
+		component.setFont(font);
+		return component;
+	}
+
+	public static Component setFontBold(Component component) {
+		component.setFont(fontBold);
+		return component;
+	}
+
+	public static MenuItem setFont(MenuItem component) {
+		component.setFont(font);
+		return component;
+	}
 }

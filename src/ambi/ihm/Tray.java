@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 
+import ambi.engine.AmbiEngineManagement;
 import ambi.ressources.Factory;
 
 public class Tray extends TrayIcon {
@@ -29,23 +30,38 @@ public class Tray extends TrayIcon {
 				new ConfigFrame();
 			}
 		});
-		getPopupMenu().add(configItem);
+		getPopupMenu().add(Factory.setFont(configItem));
 		MenuItem ambiFrame = new MenuItem(" Show AmbiFrame");
 		ambiFrame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Factory.getAmbiFrame().setVisible(true);
-				Factory.getAmbiFrame().setState(JFrame.NORMAL);
+				AmbiEngineManagement.getAmbiFrame().setVisible(true);
+				AmbiEngineManagement.getAmbiFrame().setState(JFrame.NORMAL);
 			}
 		});
-		getPopupMenu().add(ambiFrame);
+		getPopupMenu().add(Factory.setFont(ambiFrame));
+		MenuItem stop = new MenuItem(" Stop");
+		stop.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AmbiEngineManagement.stop();
+			}
+		});
+		getPopupMenu().add(Factory.setFont(stop));
+		MenuItem restart = new MenuItem(" Restart");
+		restart.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AmbiEngineManagement.restart();
+			}
+		});
+		getPopupMenu().add(Factory.setFont(restart));
+		getPopupMenu().addSeparator();
 		MenuItem exit = new MenuItem(" Close");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Factory.getArduinoSender().close();
+				AmbiEngineManagement.stop();
 				System.exit(0);
 			}
 		});
-		getPopupMenu().add(exit);
+		getPopupMenu().add(Factory.setFont(exit));
 	}
 
 	public static void main(String[] args) {
