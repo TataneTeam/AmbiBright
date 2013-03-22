@@ -29,15 +29,16 @@ public class Ambi extends Thread {
 		int fps = 0;
 		List<Color> colors;
 		try {
+			AmbiEngineManagement.getAmbiFrame().setInfo("Not running");
 			while (!stop) {
 				second = Calendar.getInstance().get(Calendar.SECOND);
 				if (second % 5 == 0) {
 					running = !Factory.isCheckProcess() || shouldRun();
 				}
-				if (running && second % 10 == 0) {
-					screen.init();
-				}
 				if (running) {
+					if (second % 15 == 0) {
+						screen.init();
+					}
 					if (second != currentSecond) {
 						AmbiEngineManagement.getAmbiFrame().setInfo(fps + " FPS");
 						fps = 1;
