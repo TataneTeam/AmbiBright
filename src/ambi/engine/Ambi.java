@@ -61,10 +61,13 @@ public class Ambi extends Thread {
 		result[4] = (byte) ((totalLED - 1) & 0xff);
 		result[5] = (byte) (result[3] ^ result[4] ^ 0x55);
 		int i = 6;
+		int r = Factory.getRGB_R();
+		int g = Factory.getRGB_G();
+		int b = Factory.getRGB_B();
 		for (Color color : colors) {
-			result[i++] = (byte) color.getRed();
-			result[i++] = (byte) color.getGreen();
-			result[i++] = (byte) color.getBlue();
+			result[i++] = (byte) Math.min(Math.max(color.getRed() + r, 0),255);
+			result[i++] = (byte) Math.min(Math.max(color.getGreen() + g, 0),255);
+			result[i++] = (byte) Math.min(Math.max(color.getBlue() + b, 0),255);
 		}
 		return result;
 	}

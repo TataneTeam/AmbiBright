@@ -21,6 +21,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 
 	private JPanel back;
 	private JColorChooser colorChooser;
+	private RGBColorManager colorManager;
 
 	public ColorFrame(Rectangle bounds) {
 		super();
@@ -35,22 +36,34 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		colorChooser = new JColorChooser(back.getBackground());
 		colorChooser.getSelectionModel().addChangeListener(this);
 		colorChooser.setBorder(BorderFactory.createTitledBorder("Choose background color"));
+		colorChooser.setPreviewPanel(new JPanel());
+		
+		colorManager = new RGBColorManager();
 
-		JButton close = new JButton("Close");
+		JButton close = new JButton("Save");
 		close.setOpaque(false);
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
+				Factory.getConfig().save();
 			}
 		});
 
+		int y = 0;
 		lpane.add(back, JLayeredPane.DEFAULT_LAYER);
 		back.setBounds(bounds);
+		
 		lpane.add(colorChooser, JLayeredPane.POPUP_LAYER);
-		colorChooser.setBounds(bounds.x + (bounds.width - colorChooser.getPreferredSize().width) / 2, bounds.y + (bounds.height - colorChooser.getPreferredSize().height) / 2, colorChooser.getPreferredSize().width, colorChooser.getPreferredSize().height);
+		y =  bounds.y + (bounds.height - colorChooser.getPreferredSize().height) / 2;
+		colorChooser.setBounds(bounds.x + (bounds.width - colorChooser.getPreferredSize().width) / 2,y, colorChooser.getPreferredSize().width, colorChooser.getPreferredSize().height);
+		
+		lpane.add(colorManager, JLayeredPane.POPUP_LAYER);
+		y += colorChooser.getPreferredSize().height + 20;
+		colorManager.setBounds(bounds.x + (bounds.width - colorManager.getPreferredSize().width) / 2, y, colorManager.getPreferredSize().width, colorManager.getPreferredSize().height);
+	
 		lpane.add(Factory.setFont(close), JLayeredPane.POPUP_LAYER);
 		close.setBounds(bounds.x + (bounds.width - close.getPreferredSize().width) / 2, bounds.y + (bounds.height - close.getPreferredSize().height), close.getPreferredSize().width, close.getPreferredSize().height);
-
+	
 		pack();
 		setLocation(bounds.x, bounds.y);
 		setVisible(true);

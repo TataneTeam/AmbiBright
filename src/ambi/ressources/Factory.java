@@ -91,6 +91,18 @@ public class Factory {
 	public static Integer getLedNBTop() {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_LED_NB_TOP));
 	}
+	
+	public static Integer getRGB_R(){
+		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_R));
+	}
+	
+	public static Integer getRGB_G(){
+		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_G));
+	}
+	
+	public static Integer getRGB_B(){
+		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_B));
+	}
 
 	public static List<String> getProcessList() {
 		List<String> result = new ArrayList<String>();
