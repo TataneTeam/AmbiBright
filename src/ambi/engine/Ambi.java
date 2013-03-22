@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -16,9 +15,10 @@ public class Ambi extends Thread {
 
 	private Screen screen;
 	private boolean stop = false;
-	private int totalLED;
+	private int totalLED, fps = 0;
 	private boolean running = false;
 	private Timer timer;
+	private int timerPeriod = 5000;
 
 	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop) {
 		super();
@@ -28,26 +28,13 @@ public class Ambi extends Thread {
 	}
 
 	public void run() {
-		int currentSecond = 0;
-		int second = 0;
-		int fps = 0;
 		List<Color> colors;
 		try {
-			timer.schedule(new CheckProcess(), 5000);
+			timer.schedule(new CheckProcess(), 0, timerPeriod);
 			AmbiEngineManagement.getAmbiFrame().setInfo("Not running");
 			while (!stop) {
-				second = Calendar.getInstance().get(Calendar.SECOND);
 				if (running) {
-					if (second % 15 == 0) {
-						screen.init();
-					}
-					if (second != currentSecond) {
-						AmbiEngineManagement.getAmbiFrame().setInfo(fps + " FPS");
-						fps = 1;
-						currentSecond = second;
-					} else {
-						fps++;
-					}
+					fps++;
 					colors = screen.getColors();
 					AmbiEngineManagement.getArduinoSender().write(getArray(colors));
 					AmbiEngineManagement.getAmbiFrame().refresh(colors);
@@ -100,35 +87,19 @@ public class Ambi extends Thread {
 		return stop;
 	}
 
-	public boolean shouldRun() {
-		System.out.println("process");
-		boolean result = false;
-		String apps = Factory.getProcessList();
-		BufferedReader input = null;
-		try {
-			String line;
-			Process p = Runtime.getRuntime().exec(System.getenv("windir") + "\\system32\\" + "tasklist.exe /FO CSV /NH");
-			input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			while ((line = input.readLine()) != null) {
-				line = line.substring(1, line.indexOf("\","));
-				if (apps.contains(line)) {
-					result = true;
-					break;
-				}
-			}
-		} catch (Exception err) {
-			err.printStackTrace();
-		} finally {
-			try {
-				input.close();
-			} catch (Exception e) {
-			}
-		}
-		return result;
-	}
-
 	class CheckProcess extends TimerTask {
 		public void run() {
+
+			// Display FPS
+			if (running) {
+				AmbiEngineManagement.getAmbiFrame().setInfo(fps / (timerPeriod / 1000) + " FPS");
+				fps = 0;
+			}
+
+			// Check image format
+			screen.getImageFormat();
+
+			// Check Process
 			String apps = Factory.getProcessList();
 			BufferedReader input = null;
 			try {
@@ -139,9 +110,10 @@ public class Ambi extends Thread {
 					line = line.substring(1, line.indexOf("\","));
 					if (apps.contains(line)) {
 						running = true;
-						break;
+						return;
 					}
 				}
+				running = false;
 			} catch (Exception err) {
 				err.printStackTrace();
 			} finally {
@@ -150,8 +122,7 @@ public class Ambi extends Thread {
 				} catch (Exception e) {
 				}
 			}
-			running = false;
-			screen.init();
+
 		}
 	}
 
