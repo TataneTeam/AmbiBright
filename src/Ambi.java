@@ -1,6 +1,7 @@
 import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
+import java.util.Calendar;
 import java.util.List;
 
 public class Ambi extends Thread {
@@ -23,14 +24,20 @@ public class Ambi extends Thread {
 		ArduinoSender arduino = new ArduinoSender(arduinoConf);
 		AmbiFrame af = new AmbiFrame(ledCountLeftRight, ledCountTop);
 		int count = 0;
+		int currentSecond = -1;
+		int nbIter = 0;
+		List<Color> colors;
 		try {
 			while (true) {
 				sleep(10);
-				List<Color> colors = screen.getColors();
-				if (colors.size() != 2 * ledCountLeftRight + ledCountTop - 2) {
-					System.out.println("Error: " + colors.size());
-					continue;
+				if(Calendar.getInstance().get(Calendar.SECOND) != currentSecond){
+					System.out.println(nbIter + " FPS");
+					nbIter = 0;
+					currentSecond = Calendar.getInstance().get(Calendar.SECOND);
+				}else{
+					nbIter++;
 				}
+				colors = screen.getColors();
 				arduino.write(getArray(colors));
 				af.refresh(colors);
 				count++;
@@ -46,7 +53,7 @@ public class Ambi extends Thread {
 		}
 	}
 
-	public byte[] getArray(List<Color> colors) {
+	public static byte[] getArray(List<Color> colors) {
 		byte[] result = new byte[6 + colors.size() * 3];
 		result[0] = 'A';
 		result[1] = 'd';
@@ -66,4 +73,5 @@ public class Ambi extends Thread {
 	public static void main(String[] args) {
 		new Ambi(1, 14, 24, "COM5").start();
 	}
+
 }

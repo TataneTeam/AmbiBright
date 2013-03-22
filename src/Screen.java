@@ -2,12 +2,8 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 public class Screen {
 
@@ -40,7 +36,6 @@ public class Screen {
 	}
 
 	public void init() {
-		System.out.println("Init");
 		int current = 0;
 		int red = 0;
 		int green = 0;
@@ -130,14 +125,6 @@ public class Screen {
 			}
 		}
 		return new Color(red / nbPixel, green / nbPixel, blue / nbPixel);
-	}
-
-	public void saveImage(BufferedImage image, File file) {
-		try {
-			ImageIO.write(image, "png", file);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 }
