@@ -6,8 +6,8 @@ import java.io.OutputStream;
 
 public class ArduinoSender  {
 
-	private static final int TIME_OUT = 2000;
-	private static final int DATA_RATE = 115200;
+	private static final int TIME_OUT = 500;
+	private static final int DATA_RATE = 1152000;
 
 	private SerialPort serialPort;
 	private OutputStream output;

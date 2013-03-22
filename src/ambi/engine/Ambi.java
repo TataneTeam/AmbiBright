@@ -24,19 +24,20 @@ public class Ambi extends Thread {
 	}
 
 	public void run() {
-		int count = 0;
-		int currentSecond = -1;
-		int second = Calendar.getInstance().get(Calendar.SECOND);
+		int currentSecond = 0;
+		int second = 0;
 		int fps = 0;
 		List<Color> colors;
 		try {
 			while (!stop) {
 				second = Calendar.getInstance().get(Calendar.SECOND);
-				if (second % 3 == 0) {
+				if (second % 5 == 0) {
 					running = !Factory.isCheckProcess() || shouldRun();
 				}
+				if (running && second % 10 == 0) {
+					screen.init();
+				}
 				if (running) {
-					sleep(10);
 					if (second != currentSecond) {
 						AmbiEngineManagement.getAmbiFrame().setInfo(fps + " FPS");
 						fps = 1;
@@ -47,11 +48,6 @@ public class Ambi extends Thread {
 					colors = screen.getColors();
 					AmbiEngineManagement.getArduinoSender().write(getArray(colors));
 					AmbiEngineManagement.getAmbiFrame().refresh(colors);
-					count++;
-					if (count == 100) {
-						screen.init();
-						count = 0;
-					}
 				} else {
 					AmbiEngineManagement.getArduinoSender().write(getStopArray());
 					AmbiEngineManagement.getAmbiFrame().setInfo("Not running");

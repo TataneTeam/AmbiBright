@@ -1,4 +1,5 @@
 package ambi.ihm;
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -15,7 +16,7 @@ import ambi.ressources.Factory;
 public class AmbiFrame extends JFrame {
 
 	private JPanel[][] cells;
-	int rows, cols;
+	int rows, cols,	i;
 
 	public AmbiFrame(int rows, int cols) {
 		super(Factory.appName + " - Show Frame");
@@ -35,10 +36,10 @@ public class AmbiFrame extends JFrame {
 		}
 		addWindowListener(new WindowListener() {
 			public void windowOpened(WindowEvent e) {}
-			public void windowIconified(WindowEvent e) {setVisible(false);}
+			public void windowIconified(WindowEvent e) { setVisible(false);	}
 			public void windowDeiconified(WindowEvent e) {}
 			public void windowDeactivated(WindowEvent e) {}
-			public void windowClosing(WindowEvent e) {setVisible(false);}
+			public void windowClosing(WindowEvent e) { setVisible(false); }
 			public void windowClosed(WindowEvent e) {}
 			public void windowActivated(WindowEvent e) {}
 		});
@@ -54,23 +55,21 @@ public class AmbiFrame extends JFrame {
 	}
 
 	public void refresh(List<Color> colors) {
-		if(isVisible()){
-			for (int i = 0; i < rows; i++) {
+		if (isVisible()) {
+			for (i = 0; i < rows; i++) {
 				setColor(rows - 1 - i, 0, colors.get(i));
 			}
-			for (int i = 1; i < cols; i++) {
+			for (i = 1; i < cols; i++) {
 				setColor(0, i, colors.get(i + rows - 1));
 			}
-			for (int i = 1; i < rows; i++) {
+			for (i = 1; i < rows; i++) {
 				setColor(i, cols - 1, colors.get(i + rows + cols - 2));
 			}
-			validate();
 		}
 	}
-	
+
 	public void setInfo(String string) {
 		setTitle(Factory.appName + " - Show Frame - " + string);
-		
 	}
 
 }
