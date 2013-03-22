@@ -20,7 +20,7 @@ public class Screen {
 
 	public static final int blackLimit = 6;
 
-	private BufferedImage image;
+	private BufferedImage image, original;
 
 	private List<Color> result;
 
@@ -46,7 +46,7 @@ public class Screen {
 		x = 0;
 
 		// Get original image
-		BufferedImage original = getScreenCapture(originalBounds);
+		original = getScreenCapture(originalBounds);
 
 		// Detect top
 		for (; y < originalBounds.height / 4; y++) {
