@@ -27,11 +27,13 @@ public class AmbiEngineManagement {
 	}
 
 	public static void restart() {
-		stop();
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if (!getAmbi().isStop()) {
+			stop();
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 		reset();
 		start();

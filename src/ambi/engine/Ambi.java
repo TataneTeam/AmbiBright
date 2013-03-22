@@ -53,10 +53,6 @@ public class Ambi extends Thread {
 		}
 	}
 
-	public void stopProcessing() {
-		stop = true;
-	}
-
 	public byte[] getArray(List<Color> colors) {
 		byte[] result = new byte[6 + totalLED * 3];
 		result[0] = 'A';
@@ -78,6 +74,14 @@ public class Ambi extends Thread {
 		byte[] result = getArray(new ArrayList<Color>());
 		Arrays.fill(result, 6, result.length, (byte) 0);
 		return result;
+	}
+
+	public void stopProcessing() {
+		stop = true;
+	}
+
+	public boolean isStop() {
+		return stop;
 	}
 
 }
