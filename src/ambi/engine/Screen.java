@@ -1,13 +1,13 @@
+package ambi.engine;
 import java.awt.Color;
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Screen {
+import ambi.ressources.Factory;
 
-	private Robot robot;
+public class Screen {
 
 	private Rectangle bounds, originalBounds;
 
@@ -23,11 +23,6 @@ public class Screen {
 
 	public Screen(Rectangle bounds, int ledNumberLeftRight, int ledNumberTop) {
 		super();
-		try {
-			robot = new Robot();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 		this.bounds = bounds;
 		this.originalBounds = bounds;
 		this.ledNumberLeftRight = ledNumberLeftRight;
@@ -83,7 +78,7 @@ public class Screen {
 	}
 
 	public BufferedImage getScreenCapture(Rectangle bounds) {
-		return robot.createScreenCapture(bounds);
+		return Factory.getRobot().createScreenCapture(bounds);
 	}
 
 	// L > T > R

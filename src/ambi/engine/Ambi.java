@@ -1,45 +1,42 @@
+package ambi.engine;
+
 import java.awt.Color;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.util.Calendar;
 import java.util.List;
 
+import ambi.ressources.Factory;
+
 public class Ambi extends Thread {
 
-	private int ledCountLeftRight = 14;
-	private int ledCountTop = 24;
-	private String arduinoConf = "COM5";
 	private Screen screen;
+	private boolean stop = false;
 
-	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop, String arduinoConf) {
+	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop) {
 		super();
-		this.ledCountLeftRight = ledCountLeftRight;
-		this.ledCountTop = ledCountTop;
-		this.arduinoConf = arduinoConf;
 		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
 		screen = new Screen(bounds, ledCountLeftRight, ledCountTop);
 	}
 
 	public void run() {
-		ArduinoSender arduino = new ArduinoSender(arduinoConf);
-		AmbiFrame af = new AmbiFrame(ledCountLeftRight, ledCountTop);
 		int count = 0;
 		int currentSecond = -1;
-		int nbIter = 0;
+		int fps = 0;
 		List<Color> colors;
 		try {
-			while (true) {
+			while (!stop) {
 				sleep(10);
-				if(Calendar.getInstance().get(Calendar.SECOND) != currentSecond){
-					System.out.println(nbIter + " FPS");
-					nbIter = 0;
+				if (Calendar.getInstance().get(Calendar.SECOND) != currentSecond) {
+					Factory.getAmbiFrame().setFps(fps);
+					fps = 0;
 					currentSecond = Calendar.getInstance().get(Calendar.SECOND);
-				}else{
-					nbIter++;
+				} else {
+					fps++;
 				}
 				colors = screen.getColors();
-				arduino.write(getArray(colors));
-				af.refresh(colors);
+				Factory.getArduinoSender().write(getArray(colors));
+				Factory.getAmbiFrame().refresh(colors);
 				count++;
 				if (count == 100) {
 					screen.init();
@@ -49,7 +46,7 @@ public class Ambi extends Thread {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			arduino.close();
+			Factory.getArduinoSender().close();
 		}
 	}
 
@@ -68,10 +65,6 @@ public class Ambi extends Thread {
 			result[i++] = (byte) color.getBlue();
 		}
 		return result;
-	}
-
-	public static void main(String[] args) {
-		new Ambi(1, 14, 24, "COM5").start();
 	}
 
 }
