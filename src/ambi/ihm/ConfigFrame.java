@@ -19,8 +19,8 @@ import ambi.ressources.Factory;
 public class ConfigFrame extends JFrame {
 
 	private JTextField arduinoSerial, arduinoDataRate, appList;
-	private JComboBox<String> screenDevice;
-	private JComboBox<Integer> ledNbTop, lebNbLeft;
+	private JComboBox screenDevice;
+	private JComboBox ledNbTop, lebNbLeft;
 	private JCheckBox checkApp;
 
 	public ConfigFrame() {
@@ -32,8 +32,8 @@ public class ConfigFrame extends JFrame {
 		appList = new JTextField(Factory.getConfig().get(Parameters.CONFIG_PROCESS_LIST));
 		arduinoDataRate = new JTextField(Factory.getConfig().get(Parameters.CONFIG_ARDUINO_DATA_RATE));
 
-		ledNbTop = new JComboBox<Integer>();
-		lebNbLeft = new JComboBox<Integer>();
+		ledNbTop = new JComboBox();
+		lebNbLeft = new JComboBox();
 		lebNbLeft.setBorder(null);
 		ledNbTop.setBorder(null);
 		for (int i = 0; i < 100; i++) {
@@ -43,7 +43,7 @@ public class ConfigFrame extends JFrame {
 		ledNbTop.setSelectedIndex(Integer.valueOf(Factory.getConfig().get(Parameters.CONFIG_LED_NB_TOP)));
 		lebNbLeft.setSelectedIndex(Integer.valueOf(Factory.getConfig().get(Parameters.CONFIG_LED_NB_LEFT)));
 
-		screenDevice = new JComboBox<String>();
+		screenDevice = new JComboBox();
 		screenDevice.setBorder(null);
 		for (GraphicsDevice device : GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()) {
 			screenDevice.addItem(device.getIDstring() + " - " + device.getDefaultConfiguration().getBounds().width + "x" + device.getDefaultConfiguration().getBounds().height);

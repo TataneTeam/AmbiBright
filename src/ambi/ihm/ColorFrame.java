@@ -78,7 +78,6 @@ public class ColorFrame extends JDialog implements ChangeListener {
 
 	public void stateChanged(ChangeEvent e) {
 		back.setBackground(colorChooser.getColor());
-		revalidate();
 	}
 
 }
