@@ -5,9 +5,8 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import ambi.ressources.Factory;
 
@@ -15,26 +14,37 @@ public class Ambi extends Thread {
 
 	private Screen screen;
 	private boolean stop = false;
-	private int totalLED, fps = 0;
+	private int totalLED;
 	private boolean running = false;
-	private Timer timer;
-	private int timerPeriod = 5000;
 
 	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop) {
 		super();
 		totalLED = ledCountLeftRight * 2 + ledCountTop - 2;
 		screen = new Screen(Factory.getBounds(screenDevice), ledCountLeftRight, ledCountTop);
-		timer = new Timer();
 	}
 
 	public void run() {
+		int currentSecond = 0, lastSecondCheck = 0;
+		int second = 0;
+		int fps = 0;
 		List<Color> colors;
 		try {
-			timer.schedule(new CheckProcess(), 0, timerPeriod);
 			AmbiEngineManagement.getAmbiFrame().setInfo("Not running");
 			while (!stop) {
+				second = Calendar.getInstance().get(Calendar.SECOND);
+				if (lastSecondCheck != second && second % 5 == 0) {
+					running = !Factory.isCheckProcess() || shouldRun();
+					screen.detectImageFormat();
+					lastSecondCheck = second;
+				}
 				if (running) {
-					fps++;
+					if (second != currentSecond) {
+						AmbiEngineManagement.getAmbiFrame().setInfo(fps + " FPS");
+						fps = 1;
+						currentSecond = second;
+					} else {
+						fps++;
+					}
 					colors = screen.getColors();
 					AmbiEngineManagement.getArduinoSender().write(getArray(colors));
 					AmbiEngineManagement.getAmbiFrame().refresh(colors);
@@ -45,7 +55,6 @@ public class Ambi extends Thread {
 				}
 			}
 			AmbiEngineManagement.getArduinoSender().write(getStopArray());
-			timer.cancel();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -87,43 +96,25 @@ public class Ambi extends Thread {
 		return stop;
 	}
 
-	class CheckProcess extends TimerTask {
-		public void run() {
-
-			// Display FPS
-			if (running) {
-				AmbiEngineManagement.getAmbiFrame().setInfo(fps / (timerPeriod / 1000) + " FPS");
-				fps = 0;
-			}
-
-			// Check image format
-			screen.getImageFormat();
-
-			// Check Process
-			String apps = Factory.getProcessList();
-			BufferedReader input = null;
-			try {
-				String line;
-				Process p = Runtime.getRuntime().exec(System.getenv("windir") + "\\system32\\" + "tasklist.exe /FO CSV /NH");
-				input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-				while ((line = input.readLine()) != null) {
-					line = line.substring(1, line.indexOf("\","));
-					if (apps.contains(line)) {
-						running = true;
-						return;
-					}
-				}
-				running = false;
-			} catch (Exception err) {
-				err.printStackTrace();
-			} finally {
-				try {
-					input.close();
-				} catch (Exception e) {
+	public boolean shouldRun() {
+		boolean result = false;
+		String apps = Factory.getProcessList();
+		BufferedReader input = null;
+		try {
+			String line;
+			Process p = Runtime.getRuntime().exec(System.getenv("windir") + "\\system32\\" + "tasklist.exe /FO CSV /NH");
+			input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			while ((line = input.readLine()) != null) {
+				line = line.substring(1, line.indexOf("\","));
+				if (apps.contains(line)) {
+					result = true;
+					break;
 				}
 			}
-
+			input.close();
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+		return result;
 	}
-
 }
