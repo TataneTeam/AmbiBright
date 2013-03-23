@@ -95,7 +95,9 @@ public class Screen {
 	public List<Color> getColors() {
 		squareSize = Factory.getSquareSize();
 		result.clear();
+		System.out.println("C" + Runtime.getRuntime().totalMemory()/8/1024/1024);
 		image = getScreenCapture(bounds);
+		System.out.println("D" + Runtime.getRuntime().totalMemory()/8/1024/1024);
 		
 		// Left from bottom to top
 		for (y = bounds.height - squareSizeLeftRight; y >= 0; y -= squareSizeLeftRight) {

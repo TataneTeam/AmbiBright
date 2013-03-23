@@ -29,13 +29,14 @@ public class Ambi extends Thread {
 		int fps = 0;
 		List<Color> colors;
 		try {
-			AmbiEngineManager.getAmbiFrame().setInfo("Not running");
 			while (!stop) {
 				second = Calendar.getInstance().get(Calendar.SECOND);
 				if (lastSecondCheck != second && second % 5 == 0) {
 					running = !Factory.isCheckProcess() || shouldRun();
 					if(running){
 						screen.detectImageFormat();
+					}else{
+						stopRunning();
 					}
 					lastSecondCheck = second;
 				}
@@ -51,18 +52,21 @@ public class Ambi extends Thread {
 					AmbiEngineManager.getArduinoSender().write(getArray(colors));
 					AmbiEngineManager.getAmbiFrame().refresh(colors);
 					sleep(10);
-				} else {
-					AmbiEngineManager.getArduinoSender().write(getStopArray());
-					AmbiEngineManager.getAmbiFrame().setInfo("Not running");
+				}else{
 					sleep(800);
 				}
 			}
-			AmbiEngineManager.getArduinoSender().write(getStopArray());
+			stopRunning();
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			AmbiEngineManager.getArduinoSender().close();
 		}
+	}
+	
+	private void stopRunning(){
+		AmbiEngineManager.getAmbiFrame().setInfo("Not running");
+		AmbiEngineManager.getArduinoSender().write(getStopArray());
 	}
 
 	public byte[] getArray(List<Color> colors) {
