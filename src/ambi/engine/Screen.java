@@ -74,6 +74,8 @@ public class Screen {
 		if (x == originalBounds.width / 4) {
 			x = 0;
 		}
+		
+		original = null;
 
 		// New capture zone
 		bounds = new Rectangle(originalBounds.x + x, originalBounds.y + y, originalBounds.width - (2 * x), originalBounds.height - (2 * y));
@@ -92,7 +94,7 @@ public class Screen {
 		squareSize = Factory.getSquareSize();
 		result.clear();
 		image = getScreenCapture(bounds);
-
+		
 		// Left from bottom to top
 		for (y = bounds.height - squareSizeLeftRight; y >= 0; y -= squareSizeLeftRight) {
 			result.add(getColor(0, y, squareSize, squareSizeLeftRight));
@@ -107,6 +109,8 @@ public class Screen {
 		for (y = squareSizeLeftRight - 1; y + squareSizeLeftRight < bounds.height; y += squareSizeLeftRight) {
 			result.add(getColor(bounds.width - squareSizeLeftRight, y, squareSize, squareSizeLeftRight));
 		}
+		
+		image = null;
 
 		return result;
 	}

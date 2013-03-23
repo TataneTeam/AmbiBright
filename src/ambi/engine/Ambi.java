@@ -34,7 +34,9 @@ public class Ambi extends Thread {
 				second = Calendar.getInstance().get(Calendar.SECOND);
 				if (lastSecondCheck != second && second % 5 == 0) {
 					running = !Factory.isCheckProcess() || shouldRun();
-					screen.detectImageFormat();
+					if(running){
+						screen.detectImageFormat();
+					}
 					lastSecondCheck = second;
 				}
 				if (running) {
@@ -48,12 +50,14 @@ public class Ambi extends Thread {
 					colors = screen.getColors();
 					AmbiEngineManager.getArduinoSender().write(getArray(colors));
 					AmbiEngineManager.getAmbiFrame().refresh(colors);
+
 					sleep(10);
 				} else {
 					AmbiEngineManager.getArduinoSender().write(getStopArray());
 					AmbiEngineManager.getAmbiFrame().setInfo("Not running");
 					sleep(800);
 				}
+			
 			}
 			AmbiEngineManager.getArduinoSender().write(getStopArray());
 		} catch (Exception e) {
