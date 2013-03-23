@@ -18,7 +18,7 @@ import ambi.ressources.Factory;
 
 public class ConfigFrame extends JFrame {
 
-	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize;
+	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize, threadSleep;
 	private JComboBox screenDevice;
 	private JComboBox ledNbTop, lebNbLeft;
 	private JCheckBox checkApp;
@@ -26,12 +26,13 @@ public class ConfigFrame extends JFrame {
 	public ConfigFrame() {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.getImageIcon());
-		setLayout(new GridLayout(9, 2));
+		setLayout(new GridLayout(10, 2));
 
 		arduinoSerial = new JTextField(Factory.getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
 		appList = new JTextField(Factory.getConfig().get(Parameters.CONFIG_PROCESS_LIST));
 		arduinoDataRate = new JTextField(Factory.getConfig().get(Parameters.CONFIG_ARDUINO_DATA_RATE));
 		squareSize = new JTextField(Factory.getConfig().get(Parameters.CONFIG_SQUARE_SIZE));
+		threadSleep = new JTextField(Factory.getConfig().get(Parameters.CONFIG_THREAD_SLEEP));
 
 		ledNbTop = new JComboBox();
 		lebNbLeft = new JComboBox();
@@ -66,6 +67,7 @@ public class ConfigFrame extends JFrame {
 				Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, checkApp.isSelected() + "");
 				Factory.getConfig().put(Parameters.CONFIG_ARDUINO_DATA_RATE, arduinoDataRate.getText());
 				Factory.getConfig().put(Parameters.CONFIG_SQUARE_SIZE, squareSize.getText());
+				Factory.getConfig().put(Parameters.CONFIG_THREAD_SLEEP, threadSleep.getText());
 				Factory.getConfig().save();
 				dispose();
 			}
@@ -85,7 +87,7 @@ public class ConfigFrame extends JFrame {
 
 		add(Factory.setFontBold(new JLabel(" Arduino Data Rate")));
 		add(Factory.setFont(arduinoDataRate));
-		
+
 		add(Factory.setFontBold(new JLabel(" Square Size")));
 		add(Factory.setFont(squareSize));
 
@@ -94,6 +96,9 @@ public class ConfigFrame extends JFrame {
 
 		add(Factory.setFontBold(new JLabel(" Check for Process list")));
 		add(Factory.setFont(appList));
+
+		add(Factory.setFontBold(new JLabel(" Thread Sleep")));
+		add(Factory.setFont(threadSleep));
 
 		add(Factory.setFontBold(new JLabel("")));
 		add(Factory.setFont(save));

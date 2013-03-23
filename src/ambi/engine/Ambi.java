@@ -27,6 +27,7 @@ public class Ambi extends Thread {
 		int currentSecond = 0, lastSecondCheck = 0;
 		int second = 0;
 		int fps = 0;
+		int sleep = Factory.getTreahSleep();
 		List<Color> colors;
 		try {
 			while (!stop) {
@@ -38,6 +39,7 @@ public class Ambi extends Thread {
 					}else{
 						stopRunning();
 					}
+					sleep = Factory.getTreahSleep();
 					lastSecondCheck = second;
 				}
 				if (running) {
@@ -51,7 +53,7 @@ public class Ambi extends Thread {
 					colors = screen.getColors();
 					AmbiEngineManager.getArduinoSender().write(getArray(colors));
 					AmbiEngineManager.getAmbiFrame().refresh(colors);
-					sleep(10);
+					sleep(sleep);
 				}else{
 					sleep(800);
 				}

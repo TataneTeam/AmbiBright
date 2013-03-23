@@ -108,6 +108,10 @@ public class Factory {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_SQUARE_SIZE));
 	}
 
+	public static Integer getTreahSleep(){
+		return Integer.valueOf(getConfig().get(Parameters.CONFIG_THREAD_SLEEP));
+	}
+
 	public static Tray getTray() {
 		if (tray == null) {
 			tray = new Tray();
