@@ -18,7 +18,7 @@ import ambi.ressources.Factory;
 
 public class ConfigFrame extends JFrame {
 
-	private JTextField arduinoSerial, arduinoDataRate, appList;
+	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize;
 	private JComboBox screenDevice;
 	private JComboBox ledNbTop, lebNbLeft;
 	private JCheckBox checkApp;
@@ -26,11 +26,12 @@ public class ConfigFrame extends JFrame {
 	public ConfigFrame() {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.getImageIcon());
-		setLayout(new GridLayout(8, 2));
+		setLayout(new GridLayout(9, 2));
 
 		arduinoSerial = new JTextField(Factory.getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
 		appList = new JTextField(Factory.getConfig().get(Parameters.CONFIG_PROCESS_LIST));
 		arduinoDataRate = new JTextField(Factory.getConfig().get(Parameters.CONFIG_ARDUINO_DATA_RATE));
+		squareSize = new JTextField(Factory.getConfig().get(Parameters.CONFIG_SQUARE_SIZE));
 
 		ledNbTop = new JComboBox();
 		lebNbLeft = new JComboBox();
@@ -64,6 +65,7 @@ public class ConfigFrame extends JFrame {
 				Factory.getConfig().put(Parameters.CONFIG_SCREEN_DEVICE, screenDevice.getSelectedIndex() + "");
 				Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, checkApp.isSelected() + "");
 				Factory.getConfig().put(Parameters.CONFIG_ARDUINO_DATA_RATE, arduinoDataRate.getText());
+				Factory.getConfig().put(Parameters.CONFIG_SQUARE_SIZE, squareSize.getText());
 				Factory.getConfig().save();
 				dispose();
 			}
@@ -83,6 +85,9 @@ public class ConfigFrame extends JFrame {
 
 		add(Factory.setFontBold(new JLabel(" Arduino Data Rate")));
 		add(Factory.setFont(arduinoDataRate));
+		
+		add(Factory.setFontBold(new JLabel(" Square Size")));
+		add(Factory.setFont(squareSize));
 
 		add(Factory.setFontBold(new JLabel(" Check for Process")));
 		add(Factory.setFont(checkApp));

@@ -103,6 +103,10 @@ public class Factory {
 	public static Integer getRGB_B(){
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_B));
 	}
+	
+	public static Integer getSquareSize(){
+		return Integer.valueOf(getConfig().get(Parameters.CONFIG_SQUARE_SIZE));
+	}
 
 	public static Tray getTray() {
 		if (tray == null) {

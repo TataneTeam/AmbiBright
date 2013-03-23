@@ -24,7 +24,7 @@ public class Screen {
 
 	private List<Color> result;
 
-	private int current, red, green, blue, nbPixel, x, y, posX, posY;
+	private int current, red, green, blue, nbPixel, x, y, posX, posY,squareSize;
 
 	public Screen(Rectangle bounds, int ledNumberLeftRight, int ledNumberTop) {
 		super();
@@ -89,22 +89,23 @@ public class Screen {
 
 	// L > T > R
 	public List<Color> getColors() {
+		squareSize = Factory.getSquareSize();
 		result.clear();
 		image = getScreenCapture(bounds);
 
 		// Left from bottom to top
 		for (y = bounds.height - squareSizeLeftRight; y >= 0; y -= squareSizeLeftRight) {
-			result.add(getColor(0, y, squareSizeLeftRight, squareSizeLeftRight));
+			result.add(getColor(0, y, squareSize, squareSizeLeftRight));
 		}
 
 		// Top from left to right
 		for (x = squareSizeTop - 1; x + squareSizeTop < bounds.width; x += squareSizeTop) {
-			result.add(getColor(x, 0, squareSizeTop, squareSizeTop));
+			result.add(getColor(x, 0, squareSizeTop, squareSize));
 		}
 
 		// Right from top to bottom
 		for (y = squareSizeLeftRight - 1; y + squareSizeLeftRight < bounds.height; y += squareSizeLeftRight) {
-			result.add(getColor(bounds.width - squareSizeLeftRight, y, squareSizeLeftRight, squareSizeLeftRight));
+			result.add(getColor(bounds.width - squareSizeLeftRight, y, squareSize, squareSizeLeftRight));
 		}
 
 		return result;
