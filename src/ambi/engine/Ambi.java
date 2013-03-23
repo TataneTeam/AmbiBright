@@ -50,14 +50,12 @@ public class Ambi extends Thread {
 					colors = screen.getColors();
 					AmbiEngineManager.getArduinoSender().write(getArray(colors));
 					AmbiEngineManager.getAmbiFrame().refresh(colors);
-
 					sleep(10);
 				} else {
 					AmbiEngineManager.getArduinoSender().write(getStopArray());
 					AmbiEngineManager.getAmbiFrame().setInfo("Not running");
 					sleep(800);
 				}
-			
 			}
 			AmbiEngineManager.getArduinoSender().write(getStopArray());
 		} catch (Exception e) {

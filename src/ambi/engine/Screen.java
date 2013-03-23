@@ -75,6 +75,8 @@ public class Screen {
 			x = 0;
 		}
 		
+		// Flushing the image
+		original.flush();
 		original = null;
 
 		// New capture zone
@@ -110,6 +112,8 @@ public class Screen {
 			result.add(getColor(bounds.width - squareSizeLeftRight, y, squareSize, squareSizeLeftRight));
 		}
 		
+		// Flushing the image
+		image.flush();
 		image = null;
 
 		return result;
