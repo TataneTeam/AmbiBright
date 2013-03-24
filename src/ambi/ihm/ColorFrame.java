@@ -25,12 +25,12 @@ public class ColorFrame extends JDialog implements ChangeListener {
 	private RGBColorManager colorManager;
 	private boolean isCheckApp;
 
-	public ColorFrame(Rectangle bounds) {
+	public ColorFrame(Rectangle bounds, AmbiFont ambiFont) {
 		super();
-		
-		isCheckApp = Factory.isCheckProcess();
-		Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, "false");
-		
+
+		isCheckApp = Factory.get().isCheckProcess();
+		Factory.get().getConfig().put(Parameters.CONFIG_CHECK_PROCESS, "false");
+
 		JLayeredPane lpane = new JLayeredPane();
 		add(lpane);
 		setUndecorated(true);
@@ -44,15 +44,15 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		colorChooser.setBorder(BorderFactory.createTitledBorder("Choose background color"));
 		colorChooser.setPreviewPanel(new JPanel());
 
-		colorManager = new RGBColorManager();
+		colorManager = new RGBColorManager(ambiFont);
 
 		JButton close = new JButton("Save");
 		close.setOpaque(false);
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
-				Factory.getConfig().put(Parameters.CONFIG_CHECK_PROCESS, isCheckApp  + "");
-				Factory.getConfig().save();
+				Factory.get().getConfig().put(Parameters.CONFIG_CHECK_PROCESS, isCheckApp  + "");
+				Factory.get().getConfig().save();
 			}
 		});
 
@@ -68,7 +68,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		y += colorChooser.getPreferredSize().height + 20;
 		colorManager.setBounds(bounds.x + (bounds.width - colorManager.getPreferredSize().width) / 2, y, colorManager.getPreferredSize().width, colorManager.getPreferredSize().height);
 
-		lpane.add(Factory.setFont(close), JLayeredPane.POPUP_LAYER);
+		lpane.add(ambiFont.setFont(close), JLayeredPane.POPUP_LAYER);
 		close.setBounds(bounds.x + (bounds.width - close.getPreferredSize().width) / 2, bounds.y + (bounds.height - close.getPreferredSize().height), close.getPreferredSize().width, close.getPreferredSize().height);
 
 		pack();

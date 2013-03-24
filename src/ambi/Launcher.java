@@ -2,7 +2,7 @@ package ambi;
 
 import javax.swing.UIManager;
 
-import ambi.engine.AmbiEngineManager;
+import ambi.engine.Manager;
 import ambi.ressources.Factory;
 
 public class Launcher {
@@ -12,8 +12,7 @@ public class Launcher {
 			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
 		} catch (Exception e) {
 		}
-		Factory.getTray();
-		AmbiEngineManager.start();
-	}
+        Factory.get().getManager().start();
+    }
 
 }

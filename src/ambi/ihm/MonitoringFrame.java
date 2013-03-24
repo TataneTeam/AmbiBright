@@ -1,8 +1,6 @@
 package ambi.ihm;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -17,9 +15,9 @@ public class MonitoringFrame extends JFrame {
 	private JPanel[][] cells;
 	int rows, cols, i;
 
-	public MonitoringFrame(int rows, int cols) {
+	public MonitoringFrame(int rows, int cols, Image icon) {
 		super(Factory.appName + " - Monitoring Frame");
-		setIconImage(Factory.getImageIcon());
+		setIconImage(icon);
 		this.rows = rows;
 		this.cols = cols;
 		setLayout(new GridLayout(rows, cols));

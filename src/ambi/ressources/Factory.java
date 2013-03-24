@@ -1,152 +1,199 @@
 package ambi.ressources;
 
-import java.awt.Component;
-import java.awt.Font;
-import java.awt.GraphicsEnvironment;
-import java.awt.Image;
-import java.awt.MenuItem;
-import java.awt.Rectangle;
-import java.awt.Robot;
+import javax.swing.*;
+import java.awt.*;
 import java.net.URL;
 
-import javax.swing.ImageIcon;
-
+import ambi.engine.ArduinoSender;
+import ambi.engine.AspectRatioService;
+import ambi.engine.Manager;
+import ambi.engine.ProcessCheckerService;
+import ambi.engine.UpdateColorsService;
+import ambi.ihm.AmbiFont;
+import ambi.ihm.MonitoringFrame;
 import ambi.ihm.Tray;
 import ambi.ressources.Config.Parameters;
 
-public class Factory {
+public class Factory
+{
+    public static final String appName = "Ambi";
+    public static final String imageIconPath = "icon.png";
+    public static final String configFileName = "AmbiConfig";
+    private static final Factory instance = new Factory();
 
-	public static String appName = "Ambi";
+    public static Factory get()
+    {
+        return instance;
+    }
 
-	public static String imageIconPath = "icon.png";
+    private final Robot robot;
+    private final Config config;
+    private final AmbiFont ambiFont;
+    private final Tray tray;
+    private final MonitoringFrame ambiFrame;
+    private final ArduinoSender arduinoSender;
+    private final Rectangle fullScreenBounds;
+    private final CurrentBounds currentBounds;
+    private final Manager manager;
 
-	public static String configFileName = "AmbiConfig";
+    private Factory()
+    {
+        this.config = new Config( configFileName );
+        this.config.load();
 
-	public static String fontName = "Calibri";
+        try
+        {
+            this.robot = new Robot();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+            throw new RuntimeException( e );
+        }
 
-	public static Font font = new Font(fontName, Font.PLAIN, 11);
+        this.ambiFont = new AmbiFont();
 
-	public static Font fontBold = new Font(fontName, Font.BOLD, 11);
+        this.fullScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[getScreenDevice
+            ()].getDefaultConfiguration().getBounds();
+        this.currentBounds = new CurrentBounds( fullScreenBounds );
 
-	private static Robot robot;
+        this.tray = new Tray(getImageIcon(), ambiFont, config);
+        this.ambiFrame = new MonitoringFrame( getLedNBLeft(), getLedNBTop(), getImageIcon() );
+        this.arduinoSender = new ArduinoSender( getArduinoSerial(), getArduinoDataRate(), getLedNBLeft(),
+            getLedNBTop() );
+        this.manager = new Manager();
+    }
 
-	private static Config config;
+    public Manager getManager()
+    {
+        return manager;
+    }
 
-	private static Tray tray;
+    public Image getImageIcon()
+    {
+        return createImage( imageIconPath );
+    }
 
-	public static Image getImageIcon() {
-		return createImage(imageIconPath);
-	}
+    private Image createImage( String path )
+    {
+        Image result = null;
+        try
+        {
+            URL imageURL = Factory.class.getResource( path );
+            result = new ImageIcon( imageURL ).getImage();
+        }
+        catch ( Exception e )
+        {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
-	public static Image createImage(String path) {
-		Image result = null;
-		try {
-			URL imageURL = Factory.class.getResource(path);
-			result = new ImageIcon(imageURL).getImage();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return result;
-	}
+    public Config getConfig()
+    {
+        return config;
+    }
 
-	public static Robot getRobot() {
-		if (robot == null) {
-			try {
-				robot = new Robot();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return robot;
-	}
+    public String getArduinoSerial()
+    {
+        return getConfig().get( Parameters.CONFIG_ARDUINO_PORT );
+    }
 
-	public static Config getConfig() {
-		if (config == null) {
-			config = new Config(configFileName);
-			config.load();
-		}
-		return config;
-	}
+    public Integer getArduinoDataRate()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_ARDUINO_DATA_RATE ) );
+    }
 
-	public static String getArduinoSerial() {
-		return getConfig().get(Parameters.CONFIG_ARDUINO_PORT);
-	}
+    public String getProcessList()
+    {
+        return getConfig().get( Parameters.CONFIG_PROCESS_LIST );
+    }
 
-	public static Integer getArduinoDataRate() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_ARDUINO_DATA_RATE));
-	}
+    public Integer getScreenDevice()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_SCREEN_DEVICE ) );
+    }
 
-	public static String getProcessList() {
-		return getConfig().get(Parameters.CONFIG_PROCESS_LIST);
-	}
+    public Integer getLedNBLeft()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_LED_NB_LEFT ) );
+    }
 
-	public static Integer getScreenDevice() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_SCREEN_DEVICE));
-	}
+    public Integer getLedNBTop()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_LED_NB_TOP ) );
+    }
 
-	public static Integer getLedNBLeft() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_LED_NB_LEFT));
-	}
+    public Integer getAnalysePitch()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_ANALYSE_PITCH ) );
+    }
 
-	public static Integer getLedNBTop() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_LED_NB_TOP));
-	}
+    public Integer getRGB_R()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_RGB_R ) );
+    }
 
-	public static Integer getAnalysePitch() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_ANALYSE_PITCH));
-	}
+    public Integer getRGB_G()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_RGB_G ) );
+    }
 
-	public static Integer getRGB_R() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_R));
-	}
+    public Integer getRGB_B()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_RGB_B ) );
+    }
 
-	public static Integer getRGB_G() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_G));
-	}
+    public Integer getSquareSize()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_SQUARE_SIZE ) );
+    }
 
-	public static Integer getRGB_B() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_B));
-	}
+    public Integer getFpsWanted()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_FPS ) );
+    }
 
-	public static Integer getSquareSize() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_SQUARE_SIZE));
-	}
+    public Rectangle getBounds()
+    {
+        return getBounds( getScreenDevice() );
+    }
 
-	public static Integer getTreahSleep() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_THREAD_SLEEP));
-	}
+    private Rectangle getBounds( int screenDevice )
+    {
+        return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice]
+            .getDefaultConfiguration().getBounds();
+    }
 
-	public static Tray getTray() {
-		if (tray == null) {
-			tray = new Tray();
-		}
-		return tray;
-	}
+    public boolean isCheckProcess()
+    {
+        return "true".equals( getConfig().get( Parameters.CONFIG_CHECK_PROCESS ).toLowerCase() );
+    }
 
-	public static Component setFont(Component component) {
-		component.setFont(font);
-		return component;
-	}
+    public MonitoringFrame getAmbiFrame()
+    {
+        return ambiFrame;
+    }
 
-	public static Component setFontBold(Component component) {
-		component.setFont(fontBold);
-		return component;
-	}
+    public ArduinoSender getArduinoSender()
+    {
+        return arduinoSender;
+    }
 
-	public static MenuItem setFont(MenuItem component) {
-		component.setFont(font);
-		return component;
-	}
+    public AspectRatioService newAspectRatioService()
+    {
+        return new AspectRatioService( getBounds(), currentBounds, robot );
+    }
 
-	public static Rectangle getBounds(int screenDevice) {
-		return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
-	}
+    public ProcessCheckerService newProcessCheckerService()
+    {
+        return new ProcessCheckerService( manager, getProcessList() );
+    }
 
-	public static Rectangle getBounds() {
-		return getBounds(getScreenDevice());
-	}
-
-	public static boolean isCheckProcess() {
-		return "true".equals(Factory.getConfig().get(Parameters.CONFIG_CHECK_PROCESS).toLowerCase());
-	}
+    public UpdateColorsService newUpdateColorsService()
+    {
+        return new UpdateColorsService( robot, arduinoSender, ambiFrame,
+            currentBounds, getLedNBLeft(), getLedNBTop(), getSquareSize(),
+            getAnalysePitch(), getRGB_R(), getRGB_G(), getRGB_B() );
+    }
 }

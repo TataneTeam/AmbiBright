@@ -23,12 +23,12 @@ public class RGBColorManager extends JPanel {
 	private int max = 150;
 	private JCheckBox all;
 
-	public RGBColorManager() {
+	public RGBColorManager(AmbiFont ambiFont) {
 		setLayout(new GridLayout(5, 1));
-		r = new JSlider(JSlider.HORIZONTAL, min, max, Factory.getRGB_R());
+		r = new JSlider(JSlider.HORIZONTAL, min, max, Factory.get().getRGB_R());
 		r.setPreferredSize(new Dimension(800, r.getPreferredSize().height));
-		g = new JSlider(JSlider.HORIZONTAL, min, max, Factory.getRGB_G());
-		b = new JSlider(JSlider.HORIZONTAL, min, max, Factory.getRGB_B());
+		g = new JSlider(JSlider.HORIZONTAL, min, max, Factory.get().getRGB_G());
+		b = new JSlider(JSlider.HORIZONTAL, min, max, Factory.get().getRGB_B());
 		r.setMajorTickSpacing(10);
 		g.setMajorTickSpacing(10);
 		b.setMajorTickSpacing(10);
@@ -41,9 +41,9 @@ public class RGBColorManager extends JPanel {
 		r.setPaintLabels(true);
 		g.setPaintLabels(true);
 		b.setPaintLabels(true);
-		add(Factory.setFont(r));
-		add(Factory.setFont(g));
-		add(Factory.setFont(b));
+		add(ambiFont.setFont(r));
+		add(ambiFont.setFont(g));
+		add(ambiFont.setFont(b));
 		r.addChangeListener(new SliderColorListener(r, Parameters.CONFIG_RGB_R));
 		g.addChangeListener(new SliderColorListener(g, Parameters.CONFIG_RGB_G));
 		b.addChangeListener(new SliderColorListener(b, Parameters.CONFIG_RGB_B));
@@ -70,8 +70,8 @@ public class RGBColorManager extends JPanel {
 		});
 
 		all.setHorizontalAlignment(JLabel.CENTER);
-		add(Factory.setFont(all));
-		add(Factory.setFont(reset));
+		add(ambiFont.setFont(all));
+		add(ambiFont.setFont(reset));
 		setOpaque(false);
 		reset.setOpaque(false);
 	}
@@ -91,7 +91,7 @@ public class RGBColorManager extends JPanel {
 				g.setValue(r.getValue());
 				b.setValue(r.getValue());
 			}
-			Factory.getConfig().put(config, slider.getValue() + "");
+			Factory.get().getConfig().put(config, slider.getValue() + "");
 		}
 
 	}
