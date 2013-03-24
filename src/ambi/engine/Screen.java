@@ -1,12 +1,9 @@
 package ambi.engine;
 
-import java.awt.Color;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -26,9 +23,9 @@ public class Screen {
 
 	private BufferedImage image, original;
 
-	private List<Color> result;
+	private Integer[][] result;
 
-	private int current, red, green, blue, nbPixel, x, y, posX, posY,squareSize;
+	private int current, red, green, blue, nbPixel, x, y, posX, posY, squareSize, pos;
 
 	public Screen(Rectangle bounds, int ledNumberLeftRight, int ledNumberTop) {
 		super();
@@ -36,7 +33,7 @@ public class Screen {
 		this.originalBounds = bounds;
 		this.ledNumberLeftRight = ledNumberLeftRight;
 		this.ledNumberTop = ledNumberTop;
-		this.result = new ArrayList<Color>();
+		this.result = new Integer[2 * ledNumberLeftRight + ledNumberTop - 2][3];
 		detectImageFormat();
 	}
 
@@ -47,6 +44,8 @@ public class Screen {
 		int blue = 0;
 		int y = 0;
 		int x = 0;
+
+		squareSize = Factory.getSquareSize();
 
 		// Get original image
 		original = getScreenCapture(originalBounds);
@@ -78,7 +77,7 @@ public class Screen {
 		if (x == originalBounds.width / 4) {
 			x = 0;
 		}
-		
+
 		// Flushing the image
 		original.flush();
 		original = null;
@@ -89,8 +88,9 @@ public class Screen {
 		// Calculating squareSize
 		squareSizeLeftRight = bounds.height / ledNumberLeftRight;
 		squareSizeTop = bounds.width / ledNumberTop;
-		
-		//saveImage(getScreenCapture(bounds), new File("detectImageFormat.png"));
+
+		// saveImage(getScreenCapture(bounds), new
+		// File("detectImageFormat.png"));
 	}
 
 	public BufferedImage getScreenCapture(Rectangle bounds) {
@@ -98,26 +98,25 @@ public class Screen {
 	}
 
 	// L > T > R
-	public List<Color> getColors() {
-		squareSize = Factory.getSquareSize();
-		result.clear();
+	public Integer[][] getColors() {
+		pos = 0;
 		image = getScreenCapture(bounds);
-		
+
 		// Left from bottom to top
 		for (y = bounds.height - squareSizeLeftRight; y >= 0; y -= squareSizeLeftRight) {
-			result.add(getColor(0, y, squareSize, squareSizeLeftRight));
+			getColor(pos++, 0, y, squareSize, squareSizeLeftRight);
 		}
 
 		// Top from left to right
 		for (x = squareSizeTop - 1; x + squareSizeTop < bounds.width; x += squareSizeTop) {
-			result.add(getColor(x, 0, squareSizeTop, squareSize));
+			getColor(pos++, x, 0, squareSizeTop, squareSize);
 		}
 
 		// Right from top to bottom
 		for (y = squareSizeLeftRight - 1; y + squareSizeLeftRight < bounds.height; y += squareSizeLeftRight) {
-			result.add(getColor(bounds.width - squareSizeLeftRight, y, squareSize, squareSizeLeftRight));
+			getColor(pos++, bounds.width - squareSizeLeftRight, y, squareSize, squareSizeLeftRight);
 		}
-		
+
 		// Flushing the image
 		image.flush();
 		image = null;
@@ -125,7 +124,7 @@ public class Screen {
 		return result;
 	}
 
-	private Color getColor(int x, int y, int width, int height) {
+	private void getColor(int ledNumber, int x, int y, int width, int height) {
 		current = 0;
 		red = 0;
 		green = 0;
@@ -140,10 +139,12 @@ public class Screen {
 				nbPixel++;
 			}
 		}
-		return new Color(red / nbPixel, green / nbPixel, blue / nbPixel);
+		result[ledNumber][0] = red / nbPixel;
+		result[ledNumber][1] = green / nbPixel;
+		result[ledNumber][2] = blue / nbPixel;
 	}
-	
-	public void saveImage(BufferedImage image, File file){
+
+	public void saveImage(BufferedImage image, File file) {
 		try {
 			ImageIO.write(image, "PNG", file);
 		} catch (IOException e) {

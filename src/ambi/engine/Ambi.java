@@ -1,12 +1,9 @@
 package ambi.engine;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.List;
 
 import ambi.ressources.Factory;
 
@@ -14,13 +11,15 @@ public class Ambi extends Thread {
 
 	private Screen screen;
 	private boolean stop = false;
-	private int totalLED;
 	private boolean running = false;
+	private int r, g, b;
 
 	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop) {
 		super();
-		totalLED = ledCountLeftRight * 2 + ledCountTop - 2;
 		screen = new Screen(Factory.getBounds(screenDevice), ledCountLeftRight, ledCountTop);
+		r = Factory.getRGB_R();
+		g = Factory.getRGB_G();
+		b = Factory.getRGB_B();
 	}
 
 	public void run() {
@@ -28,15 +27,15 @@ public class Ambi extends Thread {
 		int second = 0;
 		int fps = 0;
 		int sleep = Factory.getTreahSleep();
-		List<Color> colors;
+		Integer[][] colors;
 		try {
 			while (!stop) {
 				second = Calendar.getInstance().get(Calendar.SECOND);
 				if (lastSecondCheck != second && second % 5 == 0) {
 					running = !Factory.isCheckProcess() || shouldRun();
-					if(running){
+					if (running) {
 						screen.detectImageFormat();
-					}else{
+					} else {
 						stopRunning();
 					}
 					sleep = Factory.getTreahSleep();
@@ -47,6 +46,9 @@ public class Ambi extends Thread {
 						AmbiEngineManager.getAmbiFrame().setInfo(fps + " FPS");
 						fps = 1;
 						currentSecond = second;
+						r = Factory.getRGB_R();
+						g = Factory.getRGB_G();
+						b = Factory.getRGB_B();
 					} else {
 						fps++;
 					}
@@ -54,7 +56,7 @@ public class Ambi extends Thread {
 					AmbiEngineManager.getArduinoSender().write(getArray(colors));
 					AmbiEngineManager.getAmbiFrame().refresh(colors);
 					sleep(sleep);
-				}else{
+				} else {
 					sleep(800);
 				}
 			}
@@ -65,34 +67,31 @@ public class Ambi extends Thread {
 			AmbiEngineManager.getArduinoSender().close();
 		}
 	}
-	
-	private void stopRunning(){
+
+	private void stopRunning() {
 		AmbiEngineManager.getAmbiFrame().setInfo("Not running");
 		AmbiEngineManager.getArduinoSender().write(getStopArray());
 	}
 
-	public byte[] getArray(List<Color> colors) {
-		byte[] result = new byte[6 + totalLED * 3];
+	public byte[] getArray(Integer[][] colors) {
+		byte[] result = new byte[6 + colors.length * 3];
 		result[0] = 'A';
 		result[1] = 'd';
 		result[2] = 'a';
-		result[3] = (byte) ((totalLED - 1) >> 8);
-		result[4] = (byte) ((totalLED - 1) & 0xff);
+		result[3] = (byte) ((colors.length - 1) >> 8);
+		result[4] = (byte) ((colors.length - 1) & 0xff);
 		result[5] = (byte) (result[3] ^ result[4] ^ 0x55);
-		int i = 6;
-		int r = Factory.getRGB_R();
-		int g = Factory.getRGB_G();
-		int b = Factory.getRGB_B();
-		for (Color color : colors) {
-			result[i++] = (byte) Math.min(Math.max(color.getRed() + r, 0), 255);
-			result[i++] = (byte) Math.min(Math.max(color.getGreen() + g, 0), 255);
-			result[i++] = (byte) Math.min(Math.max(color.getBlue() + b, 0), 255);
+		int j = 6;
+		for (int i = 0; i < colors.length; i++) {
+			result[j++] = (byte) Math.min(Math.max((colors[i][0]) + r, 0), 255);
+			result[j++] = (byte) Math.min(Math.max((colors[i][1]) + g, 0), 255);
+			result[j++] = (byte) Math.min(Math.max((colors[i][2]) + b, 0), 255);
 		}
 		return result;
 	}
 
 	public byte[] getStopArray() {
-		byte[] result = getArray(new ArrayList<Color>());
+		byte[] result = getArray(new Integer[0][0]);
 		Arrays.fill(result, 6, result.length, (byte) 0);
 		return result;
 	}

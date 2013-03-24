@@ -5,7 +5,6 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -16,7 +15,7 @@ import ambi.ressources.Factory;
 public class MonitoringFrame extends JFrame {
 
 	private JPanel[][] cells;
-	int rows, cols,	i;
+	int rows, cols, i;
 
 	public MonitoringFrame(int rows, int cols) {
 		super(Factory.appName + " - Monitoring Frame");
@@ -35,13 +34,28 @@ public class MonitoringFrame extends JFrame {
 			}
 		}
 		addWindowListener(new WindowListener() {
-			public void windowOpened(WindowEvent e) {}
-			public void windowIconified(WindowEvent e) { setVisible(false);	}
-			public void windowDeiconified(WindowEvent e) {}
-			public void windowDeactivated(WindowEvent e) {}
-			public void windowClosing(WindowEvent e) { setVisible(false); }
-			public void windowClosed(WindowEvent e) {}
-			public void windowActivated(WindowEvent e) {}
+			public void windowOpened(WindowEvent e) {
+			}
+
+			public void windowIconified(WindowEvent e) {
+				setVisible(false);
+			}
+
+			public void windowDeiconified(WindowEvent e) {
+			}
+
+			public void windowDeactivated(WindowEvent e) {
+			}
+
+			public void windowClosing(WindowEvent e) {
+				setVisible(false);
+			}
+
+			public void windowClosed(WindowEvent e) {
+			}
+
+			public void windowActivated(WindowEvent e) {
+			}
 		});
 		pack();
 		setAlwaysOnTop(true);
@@ -54,22 +68,22 @@ public class MonitoringFrame extends JFrame {
 		cells[x][y].setBackground(color);
 	}
 
-	public void refresh(List<Color> colors) {
+	public void refresh(Integer[][] colors) {
 		if (isVisible()) {
 			for (i = 0; i < rows; i++) {
-				setColor(rows - 1 - i, 0, colors.get(i));
+				setColor(rows - 1 - i, 0, new Color(colors[i][0], colors[i][1], colors[i][2]));
 			}
 			for (i = 1; i < cols; i++) {
-				setColor(0, i, colors.get(i + rows - 1));
+				setColor(0, i, new Color(colors[i + rows - 1][0], colors[i + rows - 1][1], colors[i + rows - 1][2]));
 			}
 			for (i = 1; i < rows; i++) {
-				setColor(i, cols - 1, colors.get(i + rows + cols - 2));
+				setColor(i, cols - 1, new Color(colors[i + rows + cols - 2][0], colors[i + rows + cols - 2][1], colors[i + rows + cols - 2][2]));
 			}
 		}
 	}
 
 	public void setInfo(String string) {
-		setTitle(Factory.appName + " - Show Frame - " + string);
+		setTitle(Factory.appName + " - Monitoring Frame - " + string);
 	}
 
 }
