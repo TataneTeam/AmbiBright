@@ -18,32 +18,23 @@ import ambi.ressources.Factory;
 
 public class ConfigFrame extends JFrame {
 
-	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize, threadSleep;
+	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize, threadSleep, ledNbTop, lebNbLeft, analysePitch;
 	private JComboBox screenDevice;
-	private JComboBox ledNbTop, lebNbLeft;
 	private JCheckBox checkApp;
 
 	public ConfigFrame() {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.getImageIcon());
-		setLayout(new GridLayout(10, 2));
+		setLayout(new GridLayout(11, 2));
 
 		arduinoSerial = new JTextField(Factory.getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
 		appList = new JTextField(Factory.getConfig().get(Parameters.CONFIG_PROCESS_LIST));
 		arduinoDataRate = new JTextField(Factory.getConfig().get(Parameters.CONFIG_ARDUINO_DATA_RATE));
 		squareSize = new JTextField(Factory.getConfig().get(Parameters.CONFIG_SQUARE_SIZE));
 		threadSleep = new JTextField(Factory.getConfig().get(Parameters.CONFIG_THREAD_SLEEP));
-
-		ledNbTop = new JComboBox();
-		lebNbLeft = new JComboBox();
-		lebNbLeft.setBorder(null);
-		ledNbTop.setBorder(null);
-		for (int i = 0; i < 100; i++) {
-			ledNbTop.addItem(i);
-			lebNbLeft.addItem(i);
-		}
-		ledNbTop.setSelectedIndex(Integer.valueOf(Factory.getConfig().get(Parameters.CONFIG_LED_NB_TOP)));
-		lebNbLeft.setSelectedIndex(Integer.valueOf(Factory.getConfig().get(Parameters.CONFIG_LED_NB_LEFT)));
+		ledNbTop = new JTextField(Factory.getConfig().get(Parameters.CONFIG_LED_NB_TOP));
+		lebNbLeft = new JTextField(Factory.getConfig().get(Parameters.CONFIG_LED_NB_LEFT));
+		analysePitch = new JTextField(Factory.getConfig().get(Parameters.CONFIG_ANALYSE_PITCH));
 
 		screenDevice = new JComboBox();
 		screenDevice.setBorder(null);
@@ -59,8 +50,8 @@ public class ConfigFrame extends JFrame {
 
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				Factory.getConfig().put(Parameters.CONFIG_LED_NB_LEFT, lebNbLeft.getSelectedIndex() + "");
-				Factory.getConfig().put(Parameters.CONFIG_LED_NB_TOP, ledNbTop.getSelectedIndex() + "");
+				Factory.getConfig().put(Parameters.CONFIG_LED_NB_LEFT, lebNbLeft.getText());
+				Factory.getConfig().put(Parameters.CONFIG_LED_NB_TOP, ledNbTop.getText());
 				Factory.getConfig().put(Parameters.CONFIG_ARDUINO_PORT, arduinoSerial.getText());
 				Factory.getConfig().put(Parameters.CONFIG_PROCESS_LIST, appList.getText());
 				Factory.getConfig().put(Parameters.CONFIG_SCREEN_DEVICE, screenDevice.getSelectedIndex() + "");
@@ -68,6 +59,7 @@ public class ConfigFrame extends JFrame {
 				Factory.getConfig().put(Parameters.CONFIG_ARDUINO_DATA_RATE, arduinoDataRate.getText());
 				Factory.getConfig().put(Parameters.CONFIG_SQUARE_SIZE, squareSize.getText());
 				Factory.getConfig().put(Parameters.CONFIG_THREAD_SLEEP, threadSleep.getText());
+				Factory.getConfig().put(Parameters.CONFIG_ANALYSE_PITCH, analysePitch.getText());
 				Factory.getConfig().save();
 				dispose();
 			}
@@ -99,6 +91,9 @@ public class ConfigFrame extends JFrame {
 
 		add(Factory.setFontBold(new JLabel(" Thread Sleep")));
 		add(Factory.setFont(threadSleep));
+
+		add(Factory.setFontBold(new JLabel(" Capture analyse pitch")));
+		add(Factory.setFont(analysePitch));
 
 		add(Factory.setFontBold(new JLabel("")));
 		add(Factory.setFont(save));

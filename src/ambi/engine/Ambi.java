@@ -13,6 +13,7 @@ public class Ambi extends Thread {
 	private boolean stop = false;
 	private boolean running = false;
 	private int r, g, b;
+	private Integer[][] old;
 
 	public Ambi(int screenDevice, int ledCountLeftRight, int ledCountTop) {
 		super();
@@ -20,6 +21,12 @@ public class Ambi extends Thread {
 		r = Factory.getRGB_R();
 		g = Factory.getRGB_G();
 		b = Factory.getRGB_B();
+		old = new Integer[ledCountLeftRight + ledCountLeftRight + ledCountTop - 2][3];
+		for (int i = 0; i < ledCountLeftRight + ledCountLeftRight + ledCountTop - 2; i++) {
+			old[i][0] = 0;
+			old[i][1] = 0;
+			old[i][2] = 0;
+		}
 	}
 
 	public void run() {
@@ -83,9 +90,10 @@ public class Ambi extends Thread {
 		result[5] = (byte) (result[3] ^ result[4] ^ 0x55);
 		int j = 6;
 		for (int i = 0; i < colors.length; i++) {
-			result[j++] = (byte) Math.min(Math.max((colors[i][0]) + r, 0), 255);
-			result[j++] = (byte) Math.min(Math.max((colors[i][1]) + g, 0), 255);
-			result[j++] = (byte) Math.min(Math.max((colors[i][2]) + b, 0), 255);
+			result[j++] = (byte) ((Math.min(Math.max((colors[i][0]) + r, 0), 255) + old[i][0]) / 2);
+			result[j++] = (byte) ((Math.min(Math.max((colors[i][1]) + g, 0), 255) + old[i][1]) / 2);
+			result[j++] = (byte) ((Math.min(Math.max((colors[i][2]) + b, 0), 255) + old[i][2]) / 2);
+			old[i] = colors[i];
 		}
 		return result;
 	}

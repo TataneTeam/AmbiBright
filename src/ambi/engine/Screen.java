@@ -17,15 +17,13 @@ public class Screen {
 
 	private int squareSizeLeftRight, squareSizeTop;
 
-	public static final int screenAnalysePitch = 2;
-
 	public static final int blackLimit = 6;
 
 	private BufferedImage image, original;
 
 	private Integer[][] result;
 
-	private int current, red, green, blue, nbPixel, x, y, posX, posY, squareSize, pos;
+	private int current, red, green, blue, nbPixel, x, y, posX, posY, squareSize, pos,screenAnalysePitch;
 
 	public Screen(Rectangle bounds, int ledNumberLeftRight, int ledNumberTop) {
 		super();
@@ -45,7 +43,9 @@ public class Screen {
 		int y = 0;
 		int x = 0;
 
+		// Get configuration update
 		squareSize = Factory.getSquareSize();
+		screenAnalysePitch = Factory.getAnalysePitch();
 
 		// Get original image
 		original = getScreenCapture(originalBounds);

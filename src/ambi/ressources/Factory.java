@@ -71,7 +71,7 @@ public class Factory {
 	public static String getArduinoSerial() {
 		return getConfig().get(Parameters.CONFIG_ARDUINO_PORT);
 	}
-	
+
 	public static Integer getArduinoDataRate() {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_ARDUINO_DATA_RATE));
 	}
@@ -91,24 +91,28 @@ public class Factory {
 	public static Integer getLedNBTop() {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_LED_NB_TOP));
 	}
-	
-	public static Integer getRGB_R(){
+
+	public static Integer getAnalysePitch() {
+		return Integer.valueOf(getConfig().get(Parameters.CONFIG_ANALYSE_PITCH));
+	}
+
+	public static Integer getRGB_R() {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_R));
 	}
-	
-	public static Integer getRGB_G(){
+
+	public static Integer getRGB_G() {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_G));
 	}
-	
-	public static Integer getRGB_B(){
+
+	public static Integer getRGB_B() {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_B));
 	}
-	
-	public static Integer getSquareSize(){
+
+	public static Integer getSquareSize() {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_SQUARE_SIZE));
 	}
 
-	public static Integer getTreahSleep(){
+	public static Integer getTreahSleep() {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_THREAD_SLEEP));
 	}
 
@@ -133,16 +137,16 @@ public class Factory {
 		component.setFont(font);
 		return component;
 	}
-	
-	public static Rectangle getBounds(int screenDevice){
+
+	public static Rectangle getBounds(int screenDevice) {
 		return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
 	}
 
 	public static Rectangle getBounds() {
 		return getBounds(getScreenDevice());
 	}
-	
-	public static boolean isCheckProcess(){
+
+	public static boolean isCheckProcess() {
 		return "true".equals(Factory.getConfig().get(Parameters.CONFIG_CHECK_PROCESS).toLowerCase());
 	}
 }
