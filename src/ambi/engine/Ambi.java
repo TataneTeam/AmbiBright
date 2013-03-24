@@ -99,7 +99,7 @@ public class Ambi extends Thread {
 	}
 
 	public byte[] getStopArray() {
-		byte[] result = getArray(new Integer[0][0]);
+		byte[] result = getArray(old);
 		Arrays.fill(result, 6, result.length, (byte) 0);
 		return result;
 	}
