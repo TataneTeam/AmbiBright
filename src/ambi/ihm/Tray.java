@@ -28,16 +28,16 @@ public class Tray extends TrayIcon {
 				new ConfigFrame(ambiFont, config);
 			}
 		});
-		getPopupMenu().add(ambiFont.setFont( configItem ));
+		getPopupMenu().add(ambiFont.setFont(configItem));
 		MenuItem checkApp = new MenuItem(" Check for Process");
 		checkApp.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                config.put( Parameters.CONFIG_CHECK_PROCESS, !Factory.get().isCheckProcess() + "" );
-                config.save();
+				config.put(Parameters.CONFIG_CHECK_PROCESS, !Factory.get().isCheckProcess() + "");
+				config.save();
 				showInfo("Check for process: " + Factory.get().isCheckProcess());
 			}
 		});
-		getPopupMenu().add(ambiFont.setFont( checkApp ));
+		getPopupMenu().add(ambiFont.setFont(checkApp));
 		getPopupMenu().addSeparator();
 
 		MenuItem colorFrame = new MenuItem(" Color Frame");
@@ -46,7 +46,7 @@ public class Tray extends TrayIcon {
 				new ColorFrame(Factory.get().getBounds(), ambiFont);
 			}
 		});
-		getPopupMenu().add(ambiFont.setFont( colorFrame ));
+		getPopupMenu().add(ambiFont.setFont(colorFrame));
 		MenuItem ambiFrame = new MenuItem(" Monitoring Frame");
 		ambiFrame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -54,37 +54,37 @@ public class Tray extends TrayIcon {
 				Factory.get().getAmbiFrame().setState(JFrame.NORMAL);
 			}
 		});
-		getPopupMenu().add(ambiFont.setFont( ambiFrame ));
+		getPopupMenu().add(ambiFont.setFont(ambiFrame));
 		getPopupMenu().addSeparator();
 
 		MenuItem stop = new MenuItem(" Stop");
 		stop.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                Factory.get().getManager().stop();
+				Factory.get().getManager().stop();
 			}
 		});
-		getPopupMenu().add(ambiFont.setFont( stop ));
+		getPopupMenu().add(ambiFont.setFont(stop));
 		MenuItem restart = new MenuItem(" Restart");
 		restart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                Factory.get().getManager().restart();
+				Factory.get().getManager().restart();
 			}
 		});
-		getPopupMenu().add(ambiFont.setFont( restart ));
+		getPopupMenu().add(ambiFont.setFont(restart));
 
 		getPopupMenu().addSeparator();
 		MenuItem exit = new MenuItem(" Close");
 		exit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                Factory.get().getManager().stop();
+				Factory.get().getManager().stop();
 				System.exit(0);
 			}
 		});
-		getPopupMenu().add(ambiFont.setFont( exit ));
+		getPopupMenu().add(ambiFont.setFont(exit));
 	}
 
 	public void showInfo(String text) {
-		displayMessage( Factory.appName, text, TrayIcon.MessageType.INFO);
+		displayMessage(Factory.appName, text, TrayIcon.MessageType.INFO);
 	}
 
 }

@@ -51,7 +51,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
-				Factory.get().getConfig().put(Parameters.CONFIG_CHECK_PROCESS, isCheckApp  + "");
+				Factory.get().getConfig().put(Parameters.CONFIG_CHECK_PROCESS, isCheckApp + "");
 				Factory.get().getConfig().save();
 			}
 		});
