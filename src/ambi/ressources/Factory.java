@@ -127,9 +127,20 @@ public class Factory {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_FPS));
 	}
 
-	public Rectangle getBounds() {
-		return getBounds(getScreenDevice());
-	}
+    public Integer getDelayCheckRatio()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_DELAY_CHECK_RATIO ) );
+    }
+
+    public Integer getDelayCheckProcess()
+    {
+        return Integer.valueOf( getConfig().get( Parameters.CONFIG_DELAY_CHECK_PROCESS ) );
+    }
+
+    public Rectangle getBounds()
+    {
+        return getBounds( getScreenDevice() );
+    }
 
 	private Rectangle getBounds(int screenDevice) {
 		return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();

@@ -16,14 +16,19 @@ public class Manager {
 	private ScheduledExecutorService colorService;
 	private boolean isRunning = false;
 
-	public void start() {
-		if (Factory.get().isCheckProcess()) {
-			processCheckerService = Executors.newScheduledThreadPool(1);
-			processCheckerService.scheduleAtFixedRate(Factory.get().newProcessCheckerService(), 0, 3, TimeUnit.SECONDS);
-		} else {
-			startColorsProcessing();
-		}
-	}
+    public void start()
+    {
+        if ( Factory.get().isCheckProcess() )
+        {
+            processCheckerService = Executors.newScheduledThreadPool( 1 );
+            processCheckerService.scheduleAtFixedRate( Factory.get().newProcessCheckerService(), 0,
+                Factory.get().getDelayCheckProcess(), TimeUnit.MILLISECONDS );
+        }
+        else
+        {
+            startColorsProcessing();
+        }
+    }
 
 	public void stop() {
 		if (null != processCheckerService) {
@@ -38,11 +43,14 @@ public class Manager {
 		start();
 	}
 
-	public void startColorsProcessing() {
-		if (!isRunning) {
-			System.out.println("Starting");
-			aspectRatioService = Executors.newScheduledThreadPool(1);
-			aspectRatioService.scheduleAtFixedRate(Factory.get().newAspectRatioService(), 0, 500, TimeUnit.MILLISECONDS);
+    public void startColorsProcessing()
+    {
+        if ( !isRunning )
+        {
+            System.out.println( "Starting" );
+            aspectRatioService = Executors.newScheduledThreadPool( 1 );
+            aspectRatioService.scheduleAtFixedRate( Factory.get().newAspectRatioService(), 0,
+                Factory.get().getDelayCheckRatio(), TimeUnit.MILLISECONDS );
 
 			colorService = Executors.newScheduledThreadPool(1);
 			colorService.scheduleAtFixedRate(Factory.get().newUpdateColorsService(), 50, 1000 / Factory.get().getFpsWanted(), TimeUnit.MILLISECONDS);
