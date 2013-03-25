@@ -12,16 +12,16 @@ import ambibright.ressources.Factory;
  * this template use File | Settings | File Templates.
  */
 public class AspectRatioService implements Runnable {
-	private static final int blackLimit = 0;
+	private static final int blackLimit = 6;
 	private final Rectangle fullScreenBounds;
 	private final CurrentBounds currentBounds;
 	private final Robot robot;
-	private int current = 0;
 	private int red = 0;
 	private int green = 0;
 	private int blue = 0;
 	private int y = 0;
 	private int x = 0;
+	private int testY, testX;
 	private BufferedImage image;
 
 	public AspectRatioService(Rectangle fullScreenBounds, CurrentBounds currentBounds, Robot robot) {
@@ -35,31 +35,25 @@ public class AspectRatioService implements Runnable {
 		image = robot.createScreenCapture(fullScreenBounds);
 
 		// Detect top
-		for (y = 0; y < fullScreenBounds.height / 4; y++) {
-			current = image.getRGB(fullScreenBounds.width / 2, y);
-			red = (current & 0x00ff0000) >> 16;
-			green = (current & 0x0000ff00) >> 8;
-			blue = current & 0x000000ff;
-			if (red + blue + green > blackLimit) {
-				break;
+		y = fullScreenBounds.height / 4;
+		for (testX = 0; testX < fullScreenBounds.width; testX += fullScreenBounds.width / 32) {
+			for (testY = 0; testY < fullScreenBounds.height / 4; testY++) {
+				if (!isBlack(image.getRGB(testX, testY))) {
+					y = Math.min(y, testY);
+					break;
+				}
 			}
-		}
-		if (y == fullScreenBounds.height / 4) {
-			y = 0;
 		}
 
 		// Detect left
-		for (x = 0; x < fullScreenBounds.width / 4; x++) {
-			current = image.getRGB(x, fullScreenBounds.height / 2);
-			red = (current & 0x00ff0000) >> 16;
-			green = (current & 0x0000ff00) >> 8;
-			blue = current & 0x000000ff;
-			if (red + blue + green > blackLimit) {
-				break;
+		x = fullScreenBounds.width / 4;
+		for (testY = 0; testY < fullScreenBounds.height; testY += fullScreenBounds.height / 32) {
+			for (testX = 0; testX < fullScreenBounds.width / 4; testX++) {
+				if (!isBlack(image.getRGB(testX, testY))) {
+					x = Math.min(x, testX);
+					break;
+				}
 			}
-		}
-		if (x == fullScreenBounds.width / 4) {
-			x = 0;
 		}
 
 		// Flushing the image
@@ -67,7 +61,14 @@ public class AspectRatioService implements Runnable {
 		image = null;
 
 		currentBounds.updateBounds(new Rectangle(fullScreenBounds.x + x, fullScreenBounds.y + y, fullScreenBounds.width - (2 * x), fullScreenBounds.height - (2 * y)));
-		
+
 		Factory.get().getAmbiFrame().setImage(robot.createScreenCapture(currentBounds.getBounds()));
+	}
+
+	public boolean isBlack(int color) {
+		red = (color & 0x00ff0000) >> 16;
+		green = (color & 0x0000ff00) >> 8;
+		blue = color & 0x000000ff;
+		return (red + blue + green) <= blackLimit;
 	}
 }
