@@ -43,7 +43,7 @@ public class MonitoringFrame extends JFrame {
 
 		imageLabel = new JLabel();
 		lpane.add(imageLabel, JLayeredPane.POPUP_LAYER);
-		imageLabel.setBounds(squareSize * 2, squareSize * 2, lpane.getPreferredSize().width - 4 * squareSize, lpane.getPreferredSize().height - 4 * squareSize);
+		imageLabel.setBounds(squareSize + squareSize /2, squareSize + squareSize /2, lpane.getPreferredSize().width - 3 * squareSize, lpane.getPreferredSize().height - 3 * squareSize);
 		imageLabel.setBorder(BorderFactory.createLineBorder(Color.red));
 
 		cells = new JPanel[rows][cols];
@@ -114,17 +114,24 @@ public class MonitoringFrame extends JFrame {
 		if (isVisible()) {
 			imageHeight = image.getHeight() * imageLabel.getWidth() / image.getWidth();
 			imageLabel.setIcon(resizeImage(image, imageLabel.getWidth(), imageHeight));
-			imageLabel.setSize(new Dimension(imageLabel.getWidth(), imageHeight));
+			imageLabel.setSize(imageLabel.getWidth(), imageHeight);
 		}
 	}
 
 	public ImageIcon resizeImage(BufferedImage image, int width, int height) {
-		BufferedImage resutl = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D graphics2D = resutl.createGraphics();
+		String text = image.getWidth() + "x" + image.getHeight();
+		BufferedImage result = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		Graphics2D graphics2D = result.createGraphics();
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		graphics2D.drawImage(image, 0, 0, width, height, null);
+		graphics2D.setFont(AmbiFont.fontMonitoringImage);
+		graphics2D.setColor(Color.black);
+		graphics2D.drawString(text, 2, 20);
+		graphics2D.setColor(Color.white);
+		graphics2D.drawString(text, 1, 20);
 		graphics2D.dispose();
-		return new ImageIcon(resutl);
+		return new ImageIcon(result);
 	}
 
 }
