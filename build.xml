@@ -5,10 +5,10 @@
     </tstamp>
     <target name="create_run_jar">
     	<javac srcdir="src" destdir="bin"/>
-        <jar destfile="Ambi.jar">
+        <jar destfile="AmbiBright.jar">
             <manifest>
-            	<attribute name="Main-Class" value="ambi.Launcher"/>
-            	<attribute name="Rsrc-Main-Class" value="ambi.Launcher" />
+            	<attribute name="Main-Class" value="ambibright.Launcher"/>
+            	<attribute name="Rsrc-Main-Class" value="ambibright.Launcher" />
                 <attribute name="Class-Path" value="."/>
             	<attribute name="Implementation-Version" value="${TODAY}"/> 
             </manifest>
