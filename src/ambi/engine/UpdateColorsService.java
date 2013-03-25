@@ -134,13 +134,14 @@ public class UpdateColorsService implements Runnable {
 
 	private byte[] getColorsToSend(Integer[][] colors) {
 		byte[] result = arduino.getArray();
-
 		int j = 6;
 		for (int i = 0; i < colors.length; i++) {
-			result[j++] = (byte) ((Math.min(Math.max((colors[i][0]) + r, 0), 255) + old[i][0]) / 2);
-			result[j++] = (byte) ((Math.min(Math.max((colors[i][1]) + g, 0), 255) + old[i][1]) / 2);
-			result[j++] = (byte) ((Math.min(Math.max((colors[i][2]) + b, 0), 255) + old[i][2]) / 2);
-			old[i] = colors[i];
+			old[i][0] = (colors[i][0] + old[i][0]) / 2;
+			old[i][1] = (colors[i][1] + old[i][1]) / 2;
+			old[i][2] = (colors[i][2] + old[i][2]) / 2;
+			result[j++] = (byte) (Math.min(Math.max((old[i][0]) + r, 0), 255));
+			result[j++] = (byte) (Math.min(Math.max((old[i][1]) + g, 0), 255));
+			result[j++] = (byte) (Math.min(Math.max((old[i][2]) + b, 0), 255));
 		}
 		return result;
 	}
