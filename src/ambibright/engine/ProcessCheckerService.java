@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import ambibright.ressources.Factory;
+
 /**
  * Created with IntelliJ IDEA. User: Nico Date: 23/03/13 Time: 21:17 To change
  * this template use File | Settings | File Templates.
@@ -20,26 +22,30 @@ public class ProcessCheckerService implements Runnable {
 
 	public void run() {
 		boolean shouldRun = false;
-		BufferedReader input = null;
-		try {
-			String line;
-			Process p = Runtime.getRuntime().exec(PROCESS_CMD);
-			input = new BufferedReader(new InputStreamReader(p.getInputStream()));
-			while ((line = input.readLine()) != null) {
-				line = line.substring(1, line.indexOf("\","));
-				if (apps.contains(line)) {
-					shouldRun = true;
-					break;
+		if (!Factory.get().isCheckProcess()) {
+			shouldRun = true;
+		} else {
+			BufferedReader input = null;
+			try {
+				String line;
+				Process p = Runtime.getRuntime().exec(PROCESS_CMD);
+				input = new BufferedReader(new InputStreamReader(p.getInputStream()));
+				while ((line = input.readLine()) != null) {
+					line = line.substring(1, line.indexOf("\","));
+					if (apps.contains(line)) {
+						shouldRun = true;
+						break;
+					}
 				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (null != input) {
-				try {
-					input.close();
-				} catch (IOException e) {
-					e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (null != input) {
+					try {
+						input.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 			}
 		}

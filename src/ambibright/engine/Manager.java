@@ -17,12 +17,8 @@ public class Manager {
 	private boolean isRunning = false;
 
 	public void start() {
-		if (Factory.get().isCheckProcess()) {
-			processCheckerService = Executors.newScheduledThreadPool(1);
-			processCheckerService.scheduleAtFixedRate(Factory.get().newProcessCheckerService(), 0, Factory.get().getDelayCheckProcess(), TimeUnit.MILLISECONDS);
-		} else {
-			startColorsProcessing();
-		}
+		processCheckerService = Executors.newScheduledThreadPool(1);
+		processCheckerService.scheduleAtFixedRate(Factory.get().newProcessCheckerService(), 0, Factory.get().getDelayCheckProcess(), TimeUnit.MILLISECONDS);
 	}
 
 	public void stop() {
