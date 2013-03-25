@@ -5,13 +5,14 @@ import java.awt.Robot;
 import java.awt.image.BufferedImage;
 
 import ambibright.ressources.CurrentBounds;
+import ambibright.ressources.Factory;
 
 /**
  * Created with IntelliJ IDEA. User: Nico Date: 23/03/13 Time: 21:36 To change
  * this template use File | Settings | File Templates.
  */
 public class AspectRatioService implements Runnable {
-	private static final int blackLimit = 6;
+	private static final int blackLimit = 0;
 	private final Rectangle fullScreenBounds;
 	private final CurrentBounds currentBounds;
 	private final Robot robot;
@@ -34,7 +35,7 @@ public class AspectRatioService implements Runnable {
 		image = robot.createScreenCapture(fullScreenBounds);
 
 		// Detect top
-		for (; y < fullScreenBounds.height / 4; y++) {
+		for (y = 0; y < fullScreenBounds.height / 4; y++) {
 			current = image.getRGB(fullScreenBounds.width / 2, y);
 			red = (current & 0x00ff0000) >> 16;
 			green = (current & 0x0000ff00) >> 8;
@@ -48,7 +49,7 @@ public class AspectRatioService implements Runnable {
 		}
 
 		// Detect left
-		for (; x < fullScreenBounds.width / 4; x++) {
+		for (x = 0; x < fullScreenBounds.width / 4; x++) {
 			current = image.getRGB(x, fullScreenBounds.height / 2);
 			red = (current & 0x00ff0000) >> 16;
 			green = (current & 0x0000ff00) >> 8;
@@ -66,5 +67,7 @@ public class AspectRatioService implements Runnable {
 		image = null;
 
 		currentBounds.updateBounds(new Rectangle(fullScreenBounds.x + x, fullScreenBounds.y + y, fullScreenBounds.width - (2 * x), fullScreenBounds.height - (2 * y)));
+		
+		Factory.get().getAmbiFrame().setImage(robot.createScreenCapture(currentBounds.getBounds()));
 	}
 }
