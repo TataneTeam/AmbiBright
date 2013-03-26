@@ -4,6 +4,8 @@ import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import ambibright.ihm.MonitoringFrame;
 import ambibright.ressources.CurrentBounds;
@@ -37,6 +39,8 @@ public class UpdateColorsService implements Runnable {
 	private int currentSecond = 0;
 	private int second = 0;
 	private int fps = 0;
+	
+	private Map<Integer, Integer> map;
 
 	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, int ledNumberLeftRight, int ledNumberTop, int squareSize, int screenAnalysePitch, int red, int green, int blue) {
 		this.robot = robot;
@@ -52,6 +56,8 @@ public class UpdateColorsService implements Runnable {
 		this.r = red;
 		this.g = green;
 		this.b = blue;
+		
+		this.map = new HashMap<Integer, Integer>();
 
 		old = new Integer[ledNumberLeftRight + ledNumberLeftRight + ledNumberTop - 2][3];
 		for (int i = 0; i < ledNumberLeftRight + ledNumberLeftRight + ledNumberTop - 2; i++) {
@@ -93,17 +99,17 @@ public class UpdateColorsService implements Runnable {
 
 		// Left from bottom to top
 		for (y = bounds.height - squareSizeLeftRight; y >= 0; y -= squareSizeLeftRight) {
-			getColor(pos++, 0, y, squareSize, squareSizeLeftRight);
+			getMainColor(pos++, 0, y, squareSize, squareSizeLeftRight);
 		}
 
 		// Top from left to right
 		for (x = squareSizeTop - 1; x + squareSizeTop < bounds.width; x += squareSizeTop) {
-			getColor(pos++, x, 0, squareSizeTop, squareSize);
+			getMainColor(pos++, x, 0, squareSizeTop, squareSize);
 		}
 
 		// Right from top to bottom
 		for (y = squareSizeLeftRight - 1; y + squareSizeLeftRight < bounds.height; y += squareSizeLeftRight) {
-			getColor(pos++, bounds.width - squareSizeLeftRight, y, squareSize, squareSizeLeftRight);
+			getMainColor(pos++, bounds.width - squareSizeLeftRight, y, squareSize, squareSizeLeftRight);
 		}
 
 		// Flushing the image
@@ -113,7 +119,9 @@ public class UpdateColorsService implements Runnable {
 		return result;
 	}
 
-	private void getColor(int ledNumber, int x, int y, int width, int height) {
+	
+	// Average color in the square
+	public void getAverageColor(int ledNumber, int x, int y, int width, int height) {
 		current = 0;
 		red = 0;
 		green = 0;
@@ -131,6 +139,32 @@ public class UpdateColorsService implements Runnable {
 		result[ledNumber][0] = red / nbPixel;
 		result[ledNumber][1] = green / nbPixel;
 		result[ledNumber][2] = blue / nbPixel;
+	}
+	
+	// Most present color in the square
+	public void getMainColor(int ledNumber, int x, int y, int width, int height){
+		map.clear();
+		for (posX = 0; posX < width; posX += screenAnalysePitch) {
+			for (posY = 0; posY < height; posY += screenAnalysePitch) {
+				current = image.getRGB(x + posX, y + posY);
+				if(map.containsKey(current)){
+					map.put(current, map.get(current) + 1);
+				}else{
+					map.put(current, 1);
+				}
+			}
+		}
+		nbPixel = -1;
+		current = -1;
+		for(int key : map.keySet()){
+			if(map.get(key) > nbPixel){
+				nbPixel = map.get(key);
+				current = key;
+			}
+		}
+		result[ledNumber][0] = (current & 0x00ff0000) >> 16;
+		result[ledNumber][1] = (current & 0x0000ff00) >> 8;
+		result[ledNumber][2] =  current & 0x000000ff;
 	}
 
 	private byte[] getColorsToSend(Integer[][] colors) {
