@@ -6,8 +6,8 @@ import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.RenderingHints;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
@@ -24,7 +24,7 @@ public class MonitoringFrame extends JFrame {
 	private static final int squareSize = 40;
 	private JPanel[][] cells;
 	private JLabel imageLabel;
-	int rows, cols, i, imageHeight;
+	int rows, cols, i, imageHeight, j;
 
 	public MonitoringFrame(int rows, int cols, Image icon) {
 		super(Factory.appName + " - Monitoring Frame");
@@ -43,7 +43,7 @@ public class MonitoringFrame extends JFrame {
 
 		imageLabel = new JLabel();
 		lpane.add(imageLabel, JLayeredPane.POPUP_LAYER);
-		imageLabel.setBounds(squareSize + squareSize /2, squareSize + squareSize /2, lpane.getPreferredSize().width - 3 * squareSize, lpane.getPreferredSize().height - 3 * squareSize);
+		imageLabel.setBounds(squareSize + squareSize / 2, squareSize + squareSize / 2, lpane.getPreferredSize().width - 3 * squareSize, lpane.getPreferredSize().height - 3 * squareSize);
 		imageLabel.setBorder(BorderFactory.createLineBorder(Color.red));
 
 		cells = new JPanel[rows][cols];
@@ -56,28 +56,13 @@ public class MonitoringFrame extends JFrame {
 				content.add(cells[i][j]);
 			}
 		}
-		addWindowListener(new WindowListener() {
-			public void windowOpened(WindowEvent e) {
-			}
-
+		addWindowListener(new WindowAdapter() {
 			public void windowIconified(WindowEvent e) {
 				setVisible(false);
 			}
 
-			public void windowDeiconified(WindowEvent e) {
-			}
-
-			public void windowDeactivated(WindowEvent e) {
-			}
-
 			public void windowClosing(WindowEvent e) {
 				setVisible(false);
-			}
-
-			public void windowClosed(WindowEvent e) {
-			}
-
-			public void windowActivated(WindowEvent e) {
 			}
 		});
 
@@ -92,16 +77,20 @@ public class MonitoringFrame extends JFrame {
 		cells[x][y].setBackground(color);
 	}
 
-	public void refresh(Integer[][] colors) {
+	public void refresh(byte[] colors) {
 		if (isVisible()) {
+			j = 6;
+			// Left from bottom to up
 			for (i = 0; i < rows; i++) {
-				setColor(rows - 1 - i, 0, new Color(colors[i][0], colors[i][1], colors[i][2]));
+				setColor(rows - 1 - i, 0, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
 			}
+			// Top from left to right
 			for (i = 1; i < cols; i++) {
-				setColor(0, i, new Color(colors[i + rows - 1][0], colors[i + rows - 1][1], colors[i + rows - 1][2]));
+				setColor(0, i, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
 			}
+			// Right from to to bottom
 			for (i = 1; i < rows; i++) {
-				setColor(i, cols - 1, new Color(colors[i + rows + cols - 2][0], colors[i + rows + cols - 2][1], colors[i + rows + cols - 2][2]));
+				setColor(i, cols - 1, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
 			}
 		}
 	}

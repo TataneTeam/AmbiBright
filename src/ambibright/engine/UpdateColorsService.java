@@ -39,7 +39,7 @@ public class UpdateColorsService implements Runnable {
 	private int currentSecond = 0;
 	private int second = 0;
 	private int fps = 0;
-	
+
 	private Map<Integer, Integer> map;
 
 	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, int ledNumberLeftRight, int ledNumberTop, int squareSize, int screenAnalysePitch, int red, int green, int blue) {
@@ -56,7 +56,7 @@ public class UpdateColorsService implements Runnable {
 		this.r = red;
 		this.g = green;
 		this.b = blue;
-		
+
 		this.map = new HashMap<Integer, Integer>();
 
 		old = new Integer[ledNumberLeftRight + ledNumberLeftRight + ledNumberTop - 2][3];
@@ -80,8 +80,8 @@ public class UpdateColorsService implements Runnable {
 				fps++;
 			}
 
-			Integer[][] colors = getColors();
-			arduino.write(getColorsToSend(colors));
+			byte[] colors = getColorsToSend(getColors());
+			arduino.write(colors);
 			monitoringFrame.refresh(colors);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -119,7 +119,6 @@ public class UpdateColorsService implements Runnable {
 		return result;
 	}
 
-	
 	// Average color in the square
 	public void getAverageColor(int ledNumber, int x, int y, int width, int height) {
 		current = 0;
@@ -140,31 +139,31 @@ public class UpdateColorsService implements Runnable {
 		result[ledNumber][1] = green / nbPixel;
 		result[ledNumber][2] = blue / nbPixel;
 	}
-	
+
 	// Most present color in the square
-	public void getMainColor(int ledNumber, int x, int y, int width, int height){
+	public void getMainColor(int ledNumber, int x, int y, int width, int height) {
 		map.clear();
 		for (posX = 0; posX < width; posX += screenAnalysePitch) {
 			for (posY = 0; posY < height; posY += screenAnalysePitch) {
 				current = image.getRGB(x + posX, y + posY);
-				if(map.containsKey(current)){
+				if (map.containsKey(current)) {
 					map.put(current, map.get(current) + 1);
-				}else{
+				} else {
 					map.put(current, 1);
 				}
 			}
 		}
 		nbPixel = -1;
 		current = -1;
-		for(int key : map.keySet()){
-			if(map.get(key) > nbPixel){
+		for (int key : map.keySet()) {
+			if (map.get(key) > nbPixel) {
 				nbPixel = map.get(key);
 				current = key;
 			}
 		}
 		result[ledNumber][0] = (current & 0x00ff0000) >> 16;
 		result[ledNumber][1] = (current & 0x0000ff00) >> 8;
-		result[ledNumber][2] =  current & 0x000000ff;
+		result[ledNumber][2] = current & 0x000000ff;
 	}
 
 	private byte[] getColorsToSend(Integer[][] colors) {
