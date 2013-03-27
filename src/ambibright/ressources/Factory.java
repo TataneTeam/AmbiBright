@@ -39,8 +39,6 @@ public class Factory {
 	private final CurrentBounds currentBounds;
 	private final Manager manager;
 	private UpdateColorsService updateColorsService;
-	private ScreenSquares screenSquares;
-	private ColorFrame colorFrame;
 
 	private Factory() {
 		this.config = new Config(configFileName);
@@ -56,13 +54,12 @@ public class Factory {
 		this.ambiFont = new AmbiFont();
 
 		this.fullScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[getScreenDevice()].getDefaultConfiguration().getBounds();
-		this.currentBounds = new CurrentBounds(fullScreenBounds);
+		this.currentBounds = new CurrentBounds(fullScreenBounds,getLedNBLeft(),getLedNBTop(), getSquareSize());
 
 		this.tray = new Tray(getImageIcon(), ambiFont, config);
 		this.ambiFrame = new MonitoringFrame(getLedNBLeft(), getLedNBTop(), getImageIcon());
 		this.arduinoSender = new ArduinoSender(getArduinoSerial(), getArduinoDataRate(), getLedNBLeft(), getLedNBTop());
 		this.manager = new Manager();
-		this.screenSquares = new ScreenSquares(fullScreenBounds, getLedNBLeft(), getLedNBTop(), getSquareSize());
 	}
 
 	public Manager getManager() {
@@ -177,7 +174,7 @@ public class Factory {
 	}
 
 	public UpdateColorsService newUpdateColorsService() {
-		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, screenSquares, getLedTotalNumber(), getAnalysePitch(), getRGB_R(), getRGB_G(), getRGB_B());
+		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, getLedTotalNumber(), getAnalysePitch(), getRGB_R(), getRGB_G(), getRGB_B());
 		return updateColorsService;
 	}
 
@@ -189,17 +186,8 @@ public class Factory {
 		return tray;
 	}
 
-	public ScreenSquares getScreenSquares() {
-		return screenSquares;
-	}
-	
-	public ColorFrame getNewColorFrame(){
-		colorFrame = new ColorFrame(Factory.get().getBounds(), ambiFont);
-		return colorFrame;
-	}
-
-	public ColorFrame getColorFrame() {
-		return colorFrame;
+	public ColorFrame getNewColorFrame() {
+		return new ColorFrame(Factory.get().getBounds(), ambiFont);
 	}
 
 	public CurrentBounds getCurrentBounds() {

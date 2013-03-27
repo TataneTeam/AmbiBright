@@ -9,7 +9,6 @@ import java.util.Map;
 
 import ambibright.ihm.MonitoringFrame;
 import ambibright.ressources.CurrentBounds;
-import ambibright.ressources.ScreenSquares;
 
 /**
  * Created with IntelliJ IDEA. User: Nico Date: 23/03/13 Time: 22:00 To change
@@ -25,7 +24,6 @@ public class UpdateColorsService implements Runnable {
 	private final Integer[][] result;
 	private final CurrentBounds currentBounds;
 	private final int screenAnalysePitch;
-	private final ScreenSquares screenSquares;
 	private int deltaR;
 	private int deltaG;
 	private int deltaB;
@@ -39,13 +37,12 @@ public class UpdateColorsService implements Runnable {
 
 	private Map<Integer, Integer> map;
 
-	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, ScreenSquares screenSquares, int nbLed, int screenAnalysePitch, int red, int green, int blue) {
+	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, int nbLed, int screenAnalysePitch, int red, int green, int blue) {
 		this.robot = robot;
 		this.arduino = arduino;
 		this.monitoringFrame = monitoringFrame;
 		this.currentBounds = currentBounds;
 		this.screenAnalysePitch = screenAnalysePitch;
-		this.screenSquares = screenSquares;
 		this.deltaR = red;
 		this.deltaG = green;
 		this.deltaB = blue;
@@ -85,10 +82,10 @@ public class UpdateColorsService implements Runnable {
 		image = robot.createScreenCapture(currentBounds.getBounds());
 
 		// Compute for all screen parts
-		for (Rectangle bound : screenSquares.getSquares()) {
+		for (Rectangle bound : currentBounds.getZones()) {
 			getMainColor(pos++, bound);
 		}
-		
+
 		// Flushing the image
 		image.flush();
 		image = null;

@@ -61,10 +61,6 @@ public class AspectRatioService implements Runnable {
 		image = null;
 
 		currentBounds.updateBounds(new Rectangle(fullScreenBounds.x + x, fullScreenBounds.y + y, fullScreenBounds.width - (2 * x), fullScreenBounds.height - (2 * y)));
-
-		if(Factory.get().getColorFrame() != null){
-			Factory.get().getColorFrame().displaySquare();
-		}
 		Factory.get().getAmbiFrame().setImage(robot.createScreenCapture(currentBounds.getBounds()));
 	}
 

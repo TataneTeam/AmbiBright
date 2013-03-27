@@ -1,13 +1,16 @@
 package ambibright.ihm;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.BorderFactory;
@@ -101,10 +104,23 @@ public class MonitoringFrame extends JFrame {
 
 	public void setImage(BufferedImage image) {
 		if (isVisible()) {
+			addZones(image, Factory.get().getCurrentBounds().getZones());
 			imageHeight = image.getHeight() * imageLabel.getWidth() / image.getWidth();
 			imageLabel.setIcon(resizeImage(image, imageLabel.getWidth(), imageHeight));
 			imageLabel.setSize(imageLabel.getWidth(), imageHeight);
 		}
+	}
+
+	public BufferedImage addZones(BufferedImage image, Rectangle[] bounds) {
+		Graphics2D graphics2D = image.createGraphics();
+		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+		graphics2D.setColor(Color.GREEN);
+		graphics2D.setStroke(new BasicStroke(2));
+		for (Rectangle bound : bounds) {
+			graphics2D.drawRect(bound.x, bound.y, bound.width, bound.height);
+		}
+		graphics2D.dispose();
+		return image;
 	}
 
 	public ImageIcon resizeImage(BufferedImage image, int width, int height) {
@@ -115,10 +131,13 @@ public class MonitoringFrame extends JFrame {
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		graphics2D.drawImage(image, 0, 0, width, height, null);
 		graphics2D.setFont(AmbiFont.fontMonitoringImage);
+		Rectangle2D rect = graphics2D.getFontMetrics(AmbiFont.fontMonitoringImage).getStringBounds(text, graphics2D);
+		int x = (int) (width - rect.getWidth()) / 2;
+		int y = (int) (height - rect.getHeight()) / 2;
 		graphics2D.setColor(Color.black);
-		graphics2D.drawString(text, 2, 20);
+		graphics2D.drawString(text, x, y);
 		graphics2D.setColor(Color.white);
-		graphics2D.drawString(text, 1, 20);
+		graphics2D.drawString(text, x + 1, y + 1);
 		graphics2D.dispose();
 		return new ImageIcon(result);
 	}
