@@ -13,7 +13,6 @@ import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import ambibright.ressources.Config.Parameters;
 import ambibright.ressources.Factory;
 
 public class RGBColorManager extends JPanel {
@@ -44,9 +43,18 @@ public class RGBColorManager extends JPanel {
 		add(ambiFont.setFont(r));
 		add(ambiFont.setFont(g));
 		add(ambiFont.setFont(b));
-		r.addChangeListener(new SliderColorListener(r, Parameters.CONFIG_RGB_R));
-		g.addChangeListener(new SliderColorListener(g, Parameters.CONFIG_RGB_G));
-		b.addChangeListener(new SliderColorListener(b, Parameters.CONFIG_RGB_B));
+		ChangeListener slideColorListener = new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (all.isSelected()) {
+					g.setValue(r.getValue());
+					b.setValue(r.getValue());
+				}
+				Factory.get().getUpdateColorsService().setDeltaRGB(r.getValue(), g.getValue(), b.getValue());
+			}
+		};
+		r.addChangeListener(slideColorListener);
+		g.addChangeListener(slideColorListener);
+		b.addChangeListener(slideColorListener);
 		JButton reset = new JButton("Reset");
 		reset.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -76,23 +84,4 @@ public class RGBColorManager extends JPanel {
 		reset.setOpaque(false);
 	}
 
-	class SliderColorListener implements ChangeListener {
-
-		private JSlider slider;
-		private Parameters config;
-
-		public SliderColorListener(JSlider slider, Parameters config) {
-			this.config = config;
-			this.slider = slider;
-		}
-
-		public void stateChanged(ChangeEvent arg0) {
-			if (all.isSelected()) {
-				g.setValue(r.getValue());
-				b.setValue(r.getValue());
-			}
-			Factory.get().getConfig().put(config, slider.getValue() + "");
-		}
-
-	}
 }

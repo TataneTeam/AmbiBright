@@ -37,6 +37,7 @@ public class Factory {
 	private final Rectangle fullScreenBounds;
 	private final CurrentBounds currentBounds;
 	private final Manager manager;
+	private UpdateColorsService updateColorsService;
 
 	private Factory() {
 		this.config = new Config(configFileName);
@@ -168,7 +169,12 @@ public class Factory {
 	}
 
 	public UpdateColorsService newUpdateColorsService() {
-		return new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, getLedNBLeft(), getLedNBTop(), getSquareSize(), getAnalysePitch(), getRGB_R(), getRGB_G(), getRGB_B());
+		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, getLedNBLeft(), getLedNBTop(), getSquareSize(), getAnalysePitch(), getRGB_R(), getRGB_G(), getRGB_B());
+		return updateColorsService;
+	}
+
+	public UpdateColorsService getUpdateColorsService() {
+		return updateColorsService;
 	}
 
 	public Tray getTray() {

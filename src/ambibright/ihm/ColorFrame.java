@@ -5,12 +5,13 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -52,8 +53,13 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		close.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
-				Factory.get().getConfig().put(Parameters.CONFIG_CHECK_PROCESS, isCheckApp + "");
-				Factory.get().getConfig().save();
+				restorConfig();
+			}
+		});
+		
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent e) {
+				restorConfig();				
 			}
 		});
 
@@ -73,13 +79,16 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		close.setBounds(bounds.x + (bounds.width - close.getPreferredSize().width) / 2, bounds.y + (bounds.height - close.getPreferredSize().height), close.getPreferredSize().width, close.getPreferredSize().height);
 
 		pack();
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		setLocation(bounds.x, bounds.y);
 		setVisible(true);
 	}
 
 	public void stateChanged(ChangeEvent e) {
 		back.setBackground(colorChooser.getColor());
+	}
+	
+	private void restorConfig(){
+		Factory.get().getConfig().put(Parameters.CONFIG_CHECK_PROCESS, isCheckApp + "");
 	}
 
 }

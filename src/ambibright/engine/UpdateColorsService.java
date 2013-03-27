@@ -28,9 +28,9 @@ public class UpdateColorsService implements Runnable {
 	private final int ledNumberTop;
 	private final int squareSize;
 	private final int screenAnalysePitch;
-	private final int r;
-	private final int g;
-	private final int b;
+	private int deltaR;
+	private int deltaG;
+	private int deltaB;
 
 	private int current, red, green, blue, nbPixel, x, y, posX, posY, pos;
 	private BufferedImage image;
@@ -53,9 +53,9 @@ public class UpdateColorsService implements Runnable {
 		this.squareSize = squareSize;
 		this.screenAnalysePitch = screenAnalysePitch;
 
-		this.r = red;
-		this.g = green;
-		this.b = blue;
+		this.deltaR = red;
+		this.deltaG = green;
+		this.deltaB = blue;
 
 		this.map = new HashMap<Integer, Integer>();
 
@@ -173,11 +173,17 @@ public class UpdateColorsService implements Runnable {
 			old[i][0] = (colors[i][0] + old[i][0]) / 2;
 			old[i][1] = (colors[i][1] + old[i][1]) / 2;
 			old[i][2] = (colors[i][2] + old[i][2]) / 2;
-			result[j++] = (byte) (Math.min(Math.max((old[i][0]) + r, 0), 255));
-			result[j++] = (byte) (Math.min(Math.max((old[i][1]) + g, 0), 255));
-			result[j++] = (byte) (Math.min(Math.max((old[i][2]) + b, 0), 255));
+			result[j++] = (byte) (Math.min(Math.max((old[i][0]) + deltaR, 0), 255));
+			result[j++] = (byte) (Math.min(Math.max((old[i][1]) + deltaG, 0), 255));
+			result[j++] = (byte) (Math.min(Math.max((old[i][2]) + deltaB, 0), 255));
 		}
 		return result;
+	}
+
+	public void setDeltaRGB(int red, int green, int blue) {
+		this.deltaR = red;
+		this.deltaG = green;
+		this.deltaB = blue;
 	}
 
 }
