@@ -20,6 +20,7 @@ public class CurrentBounds {
 	public void updateBounds(Rectangle bounds) {
 		lock.writeLock().lock();
 		try {
+			Factory.get().getScreenSquares().computeSquares(bounds);
 			this.bounds = bounds;
 		} finally {
 			lock.writeLock().unlock();

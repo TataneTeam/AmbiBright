@@ -47,7 +47,7 @@ public class Tray extends TrayIcon {
 		MenuItem colorFrame = new MenuItem(" Color Frame");
 		colorFrame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new ColorFrame(Factory.get().getBounds(), ambiFont);
+				Factory.get().getNewColorFrame();
 			}
 		});
 		getPopupMenu().add(ambiFont.setFont(colorFrame));

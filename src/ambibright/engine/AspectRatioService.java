@@ -36,7 +36,7 @@ public class AspectRatioService implements Runnable {
 
 		// Detect top
 		y = fullScreenBounds.height / 4;
-		for (testX = 0; testX < fullScreenBounds.width; testX += fullScreenBounds.width / 32) {
+		for (testX = 0; testX < fullScreenBounds.width; testX += fullScreenBounds.width / 5) {
 			for (testY = 0; testY < fullScreenBounds.height / 4; testY++) {
 				if (!isBlack(image.getRGB(testX, testY))) {
 					y = Math.min(y, testY);
@@ -47,7 +47,7 @@ public class AspectRatioService implements Runnable {
 
 		// Detect left
 		x = fullScreenBounds.width / 4;
-		for (testY = 0; testY < fullScreenBounds.height; testY += fullScreenBounds.height / 32) {
+		for (testY = 0; testY < fullScreenBounds.height; testY += fullScreenBounds.height / 5) {
 			for (testX = 0; testX < fullScreenBounds.width / 4; testX++) {
 				if (!isBlack(image.getRGB(testX, testY))) {
 					x = Math.min(x, testX);
@@ -62,6 +62,9 @@ public class AspectRatioService implements Runnable {
 
 		currentBounds.updateBounds(new Rectangle(fullScreenBounds.x + x, fullScreenBounds.y + y, fullScreenBounds.width - (2 * x), fullScreenBounds.height - (2 * y)));
 
+		if(Factory.get().getColorFrame() != null){
+			Factory.get().getColorFrame().displaySquare();
+		}
 		Factory.get().getAmbiFrame().setImage(robot.createScreenCapture(currentBounds.getBounds()));
 	}
 

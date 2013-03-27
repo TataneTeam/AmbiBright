@@ -14,6 +14,7 @@ import ambibright.engine.Manager;
 import ambibright.engine.ProcessCheckerService;
 import ambibright.engine.UpdateColorsService;
 import ambibright.ihm.AmbiFont;
+import ambibright.ihm.ColorFrame;
 import ambibright.ihm.MonitoringFrame;
 import ambibright.ihm.Tray;
 import ambibright.ressources.Config.Parameters;
@@ -38,6 +39,8 @@ public class Factory {
 	private final CurrentBounds currentBounds;
 	private final Manager manager;
 	private UpdateColorsService updateColorsService;
+	private ScreenSquares screenSquares;
+	private ColorFrame colorFrame;
 
 	private Factory() {
 		this.config = new Config(configFileName);
@@ -59,6 +62,7 @@ public class Factory {
 		this.ambiFrame = new MonitoringFrame(getLedNBLeft(), getLedNBTop(), getImageIcon());
 		this.arduinoSender = new ArduinoSender(getArduinoSerial(), getArduinoDataRate(), getLedNBLeft(), getLedNBTop());
 		this.manager = new Manager();
+		this.screenSquares = new ScreenSquares(fullScreenBounds, getLedNBLeft(), getLedNBTop(), getSquareSize());
 	}
 
 	public Manager getManager() {
@@ -168,8 +172,12 @@ public class Factory {
 		return new ProcessCheckerService(manager, getProcessList());
 	}
 
+	public int getLedTotalNumber() {
+		return 2 * getLedNBLeft() + getLedNBTop() - 2;
+	}
+
 	public UpdateColorsService newUpdateColorsService() {
-		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, getLedNBLeft(), getLedNBTop(), getSquareSize(), getAnalysePitch(), getRGB_R(), getRGB_G(), getRGB_B());
+		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, screenSquares, getLedTotalNumber(), getAnalysePitch(), getRGB_R(), getRGB_G(), getRGB_B());
 		return updateColorsService;
 	}
 
@@ -179,6 +187,23 @@ public class Factory {
 
 	public Tray getTray() {
 		return tray;
+	}
+
+	public ScreenSquares getScreenSquares() {
+		return screenSquares;
+	}
+	
+	public ColorFrame getNewColorFrame(){
+		colorFrame = new ColorFrame(Factory.get().getBounds(), ambiFont);
+		return colorFrame;
+	}
+
+	public ColorFrame getColorFrame() {
+		return colorFrame;
+	}
+
+	public CurrentBounds getCurrentBounds() {
+		return currentBounds;
 	}
 
 }
