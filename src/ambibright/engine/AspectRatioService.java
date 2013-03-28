@@ -1,9 +1,9 @@
 package ambibright.engine;
 
-import java.awt.*;
+import java.awt.Rectangle;
+import java.awt.Robot;
 import java.awt.image.BufferedImage;
 
-import ambibright.ihm.MonitoringFrame;
 import ambibright.ressources.CurrentBounds;
 import ambibright.ressources.Factory;
 
@@ -67,10 +67,7 @@ public class AspectRatioService implements Runnable {
             lastScreenBounds = newBounds;
             currentBounds.updateBounds(newBounds);
         }
-        MonitoringFrame frame = Factory.get().getAmbiFrame();
-        if(frame.isVisible()){
-            frame.setImage(robot.createScreenCapture(lastScreenBounds));
-        }
+         Factory.get().getAmbiFrame().setImage(robot.createScreenCapture(lastScreenBounds));
 	}
 
 	public boolean isBlack(int color) {
