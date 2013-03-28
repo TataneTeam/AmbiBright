@@ -3,10 +3,10 @@ package ambibright.engine;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
+import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ihm.MonitoringFrame;
 import ambibright.ressources.CurrentBounds;
 
@@ -23,38 +23,29 @@ public class UpdateColorsService implements Runnable {
 	private final MonitoringFrame monitoringFrame;
 	private final Integer[][] result;
 	private final CurrentBounds currentBounds;
-	private final int screenAnalysePitch;
-	private int deltaR;
-	private int deltaG;
-	private int deltaB;
-
-	private int current, red, green, blue, nbPixel, posX, posY, pos;
+	private final SquareAnalyser colorAnalyser;
+	private int deltaR, deltaG,deltaB;
+	private int pos;
 	private BufferedImage image;
 	private Integer[][] old;
 	private int currentSecond = 0;
 	private int second = 0;
 	private int fps = 0;
+	private int screenAnalysePitch;
 
-	private Map<Integer, Integer> map;
 
-	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, int nbLed, int screenAnalysePitch, int red, int green, int blue) {
+	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue) {
 		this.robot = robot;
 		this.arduino = arduino;
 		this.monitoringFrame = monitoringFrame;
 		this.currentBounds = currentBounds;
+		this.colorAnalyser = colorAnalyser;
 		this.screenAnalysePitch = screenAnalysePitch;
 		this.deltaR = red;
 		this.deltaG = green;
 		this.deltaB = blue;
-
-		this.map = new HashMap<Integer, Integer>();
-		old = new Integer[nbLed][3];
-		for (int i = 0; i < nbLed; i++) {
-			old[i][0] = 0;
-			old[i][1] = 0;
-			old[i][2] = 0;
-		}
-
+		this.old = new Integer[nbLed][3];
+		Arrays.fill(old, 0, old.length,  new Integer[]{0,0,0});
 		this.result = new Integer[nbLed][3];
 	}
 
@@ -83,7 +74,7 @@ public class UpdateColorsService implements Runnable {
 
 		// Compute for all screen parts
 		for (Rectangle bound : currentBounds.getZones()) {
-			getMainColor(pos++, bound);
+			result[pos++] = colorAnalyser.getColor(image, bound, screenAnalysePitch);
 		}
 
 		// Flushing the image
@@ -91,53 +82,6 @@ public class UpdateColorsService implements Runnable {
 		image = null;
 
 		return result;
-	}
-
-	// Average color in the square
-	public void getAverageColor(int ledNumber, Rectangle bound) {
-		current = 0;
-		red = 0;
-		green = 0;
-		blue = 0;
-		nbPixel = 0;
-		for (posX = 0; posX < bound.width; posX += screenAnalysePitch) {
-			for (posY = 0; posY < bound.height; posY += screenAnalysePitch) {
-				current = image.getRGB(bound.x + posX, bound.y + posY);
-				red += (current & 0x00ff0000) >> 16;
-				green += (current & 0x0000ff00) >> 8;
-				blue += current & 0x000000ff;
-				nbPixel++;
-			}
-		}
-		result[ledNumber][0] = red / nbPixel;
-		result[ledNumber][1] = green / nbPixel;
-		result[ledNumber][2] = blue / nbPixel;
-	}
-
-	// Most present color in the square
-	public void getMainColor(int ledNumber, Rectangle bound) {
-		map.clear();
-		for (posX = 0; posX < bound.width && posX + bound.x < image.getWidth(); posX += screenAnalysePitch) {
-			for (posY = 0; posY < bound.height && posY + bound.y < image.getHeight(); posY += screenAnalysePitch) {
-				current = image.getRGB(bound.x + posX, bound.y + posY);
-				if (map.containsKey(current)) {
-					map.put(current, map.get(current) + 1);
-				} else {
-					map.put(current, 1);
-				}
-			}
-		}
-		nbPixel = -1;
-		current = -1;
-		for (int key : map.keySet()) {
-			if (map.get(key) > nbPixel) {
-				nbPixel = map.get(key);
-				current = key;
-			}
-		}
-		result[ledNumber][0] = (current & 0x00ff0000) >> 16;
-		result[ledNumber][1] = (current & 0x0000ff00) >> 8;
-		result[ledNumber][2] = current & 0x000000ff;
 	}
 
 	private byte[] getColorsToSend(Integer[][] colors) {

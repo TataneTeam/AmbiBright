@@ -14,6 +14,7 @@ import ambibright.engine.AspectRatioService;
 import ambibright.engine.Manager;
 import ambibright.engine.ProcessCheckerService;
 import ambibright.engine.UpdateColorsService;
+import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ihm.AmbiFont;
 import ambibright.ihm.ColorFrame;
 import ambibright.ihm.MonitoringFrame;
@@ -176,8 +177,12 @@ public class Factory {
 	}
 
 	public UpdateColorsService newUpdateColorsService() {
-		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, getLedTotalNumber(), getAnalysePitch(), getRGB_R(), getRGB_G(), getRGB_B());
+		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, getSquareAnalyser(),getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B());
 		return updateColorsService;
+	}
+
+	public SquareAnalyser getSquareAnalyser() {
+		return SquareAnalyser.valueOf(getConfig().get(Parameters.CONFIG_SQUARE_ANALYSER));
 	}
 
 	public UpdateColorsService getUpdateColorsService() {

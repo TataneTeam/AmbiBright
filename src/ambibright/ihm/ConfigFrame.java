@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ressources.Config;
 import ambibright.ressources.Config.Parameters;
 import ambibright.ressources.Factory;
@@ -20,13 +21,13 @@ import ambibright.ressources.Factory;
 public class ConfigFrame extends JFrame {
 
 	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize, fps, ledNbTop, lebNbLeft, analysePitch, delayCheckRatio, delayCheckProcess;
-	private JComboBox screenDevice;
+	private JComboBox screenDevice, squareAnalyser;
 	private JCheckBox checkApp;
 
 	public ConfigFrame(AmbiFont ambiFont, final Config config) {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.get().getImageIcon());
-		setLayout(new GridLayout(13, 2));
+		setLayout(new GridLayout(14, 2));
 
 		arduinoSerial = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
 		appList = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_PROCESS_LIST));
@@ -45,6 +46,13 @@ public class ConfigFrame extends JFrame {
 			screenDevice.addItem(device.getIDstring() + " - " + device.getDefaultConfiguration().getBounds().width + "x" + device.getDefaultConfiguration().getBounds().height);
 		}
 		screenDevice.setSelectedIndex(Integer.valueOf(Factory.get().getConfig().get(Parameters.CONFIG_SCREEN_DEVICE)));
+		
+		squareAnalyser = new JComboBox();
+		squareAnalyser.setBorder(null);
+		for(SquareAnalyser c: SquareAnalyser.values()){
+			squareAnalyser.addItem(c);
+		}
+		squareAnalyser.setSelectedItem(Factory.get().getSquareAnalyser());
 
 		checkApp = new JCheckBox();
 		checkApp.setSelected(Factory.get().isCheckProcess());
@@ -65,6 +73,7 @@ public class ConfigFrame extends JFrame {
 				config.put(Parameters.CONFIG_ANALYSE_PITCH, analysePitch.getText());
 				config.put(Parameters.CONFIG_DELAY_CHECK_RATIO, delayCheckRatio.getText());
 				config.put(Parameters.CONFIG_DELAY_CHECK_PROCESS, delayCheckProcess.getText());
+				config.put(Parameters.CONFIG_SQUARE_ANALYSER, squareAnalyser.getSelectedItem().toString());
 				config.save();
 				Factory.get().getManager().restart();
 				dispose();
@@ -103,6 +112,9 @@ public class ConfigFrame extends JFrame {
 
 		add(ambiFont.setFontBold(new JLabel(" Capture analyse pitch")));
 		add(ambiFont.setFont(analysePitch));
+		
+		add(ambiFont.setFontBold(new JLabel(" Square analyser")));
+		add(ambiFont.setFont(squareAnalyser));
 
 		add(ambiFont.setFontBold(new JLabel(" Delay check ratio")));
 		add(ambiFont.setFont(delayCheckRatio));
