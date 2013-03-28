@@ -61,11 +61,15 @@ public class MonitoringFrame extends JFrame {
 		}
 		addWindowListener(new WindowAdapter() {
 			public void windowIconified(WindowEvent e) {
-				setVisible(false);
+				hideFrame();
 			}
 
 			public void windowClosing(WindowEvent e) {
-				setVisible(false);
+				hideFrame();
+			}
+
+			public void windowActivated(WindowEvent e) {
+				setLocation(Factory.get().getMonitoringLocation());
 			}
 		});
 
@@ -73,6 +77,11 @@ public class MonitoringFrame extends JFrame {
 		setAlwaysOnTop(true);
 		setResizable(false);
 		setLocationRelativeTo(getParent());
+		setVisible(false);
+	}
+
+	private void hideFrame() {
+		Factory.get().saveMonitoringLocation(getLocation().x, getLocation().y);
 		setVisible(false);
 	}
 

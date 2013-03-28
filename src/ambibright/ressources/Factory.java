@@ -2,6 +2,7 @@ package ambibright.ressources;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.net.URL;
@@ -24,6 +25,7 @@ public class Factory {
 	public static final String imageIconPath = "icon.png";
 	public static final String configFileName = "AmbiBright.properties";
 	private static final Factory instance = new Factory();
+	private static final String separator = " ";
 
 	public static Factory get() {
 		return instance;
@@ -54,7 +56,7 @@ public class Factory {
 		this.ambiFont = new AmbiFont();
 
 		this.fullScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[getScreenDevice()].getDefaultConfiguration().getBounds();
-		this.currentBounds = new CurrentBounds(fullScreenBounds,getLedNBLeft(),getLedNBTop(), getSquareSize());
+		this.currentBounds = new CurrentBounds(fullScreenBounds, getLedNBLeft(), getLedNBTop(), getSquareSize());
 
 		this.tray = new Tray(getImageIcon(), ambiFont, config);
 		this.ambiFrame = new MonitoringFrame(getLedNBLeft(), getLedNBTop(), getImageIcon());
@@ -192,6 +194,16 @@ public class Factory {
 
 	public CurrentBounds getCurrentBounds() {
 		return currentBounds;
+	}
+
+	public Point getMonitoringLocation() {
+		String[] values = getConfig().get(Parameters.CONFIG_MONITORING_XY).split(separator);
+		return new Point(Integer.valueOf(values[0]), Integer.valueOf(values[1]));
+	}
+
+	public void saveMonitoringLocation(int x, int y) {
+		getConfig().put(Parameters.CONFIG_MONITORING_XY, x + separator + y);
+		getConfig().save();
 	}
 
 }
