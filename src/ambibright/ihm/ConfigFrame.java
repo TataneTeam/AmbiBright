@@ -46,10 +46,10 @@ public class ConfigFrame extends JFrame {
 			screenDevice.addItem(device.getIDstring() + " - " + device.getDefaultConfiguration().getBounds().width + "x" + device.getDefaultConfiguration().getBounds().height);
 		}
 		screenDevice.setSelectedIndex(Integer.valueOf(Factory.get().getConfig().get(Parameters.CONFIG_SCREEN_DEVICE)));
-		
+
 		squareAnalyser = new JComboBox();
 		squareAnalyser.setBorder(null);
-		for(SquareAnalyser c: SquareAnalyser.values()){
+		for (SquareAnalyser c : SquareAnalyser.values()) {
 			squareAnalyser.addItem(c);
 		}
 		squareAnalyser.setSelectedItem(Factory.get().getSquareAnalyser());
@@ -112,7 +112,7 @@ public class ConfigFrame extends JFrame {
 
 		add(ambiFont.setFontBold(new JLabel(" Capture analyse pitch")));
 		add(ambiFont.setFont(analysePitch));
-		
+
 		add(ambiFont.setFontBold(new JLabel(" Square analyser")));
 		add(ambiFont.setFont(squareAnalyser));
 

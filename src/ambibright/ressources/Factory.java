@@ -177,7 +177,7 @@ public class Factory {
 	}
 
 	public UpdateColorsService newUpdateColorsService() {
-		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, getSquareAnalyser(),getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B());
+		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, getSquareAnalyser(), getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B());
 		return updateColorsService;
 	}
 

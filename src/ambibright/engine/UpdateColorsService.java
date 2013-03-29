@@ -24,7 +24,7 @@ public class UpdateColorsService implements Runnable {
 	private final Integer[][] result;
 	private final CurrentBounds currentBounds;
 	private final SquareAnalyser colorAnalyser;
-	private int deltaR, deltaG,deltaB;
+	private int deltaR, deltaG, deltaB;
 	private int pos;
 	private BufferedImage image;
 	private Integer[][] old;
@@ -32,7 +32,6 @@ public class UpdateColorsService implements Runnable {
 	private int second = 0;
 	private int fps = 0;
 	private int screenAnalysePitch;
-
 
 	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue) {
 		this.robot = robot;
@@ -45,7 +44,7 @@ public class UpdateColorsService implements Runnable {
 		this.deltaG = green;
 		this.deltaB = blue;
 		this.old = new Integer[nbLed][3];
-		Arrays.fill(old, 0, old.length,  new Integer[]{0,0,0});
+		Arrays.fill(old, 0, old.length, new Integer[] { 0, 0, 0 });
 		this.result = new Integer[nbLed][3];
 	}
 

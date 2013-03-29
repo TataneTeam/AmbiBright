@@ -16,7 +16,7 @@ public class AspectRatioService implements Runnable {
 	private final Rectangle fullScreenBounds;
 	private final CurrentBounds currentBounds;
 	private final Robot robot;
-    private Rectangle lastScreenBounds;
+	private Rectangle lastScreenBounds;
 	private int red = 0;
 	private int green = 0;
 	private int blue = 0;
@@ -29,7 +29,7 @@ public class AspectRatioService implements Runnable {
 		this.fullScreenBounds = fullScreenBounds;
 		this.currentBounds = currentBounds;
 		this.robot = robot;
-        this.lastScreenBounds = fullScreenBounds;
+		this.lastScreenBounds = fullScreenBounds;
 	}
 
 	public void run() {
@@ -62,12 +62,12 @@ public class AspectRatioService implements Runnable {
 		image.flush();
 		image = null;
 
-        Rectangle newBounds = new Rectangle(fullScreenBounds.x + x, fullScreenBounds.y + y, fullScreenBounds.width - (2 * x), fullScreenBounds.height - (2 * y));
-        if(!lastScreenBounds.equals( newBounds )){
-            lastScreenBounds = newBounds;
-            currentBounds.updateBounds(newBounds);
-        }
-         Factory.get().getAmbiFrame().setImage(robot.createScreenCapture(lastScreenBounds));
+		Rectangle newBounds = new Rectangle(fullScreenBounds.x + x, fullScreenBounds.y + y, fullScreenBounds.width - (2 * x), fullScreenBounds.height - (2 * y));
+		if (!lastScreenBounds.equals(newBounds)) {
+			lastScreenBounds = newBounds;
+			currentBounds.updateBounds(newBounds);
+		}
+		Factory.get().getAmbiFrame().setImage(robot.createScreenCapture(lastScreenBounds));
 	}
 
 	public boolean isBlack(int color) {

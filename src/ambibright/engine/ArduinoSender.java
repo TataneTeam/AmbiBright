@@ -6,7 +6,12 @@ import gnu.io.SerialPort;
 import java.io.OutputStream;
 import java.util.Arrays;
 
+import javax.swing.JOptionPane;
+
+import ambibright.ressources.Factory;
+
 public class ArduinoSender {
+
 	private SerialPort serialPort;
 	private OutputStream output;
 	private final byte[] array;
@@ -20,7 +25,6 @@ public class ArduinoSender {
 		array[3] = (byte) ((totalLeds - 1) >> 8);
 		array[4] = (byte) ((totalLeds - 1) & 0xff);
 		array[5] = (byte) (array[3] ^ array[4] ^ 0x55);
-
 		try {
 			CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(port);
 			serialPort = (SerialPort) portId.open(this.getClass().getName(), 500);
@@ -28,6 +32,7 @@ public class ArduinoSender {
 			output = serialPort.getOutputStream();
 		} catch (Exception e) {
 			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Arduino connection error:\n" + e, Factory.appName, JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
