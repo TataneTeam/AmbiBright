@@ -13,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import ambibright.engine.ArduinoSender;
 import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ressources.Config;
 import ambibright.ressources.Config.Parameters;
@@ -27,7 +28,7 @@ public class ConfigFrame extends JFrame {
 	public ConfigFrame(AmbiFont ambiFont, final Config config) {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.get().getImageIcon());
-		setLayout(new GridLayout(14, 2));
+		setLayout(new GridLayout(15, 2));
 
 		arduinoSerial = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
 		appList = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_PROCESS_LIST));
@@ -59,6 +60,13 @@ public class ConfigFrame extends JFrame {
 
 		JButton save = new JButton("Save");
 
+		JButton findPort = new JButton("Try to find the port");
+		findPort.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				arduinoSerial.setText(ArduinoSender.getArduinoPort(Integer.valueOf(arduinoDataRate.getText()), ArduinoSender.defaultTestString));
+			}
+		});
+
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				config.put(Parameters.CONFIG_LED_NB_LEFT, lebNbLeft.getText());
@@ -89,11 +97,14 @@ public class ConfigFrame extends JFrame {
 		add(ambiFont.setFontBold(new JLabel(" Left/Right LED number")));
 		add(ambiFont.setFont(lebNbLeft));
 
+		add(ambiFont.setFontBold(new JLabel(" Arduino Data Rate")));
+		add(ambiFont.setFont(arduinoDataRate));
+
 		add(ambiFont.setFontBold(new JLabel(" Arduino Serial Port")));
 		add(ambiFont.setFont(arduinoSerial));
 
-		add(ambiFont.setFontBold(new JLabel(" Arduino Data Rate")));
-		add(ambiFont.setFont(arduinoDataRate));
+		add(ambiFont.setFontBold(new JLabel("")));
+		add(ambiFont.setFont(findPort));
 
 		add(ambiFont.setFontBold(new JLabel(" Square Size")));
 		add(ambiFont.setFont(squareSize));

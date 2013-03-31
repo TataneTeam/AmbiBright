@@ -3,14 +3,19 @@ package ambibright.engine;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Enumeration;
 
 import javax.swing.JOptionPane;
 
 import ambibright.ressources.Factory;
 
 public class ArduinoSender {
+
+	public static final String defaultTestString = "Ada";
 
 	private SerialPort serialPort;
 	private OutputStream output;
@@ -58,6 +63,35 @@ public class ArduinoSender {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	public static String getArduinoPort(int dataRate, String testString) {
+		String result = null;
+		CommPortIdentifier portId;
+		SerialPort serialPort = null;
+		Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+		while (portList.hasMoreElements()) {
+			try {
+				portId = (CommPortIdentifier) portList.nextElement();
+				serialPort = (SerialPort) portId.open("Arduino", 500);
+				serialPort.setSerialPortParams(dataRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+				serialPort.enableReceiveThreshold(1);
+				BufferedReader buffer = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+				if (testString.equals(buffer.readLine())) {
+					result = serialPort.getName().substring(serialPort.getName().lastIndexOf("/") + 1);
+					break;
+				}
+			} catch (Exception e) {
+			} finally {
+				try {
+					serialPort.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return result;
 	}
 
 }
