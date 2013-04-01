@@ -43,7 +43,6 @@ public class Updater {
 			JarFile jar = new JarFile(jarLocation);
 			result = jar.getManifest().getMainAttributes().getValue(manifestAttribute);
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 		return result;
 	}

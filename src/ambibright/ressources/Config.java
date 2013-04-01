@@ -5,10 +5,34 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import ambibright.engine.colorAnalyser.SquareAnalyser;
+
 public class Config {
 
 	public enum Parameters {
-		CONFIG_LED_NB_TOP, CONFIG_LED_NB_LEFT, CONFIG_SCREEN_DEVICE, CONFIG_ARDUINO_PORT, CONFIG_ARDUINO_DATA_RATE, CONFIG_PROCESS_LIST, CONFIG_RGB_R, CONFIG_RGB_G, CONFIG_RGB_B, CONFIG_CHECK_PROCESS, CONFIG_SQUARE_SIZE, CONFIG_ANALYSE_PITCH, CONFIG_FPS, CONFIG_DELAY_CHECK_RATIO, CONFIG_DELAY_CHECK_PROCESS, CONFIG_MONITORING_XY, CONFIG_SQUARE_ANALYSER, CONFIG_UPDATE_URL
+		
+		CONFIG_LED_NB_TOP(24), CONFIG_LED_NB_LEFT(14), CONFIG_SCREEN_DEVICE(0), CONFIG_ARDUINO_PORT("COM1"), CONFIG_ARDUINO_DATA_RATE(115200), CONFIG_PROCESS_LIST("XBMC.exe vlc.exe"), CONFIG_RGB_R(0), CONFIG_RGB_G(0), CONFIG_RGB_B(0), CONFIG_CHECK_PROCESS(true), CONFIG_SQUARE_SIZE(30), CONFIG_ANALYSE_PITCH(1), CONFIG_FPS(24), CONFIG_DELAY_CHECK_RATIO(1000), CONFIG_DELAY_CHECK_PROCESS(5000), CONFIG_MONITORING_XY("0 0"), CONFIG_SQUARE_ANALYSER(SquareAnalyser.MainColor), CONFIG_UPDATE_URL("https://raw.github.com/TataneTeam/AmbiBright/master/");
+		
+		private Object defaultValue;
+		private boolean forceValue = false;
+		
+		private Parameters(Object defaultValue, boolean forceValue) {
+			this.defaultValue = defaultValue;
+			this.forceValue = forceValue;
+		}
+		
+		private Parameters(Object defaultValue) {
+			this.defaultValue = defaultValue;
+		}
+
+		public Object getDefaultValue() {
+			return defaultValue;
+		}
+
+		public boolean isForceValue() {
+			return forceValue;
+		}
+		
 	}
 
 	private Properties properties;
@@ -33,6 +57,18 @@ public class Config {
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+			}
+		}
+	}
+	
+	public void init(){
+		for(Parameters parameter: Parameters.values()){
+			if(!properties.contains(parameter)){
+				if(!isSetParameters(parameter)){
+					put(parameter, parameter.getDefaultValue().toString());
+				}
+			}else if(parameter.isForceValue()){
+				put(parameter, parameter.getDefaultValue().toString());
 			}
 		}
 	}
@@ -61,6 +97,10 @@ public class Config {
 
 	public String get(Parameters parameter) {
 		return properties.getProperty(parameter.toString());
+	}
+	
+	public boolean isSetParameters (Parameters parameter){
+		return properties.contains(parameter);
 	}
 
 }
