@@ -18,17 +18,19 @@ import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ressources.Config;
 import ambibright.ressources.Config.Parameters;
 import ambibright.ressources.Factory;
+import ambibright.ressources.Updater;
 
 public class ConfigFrame extends JFrame {
 
-	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize, fps, ledNbTop, lebNbLeft, analysePitch, delayCheckRatio, delayCheckProcess;
+	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize, fps, ledNbTop, lebNbLeft, analysePitch, delayCheckRatio, delayCheckProcess, updateUrl;
 	private JComboBox screenDevice, squareAnalyser;
 	private JCheckBox checkApp;
+	private Updater updater;
 
 	public ConfigFrame(AmbiFont ambiFont, final Config config) {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.get().getImageIcon());
-		setLayout(new GridLayout(15, 2));
+		setLayout(new GridLayout(17, 2));
 
 		arduinoSerial = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
 		appList = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_PROCESS_LIST));
@@ -40,6 +42,9 @@ public class ConfigFrame extends JFrame {
 		analysePitch = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_ANALYSE_PITCH));
 		delayCheckRatio = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_DELAY_CHECK_RATIO));
 		delayCheckProcess = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_DELAY_CHECK_PROCESS));
+		updateUrl = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_UPDATE_URL));
+
+		updater = new Updater(Factory.get().getConfig().get(Parameters.CONFIG_UPDATE_URL));
 
 		screenDevice = new JComboBox();
 		screenDevice.setBorder(null);
@@ -58,8 +63,6 @@ public class ConfigFrame extends JFrame {
 		checkApp = new JCheckBox();
 		checkApp.setSelected(Factory.get().isCheckProcess());
 
-		JButton save = new JButton("Save");
-
 		JButton findPort = new JButton("Try to find the port");
 		findPort.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -67,6 +70,15 @@ public class ConfigFrame extends JFrame {
 			}
 		});
 
+		JButton checkUpdate = new JButton("Check for update");
+		checkUpdate.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				updater.setUrl(updateUrl.getText());
+				updater.manage();
+			}
+		});
+
+		JButton save = new JButton("Save");
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				config.put(Parameters.CONFIG_LED_NB_LEFT, lebNbLeft.getText());
@@ -82,6 +94,7 @@ public class ConfigFrame extends JFrame {
 				config.put(Parameters.CONFIG_DELAY_CHECK_RATIO, delayCheckRatio.getText());
 				config.put(Parameters.CONFIG_DELAY_CHECK_PROCESS, delayCheckProcess.getText());
 				config.put(Parameters.CONFIG_SQUARE_ANALYSER, squareAnalyser.getSelectedItem().toString());
+				config.put(Parameters.CONFIG_UPDATE_URL, updateUrl.getText());
 				config.save();
 				Factory.get().getManager().restart();
 				dispose();
@@ -129,6 +142,12 @@ public class ConfigFrame extends JFrame {
 
 		add(ambiFont.setFontBold(new JLabel(" Delay check ratio")));
 		add(ambiFont.setFont(delayCheckRatio));
+
+		add(ambiFont.setFontBold(new JLabel(" Update Url")));
+		add(ambiFont.setFont(updateUrl));
+
+		add(ambiFont.setFontBold(new JLabel("Current version: " + updater.getLocalVersion())));
+		add(ambiFont.setFont(checkUpdate));
 
 		add(ambiFont.setFontBold(new JLabel("")));
 		add(ambiFont.setFont(save));

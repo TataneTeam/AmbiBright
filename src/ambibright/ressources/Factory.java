@@ -211,4 +211,8 @@ public class Factory {
 		getConfig().save();
 	}
 
+	public String getUpdateUrl() {
+		return getConfig().get(Parameters.CONFIG_UPDATE_URL);
+	}
+
 }

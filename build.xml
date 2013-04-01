@@ -14,6 +14,7 @@
             </manifest>
             <fileset dir="bin" />
         </jar>
+    	<echo file="lastcompiled.txt" append="false" message="${TODAY}" /> 
     	<echo message="Compiled version ${TODAY}" />
     </target>
 </project>
