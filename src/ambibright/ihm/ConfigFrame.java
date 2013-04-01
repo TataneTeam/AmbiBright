@@ -26,6 +26,7 @@ public class ConfigFrame extends JFrame {
 	private JComboBox screenDevice, squareAnalyser;
 	private JCheckBox checkApp;
 	private Updater updater;
+	private JButton checkUpdate, findPort;
 
 	public ConfigFrame(AmbiFont ambiFont, final Config config) {
 		super(Factory.appName + " - Configuration");
@@ -63,18 +64,22 @@ public class ConfigFrame extends JFrame {
 		checkApp = new JCheckBox();
 		checkApp.setSelected(Factory.get().isCheckProcess());
 
-		JButton findPort = new JButton("Try to find the port");
+		findPort = new JButton("Try to find the port");
 		findPort.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				findPort.setEnabled(false);
 				arduinoSerial.setText(ArduinoSender.getArduinoPort(Integer.valueOf(arduinoDataRate.getText()), ArduinoSender.defaultTestString));
+				findPort.setEnabled(true);
 			}
 		});
 
-		JButton checkUpdate = new JButton("Check for update");
+		checkUpdate = new JButton("Check for update");
 		checkUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				checkUpdate.setEnabled(false);
 				updater.setUrl(updateUrl.getText());
 				updater.manage();
+				checkUpdate.setEnabled(true);
 			}
 		});
 
