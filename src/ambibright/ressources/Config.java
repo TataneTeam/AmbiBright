@@ -2,7 +2,6 @@ package ambibright.ressources;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Properties;
 
 import ambibright.engine.colorAnalyser.SquareAnalyser;
@@ -78,7 +77,7 @@ public class Config {
 
 	public void init() {
 		for (Parameters parameter : Parameters.values()) {
-			if (!isSetParameters(parameter) || parameter.isForceValue()) {
+			if (!isSet(parameter) || parameter.isForceValue()) {
 				put(parameter, parameter.getDefaultValue().toString());
 			}
 		}
@@ -92,12 +91,10 @@ public class Config {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			if (null != stream) {
-				try {
-					stream.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+			try {
+				stream.close();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -110,7 +107,7 @@ public class Config {
 		return properties.getProperty(parameter.toString());
 	}
 
-	public boolean isSetParameters(Parameters parameter) {
+	public boolean isSet(Parameters parameter) {
 		return properties.containsKey(parameter.toString());
 	}
 
