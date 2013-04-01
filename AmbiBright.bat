@@ -1,2 +1,3 @@
-start C:\Progra~1\Java\jdk1.6.0_25\jre\bin\javaw.exe -Xmx128M -classpath  "AmbiBright.jar" ambibright.Launcher
+set folder=%~dp0
+start javaw -Xmx128M -Djava.library.path=%folder%lib -cp %folder%AmbiBright.jar;%folder%lib\* ambibright.Launcher
 
