@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.tataneteam</groupId>
@@ -36,28 +37,42 @@
     <url>https://github.com/TataneTeam/AmbiBright/issues</url>
   </issueManagement>
 
+  <repositories>
+    <repository>
+      <id>cloudbees</id>
+      <name>Cloudbees repository</name>
+      <url>http://repository-nmorel.forge.cloudbees.com/release/</url>
+    </repository>
+  </repositories>
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>1.6</maven.compiler.source>
     <maven.compiler.target>1.6</maven.compiler.target>
 
+    <timestamp>${maven.build.timestamp}</timestamp>
+
     <!-- Plugins version -->
     <maven-compiler.version>3.0</maven-compiler.version>
+    <maven-assembly.version>2.4</maven-assembly.version>
+    <maven-jar.version>2.4</maven-jar.version>
+    <maven-antrun.version>1.7</maven-antrun.version>
 
+    <!-- Dependencies version -->
+    <nrjavaserial.version>3.8.8</nrjavaserial.version>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>RXTXcomm</groupId>
-      <artifactId>RXTXcomm</artifactId>
-      <version>1.0</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/lib/RXTXcomm.jar</systemPath>
+      <groupId>com.neuronrobotics</groupId>
+      <artifactId>nrjavaserial</artifactId>
+      <version>${nrjavaserial.version}</version>
     </dependency>
   </dependencies>
 
   <build>
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -68,6 +83,63 @@
           <target>${maven.compiler.target}</target>
         </configuration>
       </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Implementation-Version>${timestamp}</Implementation-Version>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>${maven-assembly.version}</version>
+        <executions>
+          <execution>
+            <id>release</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <finalName>AmbiBright</finalName>
+              <appendAssemblyId>false</appendAssemblyId>
+              <outputDirectory>${basedir}</outputDirectory>
+              <descriptors>
+                <descriptor>assembly.xml</descriptor>
+              </descriptors>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>${maven-antrun.version}</version>
+        <executions>
+          <execution>
+            <id>release</id>
+            <phase>package</phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <tasks>
+                <echo file="lastcompiled.txt" append="false" message="${timestamp}" />
+              </tasks>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
     </plugins>
   </build>
 </project>
