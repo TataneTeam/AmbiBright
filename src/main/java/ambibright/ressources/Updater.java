@@ -1,12 +1,13 @@
 package ambibright.ressources;
 
+import java.io.IOException;
 import java.util.jar.JarFile;
 
 import javax.swing.JOptionPane;
 
 public class Updater {
 
-	public static final String updateJarUrl = "AmbiBright.jar";
+	public static final String updateJarUrl = "AmbiBright.zip";
 
 	public static final String updateVersionUrl = "lastcompiled.txt";
 
@@ -73,25 +74,26 @@ public class Updater {
 		return result;
 	}
 
-	private boolean update() {
-		boolean result = false;
-		String dlPath = ToolFile.downloadFile(url + updateJarUrl, ToolFile.getNewTempFile());
-		if (dlPath != null) {
-			result = ToolFile.copyfile(dlPath, getJarLocation());
-		}
-		return result;
-	}
+	private void update() {
+        try
+        {
+            Runtime.getRuntime().exec( "java -cp AmbiBright.jar ambibright.Updater" );
+            Factory.get().getManager().stop();
+            System.exit(0);
+        }
+        catch ( Exception e )
+        {
+            JOptionPane.showMessageDialog(null, "Error occured while updating!", Factory.appName, JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
 
 	public void manage() {
 		if (isUpdateAvailable()) {
 			Object[] options = { "Yes, update it!", "No, thanks!" };
 			int n = JOptionPane.showOptionDialog(null, "A new update is available.\n" + "Local : " + getLocalVersion() + "\n" + "Server : " + getServerVersion() + "\n" + "Do you want to update?", Factory.appName, JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
 			if (n == 0) {
-				if (update()) {
-					JOptionPane.showMessageDialog(null, getJarLocation() + " updated.\nYou need to restart the application!", Factory.appName, JOptionPane.INFORMATION_MESSAGE);
-				} else {
-					JOptionPane.showMessageDialog(null, "Error occured while updating!", Factory.appName, JOptionPane.ERROR_MESSAGE);
-				}
+				update();
 			}
 		} else {
 			JOptionPane.showMessageDialog(null, "No update available!", Factory.appName, JOptionPane.INFORMATION_MESSAGE);
