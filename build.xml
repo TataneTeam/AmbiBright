@@ -4,17 +4,17 @@
    		<format property="TODAY" pattern="yyyy-MM-dd HH:mm" />
     </tstamp>
     <target name="create_run_jar">
-    	<javac srcdir="src" destdir="bin"/>
+    	<javac srcdir="src/main/java" destdir="bin"/>
         <jar destfile="AmbiBright.jar">
             <manifest>
             	<attribute name="Main-Class" value="ambibright.Launcher"/>
             	<attribute name="Rsrc-Main-Class" value="ambibright.Launcher" />
                 <attribute name="Class-Path" value="."/>
-            	<attribute name="Implementation-Version" value="${TODAY}"/> 
+            	<attribute name="Implementation-Version" value="${TODAY}"/>
             </manifest>
             <fileset dir="bin" />
         </jar>
-    	<echo file="lastcompiled.txt" append="false" message="${TODAY}" /> 
+    	<echo file="lastcompiled.txt" append="false" message="${TODAY}" />
     	<echo message="Compiled version ${TODAY}" />
     </target>
 </project>

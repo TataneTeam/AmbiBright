@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.github.tataneteam</groupId>
+  <artifactId>ambibright</artifactId>
+  <packaging>jar</packaging>
+  <version>0.1-SNAPSHOT</version>
+
+  <name>AmbiBright</name>
+  <description>Java Ambilight implementation</description>
+  <url>https://github.com/TataneTeam/AmbiBright</url>
+
+  <scm>
+    <connection>scm:git:git://github.com/TataneTeam/AmbiBright.git</connection>
+    <developerConnection>scm:git:git@github.com:TataneTeam/AmbiBright.git</developerConnection>
+    <url>https://github.com/TataneTeam/AmbiBright</url>
+    <tag>HEAD</tag>
+  </scm>
+
+  <developers>
+    <developer>
+      <id>jlaloi</id>
+      <name>Julien Laloi</name>
+      <timezone>+1</timezone>
+    </developer>
+    <developer>
+      <id>nmorel</id>
+      <name>Nicolas Morel</name>
+      <timezone>+1</timezone>
+    </developer>
+  </developers>
+
+  <issueManagement>
+    <system>GitHub</system>
+    <url>https://github.com/TataneTeam/AmbiBright/issues</url>
+  </issueManagement>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <maven.compiler.source>1.6</maven.compiler.source>
+    <maven.compiler.target>1.6</maven.compiler.target>
+
+    <!-- Plugins version -->
+    <maven-compiler.version>3.0</maven-compiler.version>
+
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>RXTXcomm</groupId>
+      <artifactId>RXTXcomm</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/RXTXcomm.jar</systemPath>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>${maven-compiler.version}</version>
+        <configuration>
+          <encoding>${project.build.sourceEncoding}</encoding>
+          <source>${maven.compiler.source}</source>
+          <target>${maven.compiler.target}</target>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+</project>
