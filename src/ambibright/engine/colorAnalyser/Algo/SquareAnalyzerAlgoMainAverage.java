@@ -11,12 +11,13 @@ import ambibright.engine.colorAnalyser.SquareAnalyserAlgorithm;
 
 public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 
-	public static final int nbMain = 3;
+	public static final int nbMain = 2; // Minus one
+	public static final int mainPourcent = 60;
 
 	private Map<Integer, Integer> map;
 	private int posX, posY, current, nbPixel;
-	private int red, green, blue, minimunCount;
-	private Object[] sorted;
+	private int red, green, blue, maxValue, nbOccur;
+	private Integer[] sorted;
 
 	public SquareAnalyzerAlgoMainAverage() {
 		map = new HashMap<Integer, Integer>();
@@ -39,25 +40,32 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 				} else {
 					map.put(current, 1);
 				}
+				nbPixel++;
 			}
 		}
 
-		// Get minimum count
-		if (map.size() > nbMain) {
-			sorted = map.keySet().toArray();
-			Arrays.sort(sorted, Collections.reverseOrder());
-			minimunCount = (Integer) sorted[nbMain - 1];
+		// Order the colors per occurence
+		sorted = (Integer[]) map.keySet().toArray();
+		Arrays.sort(sorted, Collections.reverseOrder());
+
+		// There is a main color
+		if (sorted[0] >= (nbPixel * mainPourcent / 100)) {
+			maxValue = sorted[0];
+		} else if (map.size() > nbMain) {
+			maxValue = sorted[nbMain - 1];
 		} else {
-			minimunCount = 0;
+			maxValue = 0;
 		}
 
 		// Get the average
-		for (int key : map.keySet()) {
-			if (map.get(key) >= minimunCount) {
-				red += (current & 0x00ff0000) >> 16;
-				green += (current & 0x0000ff00) >> 8;
-				blue += current & 0x000000ff;
-				nbPixel++;
+		nbPixel = 0;
+		for (Integer current : map.keySet()) {
+			nbOccur = map.get(current);
+			if (nbOccur >= maxValue) {
+				red += ((current & 0x00ff0000) >> 16) * nbOccur;
+				green += ((current & 0x0000ff00) >> 8) * nbOccur;
+				blue += (current & 0x000000ff) * nbOccur;
+				nbPixel += nbOccur;
 			}
 		}
 		return new Integer[] { red / nbPixel, green / nbPixel, blue / nbPixel };
