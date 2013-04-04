@@ -17,7 +17,7 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 	private Map<Integer, Integer> map;
 	private int posX, posY, current, nbPixel;
 	private int red, green, blue, maxValue, nbOccur;
-	private Integer[] sorted;
+	private Object[] sorted;
 
 	public SquareAnalyzerAlgoMainAverage() {
 		map = new HashMap<Integer, Integer>();
@@ -45,14 +45,14 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 		}
 
 		// Order the colors per occurence
-		sorted = (Integer[]) map.keySet().toArray();
+		sorted = map.keySet().toArray();
 		Arrays.sort(sorted, Collections.reverseOrder());
 
 		// There is a main color
-		if (sorted[0] >= (nbPixel * mainPourcent / 100)) {
-			maxValue = sorted[0];
+		if ((Integer) sorted[0] >= (nbPixel * mainPourcent / 100)) {
+			maxValue = (Integer) sorted[0];
 		} else if (map.size() > nbMain) {
-			maxValue = sorted[nbMain - 1];
+			maxValue = (Integer) sorted[nbMain - 1];
 		} else {
 			maxValue = 0;
 		}

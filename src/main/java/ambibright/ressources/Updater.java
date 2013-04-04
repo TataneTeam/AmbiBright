@@ -1,6 +1,5 @@
 package ambibright.ressources;
 
-import java.io.IOException;
 import java.util.jar.JarFile;
 
 import javax.swing.JOptionPane;
@@ -75,18 +74,15 @@ public class Updater {
 	}
 
 	private void update() {
-        try
-        {
-            Runtime.getRuntime().exec( "java -cp AmbiBright.jar ambibright.Updater" );
-            Factory.get().getManager().stop();
-            System.exit(0);
-        }
-        catch ( Exception e )
-        {
-            JOptionPane.showMessageDialog(null, "Error occured while updating!", Factory.appName, JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
-    }
+		try {
+			Runtime.getRuntime().exec("java -cp AmbiBright.jar ambibright.Updater");
+			Factory.get().getManager().stop();
+			System.exit(0);
+		} catch (Exception e) {
+			JOptionPane.showMessageDialog(null, "Error occured while updating!", Factory.appName, JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+	}
 
 	public void manage() {
 		if (isUpdateAvailable()) {
