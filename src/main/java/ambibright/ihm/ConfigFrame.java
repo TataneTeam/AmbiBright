@@ -158,7 +158,6 @@ public class ConfigFrame extends JFrame {
 		add(ambiFont.setFont(save));
 
 		pack();
-		setAlwaysOnTop(true);
 		setResizable(false);
 		setLocationRelativeTo(getParent());
 		setVisible(true);
