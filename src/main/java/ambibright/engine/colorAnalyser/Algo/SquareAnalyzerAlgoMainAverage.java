@@ -44,6 +44,10 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 			}
 		}
 
+		if (map.size() == 0) {
+			return defaultColor;
+		}
+
 		// Order the colors per occurence
 		sorted = map.keySet().toArray();
 		Arrays.sort(sorted, Collections.reverseOrder());
