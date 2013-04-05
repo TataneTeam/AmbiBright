@@ -2,16 +2,12 @@ package ambibright.ressources;
 
 import java.util.jar.JarFile;
 
-import javax.swing.JOptionPane;
+import javax.swing.*;
 
 public class Updater {
 
-	public static final String updateJarUrl = "AmbiBright.zip";
-
 	public static final String updateVersionUrl = "lastcompiled.txt";
-
 	public static final String manifestAttribute = "Implementation-Version";
-
 	public String url;
 
 	public Updater(String url) {
@@ -75,7 +71,7 @@ public class Updater {
 
 	private void update() {
 		try {
-			Runtime.getRuntime().exec("java -cp AmbiBright.jar ambibright.Updater");
+			Runtime.getRuntime().exec("java -cp AmbiBright.jar ambibright.Updater " + url);
 			Factory.get().getManager().stop();
 			System.exit(0);
 		} catch (Exception e) {
