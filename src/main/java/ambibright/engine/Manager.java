@@ -4,6 +4,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.*;
+
 import ambibright.ressources.Factory;
 
 /**
@@ -37,6 +39,18 @@ public class Manager {
 	public void startColorsProcessing() {
 		if (!isRunning) {
 			System.out.println("Starting");
+
+			try {
+				Factory.get().getArduinoSender().open(Factory.get().getArduinoSerial(), Factory.get().getArduinoDataRate());
+			} catch (Exception e) {
+				e.printStackTrace();
+                // If the communication with the arduino failed, we can stop the process.
+                // The user have to change the configuration and restart.
+                stop();
+				JOptionPane.showMessageDialog(null, "Arduino connection error:\n" + e, Factory.appName, JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+
 			aspectRatioService = Executors.newScheduledThreadPool(1);
 			aspectRatioService.scheduleAtFixedRate(Factory.get().newAspectRatioService(), 0, Factory.get().getDelayCheckRatio(), TimeUnit.MILLISECONDS);
 
@@ -58,7 +72,7 @@ public class Manager {
 			colorService = null;
 
 			Factory.get().getAmbiFrame().setInfo("Not running");
-			Factory.get().getArduinoSender().stop();
+			Factory.get().getArduinoSender().close();
 
 			isRunning = false;
 			System.out.println("Stopped");

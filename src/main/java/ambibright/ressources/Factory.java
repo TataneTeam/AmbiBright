@@ -62,7 +62,7 @@ public class Factory {
 
 		this.tray = new Tray(getImageIcon(), ambiFont, config);
 		this.ambiFrame = new MonitoringFrame(getLedNBLeft(), getLedNBTop(), getImageIcon());
-		this.arduinoSender = new ArduinoSender(getArduinoSerial(), getArduinoDataRate(), getLedNBLeft(), getLedNBTop());
+		this.arduinoSender = new ArduinoSender(getLedNBLeft(), getLedNBTop());
 		this.manager = new Manager();
 	}
 
@@ -178,7 +178,7 @@ public class Factory {
 	}
 
 	public UpdateColorsService newUpdateColorsService() {
-		updateColorsService = new UpdateColorsService(robot, arduinoSender, ambiFrame, currentBounds, getSquareAnalyser(), getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B());
+		updateColorsService = new UpdateColorsService(robot, getArduinoSender(), ambiFrame, currentBounds, getSquareAnalyser(), getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B());
 		return updateColorsService;
 	}
 
@@ -188,10 +188,6 @@ public class Factory {
 
 	public UpdateColorsService getUpdateColorsService() {
 		return updateColorsService;
-	}
-
-	public Tray getTray() {
-		return tray;
 	}
 
 	public ColorFrame getNewColorFrame() {
@@ -210,10 +206,6 @@ public class Factory {
 	public void saveMonitoringLocation(int x, int y) {
 		getConfig().put(Parameters.CONFIG_MONITORING_XY, x + separator + y);
 		getConfig().save();
-	}
-
-	public String getUpdateUrl() {
-		return getConfig().get(Parameters.CONFIG_UPDATE_URL);
 	}
 
 }

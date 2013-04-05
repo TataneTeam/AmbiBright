@@ -35,8 +35,12 @@ public class DisplayColorTest {
 		arduinoSender.write(sent);
 	}
 
-	public static void main(String[] args) {
-		DisplayColorTest dt = new DisplayColorTest(Factory.get().getLedTotalNumber(),Factory.get().getArduinoSender());
+	public static void main(String[] args) throws Exception {
+
+        ArduinoSender arduinoSender = Factory.get().getArduinoSender();
+        arduinoSender.open( Factory.get().getArduinoSerial(), Factory.get().getArduinoDataRate() );
+
+		DisplayColorTest dt = new DisplayColorTest(Factory.get().getLedTotalNumber(),arduinoSender);
 		while(true){
 			try {
 				Thread.sleep(20);
