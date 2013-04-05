@@ -16,8 +16,6 @@ import java.util.List;
 
 public class ToolFile {
 
-	public static final String lineSeparator = System.getProperty("line.separator");
-
 	public static final String fileSeparator = System.getProperty("file.separator");
 
 	public static final String tempDirectory = System.getenv("TMP") + fileSeparator;
@@ -86,40 +84,6 @@ public class ToolFile {
 
 	public static String getNewTempFile() {
 		return tempDirectory + Factory.appName + System.currentTimeMillis();
-	}
-
-	public static boolean copyfile(String source, String dest) {
-		boolean result = false;
-		InputStream in = null;
-		OutputStream out = null;
-		try {
-			File f1 = new File(source);
-			File f2 = new File(dest);
-			in = new FileInputStream(f1);
-			out = new FileOutputStream(f2);
-			byte[] buf = new byte[1024];
-			int len;
-			while ((len = in.read(buf)) > 0) {
-				out.write(buf, 0, len);
-			}
-			in.close();
-			out.close();
-			result = true;
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				in.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			try {
-				out.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return result;
 	}
 
 }

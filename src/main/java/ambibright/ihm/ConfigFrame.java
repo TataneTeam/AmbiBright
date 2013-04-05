@@ -15,18 +15,18 @@ import javax.swing.JTextField;
 
 import ambibright.engine.ArduinoSender;
 import ambibright.engine.colorAnalyser.SquareAnalyser;
+import ambibright.ressources.CheckUpdate;
 import ambibright.ressources.Config;
 import ambibright.ressources.Config.Parameters;
 import ambibright.ressources.Factory;
-import ambibright.ressources.Updater;
 
 public class ConfigFrame extends JFrame {
 
 	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize, fps, ledNbTop, lebNbLeft, analysePitch, delayCheckRatio, delayCheckProcess, updateUrl;
 	private JComboBox screenDevice, squareAnalyser;
 	private JCheckBox checkApp;
-	private Updater updater;
-	private JButton checkUpdate, findPort;
+	private CheckUpdate checkUpdate;
+	private JButton checkUpdateBtn, findPortBtn;
 
 	public ConfigFrame(AmbiFont ambiFont, final Config config) {
 		super(Factory.appName + " - Configuration");
@@ -45,7 +45,7 @@ public class ConfigFrame extends JFrame {
 		delayCheckProcess = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_DELAY_CHECK_PROCESS));
 		updateUrl = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_UPDATE_URL));
 
-		updater = new Updater(Factory.get().getConfig().get(Parameters.CONFIG_UPDATE_URL));
+		checkUpdate = new CheckUpdate(Factory.get().getConfig().get(Parameters.CONFIG_UPDATE_URL));
 
 		screenDevice = new JComboBox();
 		screenDevice.setBorder(null);
@@ -64,22 +64,22 @@ public class ConfigFrame extends JFrame {
 		checkApp = new JCheckBox();
 		checkApp.setSelected(Factory.get().isCheckProcess());
 
-		findPort = new JButton("Try to find the port");
-		findPort.addActionListener(new ActionListener() {
+		findPortBtn = new JButton("Try to find the port");
+		findPortBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				findPort.setEnabled(false);
+                findPortBtn.setEnabled(false);
 				arduinoSerial.setText(ArduinoSender.getArduinoPort(Integer.valueOf(arduinoDataRate.getText()), ArduinoSender.defaultTestString));
-				findPort.setEnabled(true);
+                findPortBtn.setEnabled(true);
 			}
 		});
 
-		checkUpdate = new JButton("Check for update");
-		checkUpdate.addActionListener(new ActionListener() {
+		checkUpdateBtn = new JButton("Check for update");
+        checkUpdateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				checkUpdate.setEnabled(false);
-				updater.setUrl(updateUrl.getText());
-				updater.manage();
-				checkUpdate.setEnabled(true);
+                checkUpdateBtn.setEnabled(false);
+                checkUpdate.setUrl(updateUrl.getText());
+                checkUpdate.manage();
+                checkUpdateBtn.setEnabled(true);
 			}
 		});
 
@@ -122,7 +122,7 @@ public class ConfigFrame extends JFrame {
 		add(ambiFont.setFont(arduinoSerial));
 
 		add(ambiFont.setFontBold(new JLabel("")));
-		add(ambiFont.setFont(findPort));
+		add(ambiFont.setFont(findPortBtn));
 
 		add(ambiFont.setFontBold(new JLabel(" Square Size")));
 		add(ambiFont.setFont(squareSize));
@@ -151,8 +151,8 @@ public class ConfigFrame extends JFrame {
 		add(ambiFont.setFontBold(new JLabel(" Update Url")));
 		add(ambiFont.setFont(updateUrl));
 
-		add(ambiFont.setFontBold(new JLabel("Current version: " + updater.getLocalVersion())));
-		add(ambiFont.setFont(checkUpdate));
+		add(ambiFont.setFontBold(new JLabel("Current version: " + checkUpdate.getLocalVersion())));
+		add(ambiFont.setFont(checkUpdateBtn));
 
 		add(ambiFont.setFontBold(new JLabel("")));
 		add(ambiFont.setFont(save));

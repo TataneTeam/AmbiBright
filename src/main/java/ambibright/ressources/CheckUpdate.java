@@ -4,13 +4,14 @@ import java.util.jar.JarFile;
 
 import javax.swing.*;
 
-public class Updater {
+public class CheckUpdate
+{
 
 	public static final String updateVersionUrl = "lastcompiled.txt";
 	public static final String manifestAttribute = "Implementation-Version";
 	public String url;
 
-	public Updater(String url) {
+	public CheckUpdate( String url ) {
 		super();
 		this.url = url;
 	}
