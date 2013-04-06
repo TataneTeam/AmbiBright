@@ -208,4 +208,8 @@ public class Factory {
 		getConfig().save();
 	}
 
+	public Tray getTray() {
+		return tray;
+	}
+
 }

@@ -4,7 +4,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 
 import ambibright.ressources.Factory;
 
@@ -44,9 +44,10 @@ public class Manager {
 				Factory.get().getArduinoSender().open(Factory.get().getArduinoSerial(), Factory.get().getArduinoDataRate());
 			} catch (Exception e) {
 				e.printStackTrace();
-                // If the communication with the arduino failed, we can stop the process.
-                // The user have to change the configuration and restart.
-                stop();
+				// If the communication with the arduino failed, we can stop the
+				// process.
+				// The user have to change the configuration and restart.
+				stop();
 				JOptionPane.showMessageDialog(null, "Arduino connection error:\n" + e, Factory.appName, JOptionPane.ERROR_MESSAGE);
 				return;
 			}

@@ -67,19 +67,19 @@ public class ConfigFrame extends JFrame {
 		findPortBtn = new JButton("Try to find the port");
 		findPortBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                findPortBtn.setEnabled(false);
+				findPortBtn.setEnabled(false);
 				arduinoSerial.setText(ArduinoSender.getArduinoPort(Integer.valueOf(arduinoDataRate.getText()), ArduinoSender.defaultTestString));
-                findPortBtn.setEnabled(true);
+				findPortBtn.setEnabled(true);
 			}
 		});
 
 		checkUpdateBtn = new JButton("Check for update");
-        checkUpdateBtn.addActionListener(new ActionListener() {
+		checkUpdateBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-                checkUpdateBtn.setEnabled(false);
-                checkUpdate.setUrl(updateUrl.getText());
-                checkUpdate.manage();
-                checkUpdateBtn.setEnabled(true);
+				checkUpdateBtn.setEnabled(false);
+				checkUpdate.setUrl(updateUrl.getText());
+				checkUpdate.manage();
+				checkUpdateBtn.setEnabled(true);
 			}
 		});
 

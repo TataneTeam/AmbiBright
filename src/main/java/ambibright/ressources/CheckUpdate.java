@@ -2,16 +2,15 @@ package ambibright.ressources;
 
 import java.util.jar.JarFile;
 
-import javax.swing.*;
+import javax.swing.JOptionPane;
 
-public class CheckUpdate
-{
+public class CheckUpdate {
 
 	public static final String updateVersionUrl = "lastcompiled.txt";
 	public static final String manifestAttribute = "Implementation-Version";
 	public String url;
 
-	public CheckUpdate( String url ) {
+	public CheckUpdate(String url) {
 		super();
 		this.url = url;
 	}

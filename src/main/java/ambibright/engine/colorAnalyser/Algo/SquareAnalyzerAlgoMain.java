@@ -29,7 +29,6 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 			}
 		}
 		nbPixel = -1;
-		current = -1;
 		for (int key : map.keySet()) {
 			if (map.get(key) > nbPixel) {
 				nbPixel = map.get(key);

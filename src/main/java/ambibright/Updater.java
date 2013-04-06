@@ -13,9 +13,9 @@ import ambibright.ressources.ToolFile;
 
 public class Updater {
 
-    public static final String AMBIBRIGHT_BAT = "AmbiBright.bat";
+	public static final String AMBIBRIGHT_BAT = "AmbiBright.bat";
 
-    public static final String UPDATE_ZIP_NAME = "AmbiBright.zip";
+	public static final String UPDATE_ZIP_NAME = "AmbiBright.zip";
 
 	public static void main(String[] args) throws Exception {
 
