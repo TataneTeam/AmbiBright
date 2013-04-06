@@ -45,7 +45,6 @@ public class Factory {
 
 	private Factory() {
 		this.config = new Config(configFileName);
-		this.config.load();
 		this.config.init();
 
 		try {

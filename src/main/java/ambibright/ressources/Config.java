@@ -1,5 +1,6 @@
 package ambibright.ressources;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
@@ -59,29 +60,41 @@ public class Config {
 		properties = new Properties();
 	}
 
-	public void load() {
-		FileInputStream stream = null;
-		try {
-			stream = new FileInputStream(path);
-			properties.load(stream);
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				stream.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	public void init() {
+        boolean exists = loadIfExists();
 		for (Parameters parameter : Parameters.values()) {
 			if (!isSet(parameter) || parameter.isForceValue()) {
 				put(parameter, parameter.getDefaultValue().toString());
 			}
 		}
+        if(!exists){
+            save();
+        }
 	}
+
+    private boolean loadIfExists() {
+        File configFile = new File(path);
+        if(!configFile.exists()){
+            return false;
+        }
+        FileInputStream stream = null;
+        try {
+            stream = new FileInputStream(configFile);
+            properties.load(stream);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            if(null != stream){
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
 
 	public void save() {
 		FileOutputStream stream = null;
