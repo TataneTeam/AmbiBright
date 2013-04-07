@@ -59,6 +59,13 @@ public class Tray extends TrayIcon {
 			}
 		});
 		getPopupMenu().add(ambiFont.setFont(ambiFrame));
+		MenuItem simpleFpsFrame = new MenuItem(" Simple FPS Frame");
+		simpleFpsFrame.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				showInfo("Simple FPS Frame: " + (Factory.get().getSimpleFPSFrame().display() ? "ON" : "OFF"));
+			}
+		});
+		getPopupMenu().add(ambiFont.setFont(simpleFpsFrame));
 		getPopupMenu().addSeparator();
 
 		MenuItem stop = new MenuItem(" Stop");

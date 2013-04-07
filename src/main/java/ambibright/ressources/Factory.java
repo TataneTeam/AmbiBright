@@ -18,6 +18,7 @@ import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ihm.AmbiFont;
 import ambibright.ihm.ColorFrame;
 import ambibright.ihm.MonitoringFrame;
+import ambibright.ihm.SimpleFPSFrame;
 import ambibright.ihm.Tray;
 import ambibright.ressources.Config.Parameters;
 
@@ -41,6 +42,7 @@ public class Factory {
 	private final Rectangle fullScreenBounds;
 	private final CurrentBounds currentBounds;
 	private final Manager manager;
+	private final SimpleFPSFrame simpleFPSFrame;
 	private UpdateColorsService updateColorsService;
 
 	private Factory() {
@@ -63,6 +65,7 @@ public class Factory {
 		this.ambiFrame = new MonitoringFrame(getLedNBLeft(), getLedNBTop(), getImageIcon());
 		this.arduinoSender = new ArduinoSender(getLedNBLeft(), getLedNBTop());
 		this.manager = new Manager();
+		this.simpleFPSFrame = new SimpleFPSFrame(getBounds());
 	}
 
 	public Manager getManager() {
@@ -209,6 +212,14 @@ public class Factory {
 
 	public Tray getTray() {
 		return tray;
+	}
+
+	public AmbiFont getAmbiFont() {
+		return ambiFont;
+	}
+
+	public SimpleFPSFrame getSimpleFPSFrame() {
+		return simpleFPSFrame;
 	}
 
 }

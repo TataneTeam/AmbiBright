@@ -9,6 +9,7 @@ import java.util.Calendar;
 import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ihm.MonitoringFrame;
 import ambibright.ressources.CurrentBounds;
+import ambibright.ressources.Factory;
 
 /**
  * Created with IntelliJ IDEA. User: Nico Date: 23/03/13 Time: 22:00 To change
@@ -53,6 +54,7 @@ public class UpdateColorsService implements Runnable {
 			second = Calendar.getInstance().get(Calendar.SECOND);
 			if (second != currentSecond) {
 				monitoringFrame.setInfo(fps + " FPS");
+				Factory.get().getSimpleFPSFrame().setValue(fps + " FPS");
 				fps = 1;
 				currentSecond = second;
 			} else {
