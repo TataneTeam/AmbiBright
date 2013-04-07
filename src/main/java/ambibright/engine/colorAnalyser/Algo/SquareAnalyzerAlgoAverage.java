@@ -9,7 +9,7 @@ public class SquareAnalyzerAlgoAverage implements SquareAnalyserAlgorithm {
 
 	private int current, red, green, blue, nbPixel, posX, posY;
 
-	public Integer[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch) {
+	public int[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch) {
 		red = 0;
 		green = 0;
 		blue = 0;
@@ -23,6 +23,6 @@ public class SquareAnalyzerAlgoAverage implements SquareAnalyserAlgorithm {
 				nbPixel++;
 			}
 		}
-		return new Integer[] { red / nbPixel, green / nbPixel, blue / nbPixel };
+		return new int[] { red / nbPixel, green / nbPixel, blue / nbPixel };
 	}
 }

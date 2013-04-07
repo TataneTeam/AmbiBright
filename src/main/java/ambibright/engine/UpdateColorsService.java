@@ -22,13 +22,13 @@ public class UpdateColorsService implements Runnable {
 	// consomment les couleurs pour totalement découpler le traitement
 	private final ArduinoSender arduino;
 	private final MonitoringFrame monitoringFrame;
-	private final Integer[][] result;
+	private final int[][] result;
 	private final CurrentBounds currentBounds;
 	private final SquareAnalyser colorAnalyser;
 	private int deltaR, deltaG, deltaB;
 	private int pos;
 	private BufferedImage image;
-	private Integer[][] old;
+	private final int[][] old;
 	private int currentSecond = 0;
 	private int second = 0;
 	private int fps = 0;
@@ -44,9 +44,8 @@ public class UpdateColorsService implements Runnable {
 		this.deltaR = red;
 		this.deltaG = green;
 		this.deltaB = blue;
-		this.old = new Integer[nbLed][3];
-		Arrays.fill(old, 0, old.length, new Integer[] { 0, 0, 0 });
-		this.result = new Integer[nbLed][3];
+		this.old = new int[nbLed][3];
+		this.result = new int[nbLed][3];
 	}
 
 	public void run() {
@@ -69,7 +68,7 @@ public class UpdateColorsService implements Runnable {
 	}
 
 	// L > T > R
-	private Integer[][] getColors() {
+	private int[][] getColors() {
 		pos = 0;
 		image = robot.createScreenCapture(currentBounds.getBounds());
 
@@ -85,13 +84,19 @@ public class UpdateColorsService implements Runnable {
 		return result;
 	}
 
-	private byte[] getColorsToSend(Integer[][] colors) {
+	private byte[] getColorsToSend(int[][] colors) {
 		byte[] result = arduino.getArray();
 		int j = 6;
+
+        // TODO make it configurable
+        int smoothing = 3;
+
 		for (int i = 0; i < colors.length; i++) {
-			old[i][0] = (colors[i][0] + old[i][0]) / 2;
-			old[i][1] = (colors[i][1] + old[i][1]) / 2;
-			old[i][2] = (colors[i][2] + old[i][2]) / 2;
+
+            old[i][0] = ((colors[i][0] * smoothing) + old[i][0]) / (1 + smoothing);
+            old[i][1] = ((colors[i][1] * smoothing) + old[i][1]) / (1 + smoothing);
+            old[i][2] = ((colors[i][2] * smoothing) + old[i][2]) / (1 + smoothing);
+
 			result[j++] = (byte) (Math.min(Math.max((old[i][0]) + deltaR, 0), 255));
 			result[j++] = (byte) (Math.min(Math.max((old[i][1]) + deltaG, 0), 255));
 			result[j++] = (byte) (Math.min(Math.max((old[i][2]) + deltaB, 0), 255));

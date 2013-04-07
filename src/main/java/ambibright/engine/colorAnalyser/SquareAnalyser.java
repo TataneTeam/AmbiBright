@@ -16,7 +16,7 @@ public enum SquareAnalyser {
 		this.squareAnalyserAlgorithm = squareAnalyserAlgorithm;
 	}
 
-	public Integer[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch) {
+	public int[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch) {
 		return squareAnalyserAlgorithm.getColor(image, bound, screenAnalysePitch);
 	}
 

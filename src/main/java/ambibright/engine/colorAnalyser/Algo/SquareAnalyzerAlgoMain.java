@@ -16,7 +16,7 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 		map = new HashMap<Integer, Integer>();
 	}
 
-	public Integer[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch) {
+	public int[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch) {
 		map.clear();
 		for (posX = 0; posX < bound.width && posX + bound.x < image.getWidth(); posX += screenAnalysePitch) {
 			for (posY = 0; posY < bound.height && posY + bound.y < image.getHeight(); posY += screenAnalysePitch) {
@@ -35,7 +35,7 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 				current = key;
 			}
 		}
-		return new Integer[] { (current & 0x00ff0000) >> 16, (current & 0x0000ff00) >> 8, current & 0x000000ff };
+		return new int[] { (current & 0x00ff0000) >> 16, (current & 0x0000ff00) >> 8, current & 0x000000ff };
 	}
 
 }
