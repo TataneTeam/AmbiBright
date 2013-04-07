@@ -12,6 +12,7 @@ import javax.swing.ImageIcon;
 import ambibright.engine.ArduinoSender;
 import ambibright.engine.AspectRatioService;
 import ambibright.engine.Manager;
+import ambibright.engine.MonitoringProcess;
 import ambibright.engine.ProcessCheckerService;
 import ambibright.engine.UpdateColorsService;
 import ambibright.engine.colorAnalyser.SquareAnalyser;
@@ -173,6 +174,10 @@ public class Factory {
 
 	public ProcessCheckerService newProcessCheckerService() {
 		return new ProcessCheckerService(manager, getProcessList());
+	}
+	
+	public MonitoringProcess newMonitoringProcess(){
+		return new MonitoringProcess(updateColorsService, ambiFrame, simpleFPSFrame, robot, currentBounds);
 	}
 
 	public int getLedTotalNumber() {

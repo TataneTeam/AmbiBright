@@ -5,7 +5,6 @@ import java.awt.Robot;
 import java.awt.image.BufferedImage;
 
 import ambibright.ressources.CurrentBounds;
-import ambibright.ressources.Factory;
 
 /**
  * Created with IntelliJ IDEA. User: Nico Date: 23/03/13 Time: 21:36 To change
@@ -67,7 +66,6 @@ public class AspectRatioService implements Runnable {
 			lastScreenBounds = newBounds;
 			currentBounds.updateBounds(newBounds);
 		}
-		Factory.get().getAmbiFrame().setImage(robot.createScreenCapture(lastScreenBounds));
 	}
 
 	public boolean isBlack(int color) {

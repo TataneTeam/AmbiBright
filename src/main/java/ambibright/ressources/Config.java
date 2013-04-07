@@ -29,7 +29,7 @@ public class Config {
 		CONFIG_MONITORING_XY("0 0"),
 		CONFIG_SQUARE_ANALYSER(SquareAnalyser.MainColor),
 		CONFIG_UPDATE_URL("https://raw.github.com/TataneTeam/AmbiBright/master/", true),
-		CONFIG_SMOOTHING(0);
+		CONFIG_SMOOTHING(1);
 
 		private Object defaultValue;
 		private boolean forceValue = false;

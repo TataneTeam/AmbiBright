@@ -3,12 +3,10 @@ package ambibright.engine;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
-import java.util.Calendar;
 
 import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ihm.MonitoringFrame;
 import ambibright.ressources.CurrentBounds;
-import ambibright.ressources.Factory;
 
 /**
  * Created with IntelliJ IDEA. User: Nico Date: 23/03/13 Time: 22:00 To change
@@ -28,8 +26,6 @@ public class UpdateColorsService implements Runnable {
 	private int pos;
 	private BufferedImage image;
 	private final int[][] old;
-	private int currentSecond = 0;
-	private int second = 0;
 	private int fps = 0;
 	private int screenAnalysePitch;
 
@@ -50,15 +46,7 @@ public class UpdateColorsService implements Runnable {
 
 	public void run() {
 		try {
-			second = Calendar.getInstance().get(Calendar.SECOND);
-			if (second != currentSecond) {
-				monitoringFrame.setInfo(fps + " FPS");
-				Factory.get().getSimpleFPSFrame().setValue(fps + " FPS");
-				fps = 1;
-				currentSecond = second;
-			} else {
-				fps++;
-			}
+			fps++;
 			byte[] colors = getColorsToSend(getColors());
 			arduino.write(colors);
 			monitoringFrame.refresh(colors);
@@ -102,6 +90,12 @@ public class UpdateColorsService implements Runnable {
 		this.deltaR = red;
 		this.deltaG = green;
 		this.deltaB = blue;
+	}
+	
+	public int getAndResetIterationNumber(){
+		int result = fps;
+		fps = 0;
+		return result;
 	}
 
 }

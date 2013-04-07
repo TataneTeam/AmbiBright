@@ -16,6 +16,7 @@ public class Manager {
 	private ScheduledExecutorService processCheckerService;
 	private ScheduledExecutorService aspectRatioService;
 	private ScheduledExecutorService colorService;
+	private ScheduledExecutorService monitoringServive;
 	private boolean isRunning = false;
 
 	public void start() {
@@ -57,6 +58,9 @@ public class Manager {
 
 			colorService = Executors.newScheduledThreadPool(1);
 			colorService.scheduleAtFixedRate(Factory.get().newUpdateColorsService(), 50, 1000 / Factory.get().getFpsWanted(), TimeUnit.MILLISECONDS);
+			
+			monitoringServive = Executors.newScheduledThreadPool(1);
+			monitoringServive.scheduleAtFixedRate(Factory.get().newMonitoringProcess(), 1, 1, TimeUnit.SECONDS);
 
 			isRunning = true;
 			System.out.println("Started");
@@ -72,6 +76,9 @@ public class Manager {
 			colorService.shutdown();
 			colorService = null;
 
+			monitoringServive.shutdown();
+			monitoringServive = null;
+			
 			Factory.get().getAmbiFrame().setInfo("Not running");
 			Factory.get().getArduinoSender().close();
 

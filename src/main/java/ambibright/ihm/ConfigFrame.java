@@ -63,10 +63,10 @@ public class ConfigFrame extends JFrame {
 
 		smoothing = new JComboBox();
 		smoothing.setBorder(null);
-		for (int i = 0; i < 5; i++) {
+		for (int i = 1; i < 6; i++) {
 			smoothing.addItem(i);
 		}
-		smoothing.setSelectedItem(Factory.get().getSmoothing());
+		smoothing.setSelectedItem(Factory.get().getSmoothing() - 1);
 
 		checkApp = new JCheckBox();
 		checkApp.setSelected(Factory.get().isCheckProcess());
@@ -107,7 +107,7 @@ public class ConfigFrame extends JFrame {
 				config.put(Parameters.CONFIG_DELAY_CHECK_PROCESS, delayCheckProcess.getText());
 				config.put(Parameters.CONFIG_SQUARE_ANALYSER, squareAnalyser.getSelectedItem().toString());
 				config.put(Parameters.CONFIG_UPDATE_URL, updateUrl.getText());
-				config.put(Parameters.CONFIG_SMOOTHING, smoothing.getSelectedIndex() + "");
+				config.put(Parameters.CONFIG_SMOOTHING, smoothing.getSelectedIndex() + 1 +"");
 				config.save();
 				Factory.get().getManager().restart();
 				dispose();
