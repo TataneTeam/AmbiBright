@@ -38,6 +38,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		lpane.setOpaque(false);
 		add(lpane);
 		lpane.setPreferredSize(new Dimension(bounds.width, bounds.height));
+        lpane.setLocation(0, 0);
 
 		back = new JPanel();
 		back.setBackground(Color.white);
@@ -55,6 +56,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 				restorConfig();
+                Factory.get().getConfig().save();
 			}
 		});
 
@@ -66,18 +68,18 @@ public class ColorFrame extends JDialog implements ChangeListener {
 
 		int y = 0;
 		lpane.add(back, JLayeredPane.DEFAULT_LAYER);
-		back.setBounds(bounds);
+        back.setBounds(0,0,bounds.width,bounds.height);
 
 		lpane.add(colorChooser, JLayeredPane.POPUP_LAYER);
-		y = bounds.y + (bounds.height - colorChooser.getPreferredSize().height) / 2;
-		colorChooser.setBounds(bounds.x + (bounds.width - colorChooser.getPreferredSize().width) / 2, y, colorChooser.getPreferredSize().width, colorChooser.getPreferredSize().height);
+		y = (bounds.height - colorChooser.getPreferredSize().height) / 2;
+		colorChooser.setBounds((bounds.width - colorChooser.getPreferredSize().width) / 2, y, colorChooser.getPreferredSize().width, colorChooser.getPreferredSize().height);
 
 		lpane.add(colorManager, JLayeredPane.POPUP_LAYER);
 		y += colorChooser.getPreferredSize().height + 20;
-		colorManager.setBounds(bounds.x + (bounds.width - colorManager.getPreferredSize().width) / 2, y, colorManager.getPreferredSize().width, colorManager.getPreferredSize().height);
+		colorManager.setBounds((bounds.width - colorManager.getPreferredSize().width) / 2, y, colorManager.getPreferredSize().width, colorManager.getPreferredSize().height);
 
 		lpane.add(ambiFont.setFont(close), JLayeredPane.POPUP_LAYER);
-		close.setBounds(bounds.x + (bounds.width - close.getPreferredSize().width) / 2, bounds.y + (bounds.height - close.getPreferredSize().height), close.getPreferredSize().width, close.getPreferredSize().height);
+		close.setBounds((bounds.width - close.getPreferredSize().width) / 2, bounds.y + (bounds.height - close.getPreferredSize().height), close.getPreferredSize().width, close.getPreferredSize().height);
 
 		setUndecorated(true);
 		pack();
