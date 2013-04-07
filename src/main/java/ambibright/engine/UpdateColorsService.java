@@ -3,7 +3,6 @@ package ambibright.engine;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.Calendar;
 
 import ambibright.engine.colorAnalyser.SquareAnalyser;
@@ -25,7 +24,7 @@ public class UpdateColorsService implements Runnable {
 	private final int[][] result;
 	private final CurrentBounds currentBounds;
 	private final SquareAnalyser colorAnalyser;
-	private int deltaR, deltaG, deltaB;
+	private int deltaR, deltaG, deltaB, smoothing;
 	private int pos;
 	private BufferedImage image;
 	private final int[][] old;
@@ -34,7 +33,7 @@ public class UpdateColorsService implements Runnable {
 	private int fps = 0;
 	private int screenAnalysePitch;
 
-	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue) {
+	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue, int smoothing) {
 		this.robot = robot;
 		this.arduino = arduino;
 		this.monitoringFrame = monitoringFrame;
@@ -46,6 +45,7 @@ public class UpdateColorsService implements Runnable {
 		this.deltaB = blue;
 		this.old = new int[nbLed][3];
 		this.result = new int[nbLed][3];
+		this.smoothing = smoothing;
 	}
 
 	public void run() {
@@ -87,16 +87,10 @@ public class UpdateColorsService implements Runnable {
 	private byte[] getColorsToSend(int[][] colors) {
 		byte[] result = arduino.getArray();
 		int j = 6;
-
-        // TODO make it configurable
-        int smoothing = 3;
-
 		for (int i = 0; i < colors.length; i++) {
-
-            old[i][0] = ((colors[i][0] * smoothing) + old[i][0]) / (1 + smoothing);
-            old[i][1] = ((colors[i][1] * smoothing) + old[i][1]) / (1 + smoothing);
-            old[i][2] = ((colors[i][2] * smoothing) + old[i][2]) / (1 + smoothing);
-
+			old[i][0] = ((colors[i][0] * smoothing) + old[i][0]) / (1 + smoothing);
+			old[i][1] = ((colors[i][1] * smoothing) + old[i][1]) / (1 + smoothing);
+			old[i][2] = ((colors[i][2] * smoothing) + old[i][2]) / (1 + smoothing);
 			result[j++] = (byte) (Math.min(Math.max((old[i][0]) + deltaR, 0), 255));
 			result[j++] = (byte) (Math.min(Math.max((old[i][1]) + deltaG, 0), 255));
 			result[j++] = (byte) (Math.min(Math.max((old[i][2]) + deltaB, 0), 255));

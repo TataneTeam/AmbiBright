@@ -65,7 +65,7 @@ public class Factory {
 		this.ambiFrame = new MonitoringFrame(getLedNBLeft(), getLedNBTop(), getImageIcon());
 		this.arduinoSender = new ArduinoSender(getLedNBLeft(), getLedNBTop());
 		this.manager = new Manager();
-		this.simpleFPSFrame = new SimpleFPSFrame(getBounds());
+		this.simpleFPSFrame = new SimpleFPSFrame();
 	}
 
 	public Manager getManager() {
@@ -180,7 +180,7 @@ public class Factory {
 	}
 
 	public UpdateColorsService newUpdateColorsService() {
-		updateColorsService = new UpdateColorsService(robot, getArduinoSender(), ambiFrame, currentBounds, getSquareAnalyser(), getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B());
+		updateColorsService = new UpdateColorsService(robot, getArduinoSender(), ambiFrame, currentBounds, getSquareAnalyser(), getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B(), getSmoothing());
 		return updateColorsService;
 	}
 
@@ -220,6 +220,10 @@ public class Factory {
 
 	public SimpleFPSFrame getSimpleFPSFrame() {
 		return simpleFPSFrame;
+	}
+
+	public Integer getSmoothing() {
+		return Integer.valueOf(getConfig().get(Parameters.CONFIG_SMOOTHING));
 	}
 
 }

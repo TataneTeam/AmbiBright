@@ -38,7 +38,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		lpane.setOpaque(false);
 		add(lpane);
 		lpane.setPreferredSize(new Dimension(bounds.width, bounds.height));
-        lpane.setLocation(0, 0);
+		lpane.setLocation(0, 0);
 
 		back = new JPanel();
 		back.setBackground(Color.white);
@@ -56,7 +56,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 				restorConfig();
-                Factory.get().getConfig().save();
+				Factory.get().getConfig().save();
 			}
 		});
 
@@ -68,7 +68,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 
 		int y = 0;
 		lpane.add(back, JLayeredPane.DEFAULT_LAYER);
-        back.setBounds(0,0,bounds.width,bounds.height);
+		back.setBounds(0, 0, bounds.width, bounds.height);
 
 		lpane.add(colorChooser, JLayeredPane.POPUP_LAYER);
 		y = (bounds.height - colorChooser.getPreferredSize().height) / 2;

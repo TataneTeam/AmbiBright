@@ -28,7 +28,8 @@ public class Config {
 		CONFIG_DELAY_CHECK_PROCESS(5000),
 		CONFIG_MONITORING_XY("0 0"),
 		CONFIG_SQUARE_ANALYSER(SquareAnalyser.MainColor),
-		CONFIG_UPDATE_URL("https://raw.github.com/TataneTeam/AmbiBright/master/", true);
+		CONFIG_UPDATE_URL("https://raw.github.com/TataneTeam/AmbiBright/master/", true),
+		CONFIG_SMOOTHING(0);
 
 		private Object defaultValue;
 		private boolean forceValue = false;
@@ -61,40 +62,40 @@ public class Config {
 	}
 
 	public void init() {
-        boolean exists = loadIfExists();
+		boolean exists = loadIfExists();
 		for (Parameters parameter : Parameters.values()) {
 			if (!isSet(parameter) || parameter.isForceValue()) {
 				put(parameter, parameter.getDefaultValue().toString());
 			}
 		}
-        if(!exists){
-            save();
-        }
+		if (!exists) {
+			save();
+		}
 	}
 
-    private boolean loadIfExists() {
-        File configFile = new File(path);
-        if(!configFile.exists()){
-            return false;
-        }
-        FileInputStream stream = null;
-        try {
-            stream = new FileInputStream(configFile);
-            properties.load(stream);
-            return true;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            if(null != stream){
-                try {
-                    stream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
+	private boolean loadIfExists() {
+		File configFile = new File(path);
+		if (!configFile.exists()) {
+			return false;
+		}
+		FileInputStream stream = null;
+		try {
+			stream = new FileInputStream(configFile);
+			properties.load(stream);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			if (null != stream) {
+				try {
+					stream.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
 
 	public void save() {
 		FileOutputStream stream = null;

@@ -23,7 +23,7 @@ import ambibright.ressources.Factory;
 public class ConfigFrame extends JFrame {
 
 	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize, fps, ledNbTop, lebNbLeft, analysePitch, delayCheckRatio, delayCheckProcess, updateUrl;
-	private JComboBox screenDevice, squareAnalyser;
+	private JComboBox screenDevice, squareAnalyser, smoothing;
 	private JCheckBox checkApp;
 	private CheckUpdate checkUpdate;
 	private JButton checkUpdateBtn, findPortBtn;
@@ -31,7 +31,7 @@ public class ConfigFrame extends JFrame {
 	public ConfigFrame(AmbiFont ambiFont, final Config config) {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.get().getImageIcon());
-		setLayout(new GridLayout(17, 2));
+		setLayout(new GridLayout(18, 2));
 
 		arduinoSerial = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
 		appList = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_PROCESS_LIST));
@@ -60,6 +60,13 @@ public class ConfigFrame extends JFrame {
 			squareAnalyser.addItem(c);
 		}
 		squareAnalyser.setSelectedItem(Factory.get().getSquareAnalyser());
+
+		smoothing = new JComboBox();
+		smoothing.setBorder(null);
+		for (int i = 0; i < 5; i++) {
+			smoothing.addItem(i);
+		}
+		smoothing.setSelectedItem(Factory.get().getSmoothing());
 
 		checkApp = new JCheckBox();
 		checkApp.setSelected(Factory.get().isCheckProcess());
@@ -100,6 +107,7 @@ public class ConfigFrame extends JFrame {
 				config.put(Parameters.CONFIG_DELAY_CHECK_PROCESS, delayCheckProcess.getText());
 				config.put(Parameters.CONFIG_SQUARE_ANALYSER, squareAnalyser.getSelectedItem().toString());
 				config.put(Parameters.CONFIG_UPDATE_URL, updateUrl.getText());
+				config.put(Parameters.CONFIG_SMOOTHING, smoothing.getSelectedIndex() + "");
 				config.save();
 				Factory.get().getManager().restart();
 				dispose();
@@ -126,6 +134,9 @@ public class ConfigFrame extends JFrame {
 
 		add(ambiFont.setFontBold(new JLabel(" Square Size")));
 		add(ambiFont.setFont(squareSize));
+
+		add(ambiFont.setFontBold(new JLabel(" Smoothing")));
+		add(ambiFont.setFont(smoothing));
 
 		add(ambiFont.setFontBold(new JLabel(" Check for Process")));
 		add(ambiFont.setFont(checkApp));
