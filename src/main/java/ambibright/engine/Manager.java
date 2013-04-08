@@ -58,9 +58,15 @@ public class Manager {
 
 			colorService = Executors.newScheduledThreadPool(1);
 			colorService.scheduleAtFixedRate(Factory.get().newUpdateColorsService(), 50, 1000 / Factory.get().getFpsWanted(), TimeUnit.MILLISECONDS);
-			
+
 			monitoringServive = Executors.newScheduledThreadPool(1);
 			monitoringServive.scheduleAtFixedRate(Factory.get().newMonitoringProcess(), 1, 1, TimeUnit.SECONDS);
+
+			Factory.get().getSimpleFPSFrame().setVisible(Factory.get().isShowFPSFrame());
+
+			if (Factory.get().isBlackOtherScreens()) {
+				Factory.get().getBlackScreenManager().createBlackScreens(Factory.get().getBounds());
+			}
 
 			isRunning = true;
 			System.out.println("Started");
@@ -78,9 +84,11 @@ public class Manager {
 
 			monitoringServive.shutdown();
 			monitoringServive = null;
-			
+
 			Factory.get().getAmbiFrame().setInfo("Not running");
 			Factory.get().getArduinoSender().close();
+			Factory.get().getSimpleFPSFrame().setVisible(false);
+			Factory.get().getBlackScreenManager().removeBlackScreens();
 
 			isRunning = false;
 			System.out.println("Stopped");

@@ -19,6 +19,7 @@ public class SimpleFPSFrame extends JDialog {
 		super();
 		setUndecorated(true);
 		setAlwaysOnTop(true);
+		setFocusable(false);
 		AWTUtilities.setWindowOpaque(this, false);
 		text = new JLabel();
 		text.setForeground(Color.magenta);

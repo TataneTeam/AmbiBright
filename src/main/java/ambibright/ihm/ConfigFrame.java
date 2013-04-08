@@ -24,14 +24,14 @@ public class ConfigFrame extends JFrame {
 
 	private JTextField arduinoSerial, arduinoDataRate, appList, squareSize, fps, ledNbTop, lebNbLeft, analysePitch, delayCheckRatio, delayCheckProcess, updateUrl;
 	private JComboBox screenDevice, squareAnalyser, smoothing;
-	private JCheckBox checkApp;
+	private JCheckBox checkApp, blackOtherScreens, showFPSFrame;
 	private CheckUpdate checkUpdate;
 	private JButton checkUpdateBtn, findPortBtn;
 
 	public ConfigFrame(AmbiFont ambiFont, final Config config) {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.get().getImageIcon());
-		setLayout(new GridLayout(18, 2));
+		setLayout(new GridLayout(20, 2));
 
 		arduinoSerial = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
 		appList = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_PROCESS_LIST));
@@ -71,6 +71,12 @@ public class ConfigFrame extends JFrame {
 		checkApp = new JCheckBox();
 		checkApp.setSelected(Factory.get().isCheckProcess());
 
+		blackOtherScreens = new JCheckBox();
+		blackOtherScreens.setSelected(Factory.get().isBlackOtherScreens());
+
+		showFPSFrame = new JCheckBox();
+		showFPSFrame.setSelected(Factory.get().isShowFPSFrame());
+
 		findPortBtn = new JButton("Try to find the port");
 		findPortBtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -107,8 +113,11 @@ public class ConfigFrame extends JFrame {
 				config.put(Parameters.CONFIG_DELAY_CHECK_PROCESS, delayCheckProcess.getText());
 				config.put(Parameters.CONFIG_SQUARE_ANALYSER, squareAnalyser.getSelectedItem().toString());
 				config.put(Parameters.CONFIG_UPDATE_URL, updateUrl.getText());
-				config.put(Parameters.CONFIG_SMOOTHING, smoothing.getSelectedIndex() + 1 +"");
+				config.put(Parameters.CONFIG_SMOOTHING, smoothing.getSelectedIndex() + 1 + "");
+				config.put(Parameters.CONFIG_BLACK_OTHER_SCREENS, blackOtherScreens.isSelected() + "");
+				config.put(Parameters.CONFIG_SHOW_FPS_FRAME, showFPSFrame.isSelected() + "");
 				config.save();
+				Factory.get().getTray().updateCheckBox();
 				Factory.get().getManager().restart();
 				dispose();
 			}
@@ -158,6 +167,12 @@ public class ConfigFrame extends JFrame {
 
 		add(ambiFont.setFontBold(new JLabel(" Delay check ratio")));
 		add(ambiFont.setFont(delayCheckRatio));
+
+		add(ambiFont.setFontBold(new JLabel(" Black other screens")));
+		add(ambiFont.setFont(blackOtherScreens));
+
+		add(ambiFont.setFontBold(new JLabel(" Show FPS Frame")));
+		add(ambiFont.setFont(showFPSFrame));
 
 		add(ambiFont.setFontBold(new JLabel(" Update Url")));
 		add(ambiFont.setFont(updateUrl));

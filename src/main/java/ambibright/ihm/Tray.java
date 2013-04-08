@@ -1,12 +1,16 @@
 package ambibright.ihm;
 
+import java.awt.CheckboxMenuItem;
 import java.awt.Image;
+import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 import javax.swing.JFrame;
 
@@ -15,6 +19,8 @@ import ambibright.ressources.Config.Parameters;
 import ambibright.ressources.Factory;
 
 public class Tray extends TrayIcon {
+
+	private final CheckboxMenuItem showFPSFrame, checkProcess, blackScreens;
 
 	public Tray(Image icon, final AmbiFont ambiFont, final Config config) {
 		super(icon);
@@ -26,6 +32,7 @@ public class Tray extends TrayIcon {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		MenuItem configItem = new MenuItem(" Configuration");
 		configItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -33,25 +40,52 @@ public class Tray extends TrayIcon {
 			}
 		});
 		getPopupMenu().add(ambiFont.setFont(configItem));
-		MenuItem checkApp = new MenuItem(" Check for Process");
-		checkApp.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				config.put(Parameters.CONFIG_CHECK_PROCESS, !Factory.get().isCheckProcess() + "");
+
+		Menu configMenu = new Menu(" Quick Configuration");
+		getPopupMenu().add(ambiFont.setFont(configMenu));
+		blackScreens = new CheckboxMenuItem(" Black other screens");
+		blackScreens.setState("true".equals(config.get(Parameters.CONFIG_BLACK_OTHER_SCREENS)));
+		blackScreens.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				boolean newValue = !Factory.get().isBlackOtherScreens();
+				config.put(Parameters.CONFIG_BLACK_OTHER_SCREENS, newValue + "");
 				config.save();
-				showInfo("Check for process: " + Factory.get().isCheckProcess());
+				showInfo("Black other screens: " + (newValue ? "ON" : "OFF"));
 			}
 		});
-		getPopupMenu().add(ambiFont.setFont(checkApp));
-		getPopupMenu().addSeparator();
+		configMenu.add(ambiFont.setFont(blackScreens));
+		checkProcess = new CheckboxMenuItem(" Check for Process");
+		checkProcess.setState("true".equals(config.get(Parameters.CONFIG_CHECK_PROCESS)));
+		checkProcess.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				boolean newValue = !Factory.get().isCheckProcess();
+				config.put(Parameters.CONFIG_CHECK_PROCESS, newValue + "");
+				config.save();
+				showInfo("Check for process: " + (newValue ? "ON" : "OFF"));
+			}
+		});
+		configMenu.add(ambiFont.setFont(checkProcess));
+		showFPSFrame = new CheckboxMenuItem(" Show FPS Frame");
+		showFPSFrame.setState("true".equals(config.get(Parameters.CONFIG_SHOW_FPS_FRAME)));
+		showFPSFrame.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				boolean newValue = !Factory.get().isShowFPSFrame();
+				config.put(Parameters.CONFIG_SHOW_FPS_FRAME, newValue + "");
+				config.save();
+				Factory.get().getSimpleFPSFrame().setVisible(newValue);
+				showInfo("Show FPS Frame: " + (newValue ? "ON" : "OFF"));
+			}
+		});
+		configMenu.add(ambiFont.setFont(showFPSFrame));
 
-		MenuItem colorFrame = new MenuItem(" Color Frame");
+		MenuItem colorFrame = new MenuItem(" Show Color Frame");
 		colorFrame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Factory.get().getNewColorFrame();
 			}
 		});
 		getPopupMenu().add(ambiFont.setFont(colorFrame));
-		MenuItem ambiFrame = new MenuItem(" Monitoring Frame");
+		MenuItem ambiFrame = new MenuItem(" Show Monitoring Frame");
 		ambiFrame.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Factory.get().getAmbiFrame().setVisible(true);
@@ -59,13 +93,6 @@ public class Tray extends TrayIcon {
 			}
 		});
 		getPopupMenu().add(ambiFont.setFont(ambiFrame));
-		MenuItem simpleFpsFrame = new MenuItem(" Simple FPS Frame");
-		simpleFpsFrame.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				showInfo("Simple FPS Frame: " + (Factory.get().getSimpleFPSFrame().display() ? "ON" : "OFF"));
-			}
-		});
-		getPopupMenu().add(ambiFont.setFont(simpleFpsFrame));
 		getPopupMenu().addSeparator();
 
 		MenuItem stop = new MenuItem(" Stop");
@@ -96,6 +123,12 @@ public class Tray extends TrayIcon {
 
 	public void showInfo(String text) {
 		displayMessage(Factory.appName, text, TrayIcon.MessageType.INFO);
+	}
+
+	public void updateCheckBox() {
+		showFPSFrame.setState(Factory.get().isShowFPSFrame());
+		checkProcess.setState(Factory.get().isCheckProcess());
+		blackScreens.setState(Factory.get().isBlackOtherScreens());
 	}
 
 }

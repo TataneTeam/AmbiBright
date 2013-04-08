@@ -151,4 +151,10 @@ public class MonitoringFrame extends JFrame {
 		return new ImageIcon(result);
 	}
 
+	public boolean display() {
+		setVisible(!isVisible());
+		setState(JFrame.NORMAL);
+		return isVisible();
+	}
+
 }

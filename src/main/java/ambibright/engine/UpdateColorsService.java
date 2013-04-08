@@ -91,8 +91,8 @@ public class UpdateColorsService implements Runnable {
 		this.deltaG = green;
 		this.deltaB = blue;
 	}
-	
-	public int getAndResetIterationNumber(){
+
+	public int getAndResetIterationNumber() {
 		int result = fps;
 		fps = 0;
 		return result;

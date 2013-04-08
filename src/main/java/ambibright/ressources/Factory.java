@@ -17,6 +17,7 @@ import ambibright.engine.ProcessCheckerService;
 import ambibright.engine.UpdateColorsService;
 import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ihm.AmbiFont;
+import ambibright.ihm.BlackScreenManager;
 import ambibright.ihm.ColorFrame;
 import ambibright.ihm.MonitoringFrame;
 import ambibright.ihm.SimpleFPSFrame;
@@ -44,6 +45,7 @@ public class Factory {
 	private final CurrentBounds currentBounds;
 	private final Manager manager;
 	private final SimpleFPSFrame simpleFPSFrame;
+	private final BlackScreenManager blackScreenManager;
 	private UpdateColorsService updateColorsService;
 
 	private Factory() {
@@ -67,6 +69,7 @@ public class Factory {
 		this.arduinoSender = new ArduinoSender(getLedNBLeft(), getLedNBTop());
 		this.manager = new Manager();
 		this.simpleFPSFrame = new SimpleFPSFrame();
+		this.blackScreenManager = new BlackScreenManager();
 	}
 
 	public Manager getManager() {
@@ -175,8 +178,8 @@ public class Factory {
 	public ProcessCheckerService newProcessCheckerService() {
 		return new ProcessCheckerService(manager, getProcessList());
 	}
-	
-	public MonitoringProcess newMonitoringProcess(){
+
+	public MonitoringProcess newMonitoringProcess() {
 		return new MonitoringProcess(updateColorsService, ambiFrame, simpleFPSFrame, robot, currentBounds);
 	}
 
@@ -229,6 +232,18 @@ public class Factory {
 
 	public Integer getSmoothing() {
 		return Integer.valueOf(getConfig().get(Parameters.CONFIG_SMOOTHING));
+	}
+
+	public boolean isShowFPSFrame() {
+		return "true".equals(getConfig().get(Parameters.CONFIG_SHOW_FPS_FRAME));
+	}
+
+	public boolean isBlackOtherScreens() {
+		return "true".equals(getConfig().get(Parameters.CONFIG_BLACK_OTHER_SCREENS));
+	}
+
+	public BlackScreenManager getBlackScreenManager() {
+		return blackScreenManager;
 	}
 
 }
