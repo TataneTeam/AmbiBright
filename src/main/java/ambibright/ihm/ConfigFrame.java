@@ -14,7 +14,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 
 import ambibright.engine.ArduinoSender;
-import ambibright.engine.colorAnalyser.SquareAnalyser;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
 import ambibright.ressources.CheckUpdate;
 import ambibright.ressources.Config;
 import ambibright.ressources.Config.Parameters;

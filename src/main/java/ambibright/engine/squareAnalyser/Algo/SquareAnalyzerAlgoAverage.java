@@ -1,9 +1,9 @@
-package ambibright.engine.colorAnalyser.Algo;
+package ambibright.engine.squareAnalyser.algo;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import ambibright.engine.colorAnalyser.SquareAnalyserAlgorithm;
+import ambibright.engine.squareAnalyser.SquareAnalyserAlgorithm;
 
 public class SquareAnalyzerAlgoAverage implements SquareAnalyserAlgorithm {
 

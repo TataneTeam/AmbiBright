@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.util.Properties;
 
-import ambibright.engine.colorAnalyser.SquareAnalyser;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
 
 public class Config {
 

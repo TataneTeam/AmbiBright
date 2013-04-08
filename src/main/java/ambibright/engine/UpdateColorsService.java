@@ -2,10 +2,12 @@ package ambibright.engine;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.List;
 import java.util.Set;
 
 import ambibright.ressources.CurrentBounds;
-import ambibright.engine.colorAnalyser.SquareAnalyser;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
+import ambibright.engine.color.ColorAlgorithm;
 import ambibright.engine.capture.ScreenCapture;
 
 /**
@@ -15,6 +17,7 @@ public class UpdateColorsService implements Runnable {
 
 	private final ScreenCapture screenCapture;
 	private final Set<ColorsChangeObserver> observers;
+	private final List<ColorAlgorithm> colorAlgorithmList;
 	private final int[][] result;
 	private final int[][] old;
 	private final byte[] arduinoArray;
@@ -24,9 +27,10 @@ public class UpdateColorsService implements Runnable {
 	private int pos;
 	private int screenAnalysePitch;
 
-	public UpdateColorsService(ScreenCapture screenCapture, Set<ColorsChangeObserver> observers, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue, int smoothing, byte[] arduinoArray) {
+	public UpdateColorsService(ScreenCapture screenCapture, Set<ColorsChangeObserver> observers, List<ColorAlgorithm> colorAlgorithmList, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue, int smoothing, byte[] arduinoArray) {
 		this.screenCapture = screenCapture;
 		this.observers = observers;
+		this.colorAlgorithmList = colorAlgorithmList;
 		this.currentBounds = currentBounds;
 		this.colorAnalyser = colorAnalyser;
 		this.screenAnalysePitch = screenAnalysePitch;
@@ -65,7 +69,11 @@ public class UpdateColorsService implements Runnable {
 
 		// Compute for all screen parts
 		for (Rectangle bound : currentBounds.getZones()) {
-			result[pos++] = colorAnalyser.getColor(image, bound, screenAnalysePitch);
+			int[] color = colorAnalyser.getColor(image, bound, screenAnalysePitch);
+			for (ColorAlgorithm algorithm : colorAlgorithmList) {
+				algorithm.apply(color);
+			}
+			result[pos++] = color;
 		}
 
 		return result;

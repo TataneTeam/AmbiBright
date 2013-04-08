@@ -1,4 +1,4 @@
-package ambibright.engine.colorAnalyser;
+package ambibright.engine.squareAnalyser;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
