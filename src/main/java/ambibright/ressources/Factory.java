@@ -2,12 +2,16 @@ package ambibright.ressources;
 
 import java.awt.*;
 import java.net.URL;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.*;
 
+import ambibright.engine.color.ColorAlgorithmBrightness;
+import ambibright.engine.color.ColorAlgorithmGamma;
+import ambibright.engine.color.ColorAlgorithmHue;
+import ambibright.engine.color.ColorAlgorithmSaturation;
 import ambibright.ressources.Config.Parameters;
 import ambibright.ihm.Tray;
 import ambibright.ihm.SimpleFPSFrame;
@@ -54,15 +58,14 @@ public class Factory {
 		this.config = new Config(configFileName);
 		this.config.init();
 
-		// TODO add the implementation
-		colorAlgorithmList = Collections.emptyList();
+		colorAlgorithmList = Arrays.asList(new ColorAlgorithmBrightness(config), new ColorAlgorithmGamma(config), new ColorAlgorithmHue(config), new ColorAlgorithmSaturation(config));
 
 		this.ambiFont = new AmbiFont();
 
 		this.fullScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[getScreenDevice()].getDefaultConfiguration().getBounds();
 		this.currentBounds = new CurrentBounds(fullScreenBounds, getLedNBLeft(), getLedNBTop(), getSquareSize());
 
-		this.tray = new Tray(getImageIcon(), ambiFont, config);
+		this.tray = new Tray(getImageIcon(), ambiFont, config,colorAlgorithmList);
 		this.ambiFrame = new MonitoringFrame(getLedNBLeft(), getLedNBTop(), getImageIcon());
 		this.arduinoSender = new ArduinoSender(getLedNBLeft(), getLedNBTop());
 		this.manager = new Manager();

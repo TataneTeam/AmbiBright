@@ -11,9 +11,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.util.List;
 
 import javax.swing.JFrame;
 
+import ambibright.engine.color.ColorAlgorithm;
 import ambibright.ressources.Config;
 import ambibright.ressources.Config.Parameters;
 import ambibright.ressources.Factory;
@@ -22,7 +24,7 @@ public class Tray extends TrayIcon {
 
 	private final CheckboxMenuItem showFPSFrame, checkProcess, blackScreens;
 
-	public Tray(Image icon, final AmbiFont ambiFont, final Config config) {
+	public Tray(Image icon, final AmbiFont ambiFont, final Config config, final List<ColorAlgorithm> colorAlgorithmList) {
 		super(icon);
 		setToolTip(Factory.appName);
 		setImageAutoSize(true);
@@ -36,7 +38,7 @@ public class Tray extends TrayIcon {
 		MenuItem configItem = new MenuItem(" Configuration");
 		configItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new ConfigFrame(ambiFont, config);
+				new ConfigFrame(ambiFont, config, colorAlgorithmList);
 			}
 		});
 		getPopupMenu().add(ambiFont.setFont(configItem));

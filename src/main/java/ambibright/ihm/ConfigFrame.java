@@ -1,24 +1,23 @@
 package ambibright.ihm;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.GridLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
+import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
-import ambibright.engine.ArduinoSender;
-import ambibright.engine.squareAnalyser.SquareAnalyser;
-import ambibright.ressources.CheckUpdate;
-import ambibright.ressources.Config;
-import ambibright.ressources.Config.Parameters;
 import ambibright.ressources.Factory;
+import ambibright.ressources.Config.Parameters;
+import ambibright.ressources.Config;
+import ambibright.ressources.CheckUpdate;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.engine.ArduinoSender;
 
 public class ConfigFrame extends JFrame {
 
@@ -27,11 +26,14 @@ public class ConfigFrame extends JFrame {
 	private JCheckBox checkApp, blackOtherScreens, showFPSFrame;
 	private CheckUpdate checkUpdate;
 	private JButton checkUpdateBtn, findPortBtn;
+	// TODO fix this thing
+	private EnumMap<Parameters, JSlider> colorAlgoSliders = new EnumMap<Parameters, JSlider>(Parameters.class);
+	private EnumMap<Parameters, ColorAlgorithm> colorAlgoMap = new EnumMap<Parameters, ColorAlgorithm>(Parameters.class);
 
-	public ConfigFrame(AmbiFont ambiFont, final Config config) {
+	public ConfigFrame(AmbiFont ambiFont, final Config config, final List<ColorAlgorithm> colorAlgorithmList) {
 		super(Factory.appName + " - Configuration");
 		setIconImage(Factory.get().getImageIcon());
-		setLayout(new GridLayout(20, 2));
+		setLayout(new GridLayout(20 + colorAlgorithmList.size(), 2));
 
 		arduinoSerial = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_ARDUINO_PORT));
 		appList = new JTextField(Factory.get().getConfig().get(Parameters.CONFIG_PROCESS_LIST));
@@ -96,6 +98,24 @@ public class ConfigFrame extends JFrame {
 			}
 		});
 
+		for (final ColorAlgorithm algo : colorAlgorithmList) {
+			float value = Float.parseFloat(Factory.get().getConfig().get(algo.getParameter()));
+			float inter = algo.getMaxValue() - algo.getMinValue();
+			int percent = (int) ((value / inter) * 100);
+			final JSlider slider = new JSlider(0, 100, percent * 100);
+			slider.addChangeListener(new ChangeListener() {
+				@Override
+				public void stateChanged(ChangeEvent e) {
+					float inter = algo.getMaxValue() - algo.getMinValue();
+					float percent = ((float) slider.getValue()) / 100f;
+					float value = algo.getMaxValue() - (inter * percent);
+					algo.updateParameter(value);
+				}
+			});
+			colorAlgoMap.put(algo.getParameter(), algo);
+			colorAlgoSliders.put(algo.getParameter(), slider);
+		}
+
 		JButton save = new JButton("Save");
 		save.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
@@ -116,6 +136,16 @@ public class ConfigFrame extends JFrame {
 				config.put(Parameters.CONFIG_SMOOTHING, smoothing.getSelectedIndex() + 1 + "");
 				config.put(Parameters.CONFIG_BLACK_OTHER_SCREENS, blackOtherScreens.isSelected() + "");
 				config.put(Parameters.CONFIG_SHOW_FPS_FRAME, showFPSFrame.isSelected() + "");
+
+				for (Map.Entry<Parameters, JSlider> entry : colorAlgoSliders.entrySet()) {
+					ColorAlgorithm algo = colorAlgoMap.get(entry.getKey());
+					float inter = algo.getMaxValue() - algo.getMinValue();
+					float percent = ((float) entry.getValue().getValue()) / 100f;
+					float value = algo.getMaxValue() - (inter * percent);
+					algo.updateParameter(value);
+					config.put(entry.getKey(), Float.toString(value));
+				}
+
 				config.save();
 				Factory.get().getTray().updateCheckBox();
 				Factory.get().getManager().restart();
@@ -176,6 +206,12 @@ public class ConfigFrame extends JFrame {
 
 		add(ambiFont.setFontBold(new JLabel(" Update Url")));
 		add(ambiFont.setFont(updateUrl));
+
+		for (Map.Entry<Parameters, JSlider> entry : colorAlgoSliders.entrySet()) {
+			ColorAlgorithm algo = colorAlgoMap.get(entry.getKey());
+			add(ambiFont.setFontBold(new JLabel(" " + algo.getName())));
+			add(ambiFont.setFont(entry.getValue()));
+		}
 
 		add(ambiFont.setFontBold(new JLabel("Current version: " + checkUpdate.getLocalVersion())));
 		add(ambiFont.setFont(checkUpdateBtn));
