@@ -17,7 +17,7 @@ public class ColorAlgorithmHue extends ColorAlgorithm {
 
     public void apply(int[] color) {
 		Color.RGBtoHSB(color[0], color[1], color[2], hsbVals);
-		current = Color.HSBtoRGB(configValue, hsbVals[1], hsbVals[2]);
+		current = Color.HSBtoRGB(hsbVals[0] + configValue, hsbVals[1], hsbVals[2]);
 		color[0] = (current & 0x00ff0000) >> 16;
 		color[1] = (current & 0x0000ff00) >> 8;
 		color[2] = current & 0x000000ff;
@@ -28,7 +28,7 @@ public class ColorAlgorithmHue extends ColorAlgorithm {
 	}
 
     public float getMinValue() {
-		return 0;
+		return Float.MIN_VALUE;
 	}
 
     public float getMaxValue() {
