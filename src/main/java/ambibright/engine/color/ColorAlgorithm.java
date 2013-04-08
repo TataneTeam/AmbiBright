@@ -1,37 +1,49 @@
 package ambibright.engine.color;
 
 import ambibright.ressources.Config;
+import ambibright.ressources.Factory;
 
 /**
  *
  */
-public interface ColorAlgorithm
-{
-    /**
-     * @param color color in r, g, b
-     */
-    void apply(int[] color);
+public abstract class ColorAlgorithm {
 
-    // TODO delete those methods once we got a better configuration system
+	protected final float configValue;
 
-    /**
-     * @return name of the parameter used by this algo
-     */
-    String getName();
+	public ColorAlgorithm() {
+		configValue = getConfigValue();
+	}
 
-    /**
-     * @return the minimal value of the parameter used by this algo
-     */
-    float getMinValue();
+	/**
+	 * @param color
+	 *            color in r, g, b
+	 */
+	abstract void apply(int[] color);
 
-    /**
-     * @return the maximal value of the parameter used by this algo
-     */
-    float getMaxValue();
+	// TODO delete those methods once we got a better configuration system
 
-    /**
-     * @return the parameter used by this algo
-     */
-    Config.Parameters getParameter();
+	/**
+	 * @return name of the parameter used by this algo
+	 */
+	abstract String getName();
+
+	/**
+	 * @return the minimal value of the parameter used by this algo
+	 */
+	abstract float getMinValue();
+
+	/**
+	 * @return the maximal value of the parameter used by this algo
+	 */
+	abstract float getMaxValue();
+
+	/**
+	 * @return the parameter used by this algo
+	 */
+	abstract Config.Parameters getParameter();
+
+	protected float getConfigValue() {
+		return Float.valueOf(Factory.get().getConfig().get(getParameter()));
+	}
 
 }

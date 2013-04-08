@@ -31,7 +31,11 @@ public class Config {
 		CONFIG_UPDATE_URL("https://raw.github.com/TataneTeam/AmbiBright/master/", true),
 		CONFIG_SMOOTHING(1),
 		CONFIG_SHOW_FPS_FRAME(false),
-		CONFIG_BLACK_OTHER_SCREENS(false);
+		CONFIG_BLACK_OTHER_SCREENS(false),
+		CONFIG_COLOR_GAMMA(0),
+		CONFIG_COLOR_HUE(0),
+		CONFIG_COLOR_SATURATION(0),
+		CONFIG_COLOR_BRIGHTNESS(0);
 
 		private Object defaultValue;
 		private boolean forceValue = false;
