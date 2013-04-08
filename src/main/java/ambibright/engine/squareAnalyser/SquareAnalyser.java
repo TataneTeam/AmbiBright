@@ -3,8 +3,8 @@ package ambibright.engine.squareAnalyser;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoAverage;
-import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoMain;
+import ambibright.engine.squareAnalyser.temp.SquareAnalyzerAlgoAverage;
+import ambibright.engine.squareAnalyser.temp.SquareAnalyzerAlgoMain;
 
 public enum SquareAnalyser {
 
