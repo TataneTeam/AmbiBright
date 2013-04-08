@@ -31,7 +31,7 @@ public class ColorAgorithmBrightness extends ColorAlgorithm {
 	}
 
 	float getMaxValue() {
-		return Float.MAX_VALUE;
+		return 1;
 	}
 
 	Parameters getParameter() {
