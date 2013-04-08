@@ -1,7 +1,6 @@
 package ambibright.engine;
 
-import java.awt.Robot;
-
+import ambibright.engine.capture.ScreenCapture;
 import ambibright.ihm.MonitoringFrame;
 import ambibright.ihm.SimpleFPSFrame;
 import ambibright.ressources.CurrentBounds;
@@ -12,16 +11,16 @@ public class MonitoringProcess implements Runnable {
 	private MonitoringFrame monitoringFrame;
 	private SimpleFPSFrame simpleFPSFrame;
 	private CurrentBounds currentBounds;
-	private Robot robot;
+	private final ScreenCapture screenCapture;
 	private long lastCheck, fps;
 	private String formatedText;
 
-	public MonitoringProcess(UpdateColorsService updateColorService, MonitoringFrame monitoringFrame, SimpleFPSFrame simpleFPSFrame, Robot robot, CurrentBounds currentBounds) {
+	public MonitoringProcess(UpdateColorsService updateColorService, MonitoringFrame monitoringFrame, SimpleFPSFrame simpleFPSFrame, ScreenCapture screenCapture, CurrentBounds currentBounds) {
 		super();
 		this.updateColorService = updateColorService;
 		this.monitoringFrame = monitoringFrame;
 		this.simpleFPSFrame = simpleFPSFrame;
-		this.robot = robot;
+		this.screenCapture = screenCapture;
 		this.currentBounds = currentBounds;
 		this.lastCheck = System.currentTimeMillis();
 	}
@@ -36,7 +35,7 @@ public class MonitoringProcess implements Runnable {
 			}
 			if (monitoringFrame.isVisible()) {
 				monitoringFrame.setInfo(formatedText);
-				monitoringFrame.setImage(robot.createScreenCapture(currentBounds.getBounds()));
+				monitoringFrame.setImage( screenCapture.captureScreen( currentBounds.getBounds() ) );
 			}
 		}
 	}

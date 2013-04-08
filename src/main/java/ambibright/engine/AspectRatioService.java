@@ -1,20 +1,19 @@
 package ambibright.engine;
 
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.image.BufferedImage;
 
+import ambibright.engine.capture.ScreenCapture;
 import ambibright.ressources.CurrentBounds;
 
 /**
- * Created with IntelliJ IDEA. User: Nico Date: 23/03/13 Time: 21:36 To change
- * this template use File | Settings | File Templates.
+ * Checks for changes in aspect ratio and update the bounds if any
  */
 public class AspectRatioService implements Runnable {
 	private static final int blackLimit = 6;
 	private final Rectangle fullScreenBounds;
 	private final CurrentBounds currentBounds;
-	private final Robot robot;
+	private final ScreenCapture screenCapture;
 	private Rectangle lastScreenBounds;
 	private int red = 0;
 	private int green = 0;
@@ -24,16 +23,16 @@ public class AspectRatioService implements Runnable {
 	private int testY, testX;
 	private BufferedImage image;
 
-	public AspectRatioService(Rectangle fullScreenBounds, CurrentBounds currentBounds, Robot robot) {
+	public AspectRatioService(Rectangle fullScreenBounds, CurrentBounds currentBounds, ScreenCapture screenCapture ) {
 		this.fullScreenBounds = fullScreenBounds;
 		this.currentBounds = currentBounds;
-		this.robot = robot;
+		this.screenCapture = screenCapture;
 		this.lastScreenBounds = fullScreenBounds;
 	}
 
 	public void run() {
 		// Get current image
-		image = robot.createScreenCapture(fullScreenBounds);
+		image = screenCapture.captureScreen(fullScreenBounds);
 
 		// Detect top
 		y = fullScreenBounds.height / 4;

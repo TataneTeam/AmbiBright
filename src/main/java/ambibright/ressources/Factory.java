@@ -15,6 +15,8 @@ import ambibright.engine.Manager;
 import ambibright.engine.MonitoringProcess;
 import ambibright.engine.ProcessCheckerService;
 import ambibright.engine.UpdateColorsService;
+import ambibright.engine.capture.DefaultScreenCapture;
+import ambibright.engine.capture.ScreenCapture;
 import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ihm.AmbiFont;
 import ambibright.ihm.BlackScreenManager;
@@ -34,15 +36,13 @@ public class Factory {
 	public static Factory get() {
 		return instance;
 	}
-
-	private final Robot robot;
 	private final Config config;
 	private final AmbiFont ambiFont;
 	private final Tray tray;
 	private final MonitoringFrame ambiFrame;
 	private final ArduinoSender arduinoSender;
 	private final Rectangle fullScreenBounds;
-	private final CurrentBounds currentBounds;
+    private final CurrentBounds currentBounds;
 	private final Manager manager;
 	private final SimpleFPSFrame simpleFPSFrame;
 	private final BlackScreenManager blackScreenManager;
@@ -51,13 +51,6 @@ public class Factory {
 	private Factory() {
 		this.config = new Config(configFileName);
 		this.config.init();
-
-		try {
-			this.robot = new Robot();
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
 
 		this.ambiFont = new AmbiFont();
 
@@ -116,7 +109,7 @@ public class Factory {
 	}
 
 	public Integer getLedNBTop() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_LED_NB_TOP));
+		return Integer.valueOf( getConfig().get( Parameters.CONFIG_LED_NB_TOP ) );
 	}
 
 	public Integer getAnalysePitch() {
@@ -128,7 +121,7 @@ public class Factory {
 	}
 
 	public Integer getRGB_G() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_RGB_G));
+		return Integer.valueOf( getConfig().get( Parameters.CONFIG_RGB_G ) );
 	}
 
 	public Integer getRGB_B() {
@@ -136,7 +129,7 @@ public class Factory {
 	}
 
 	public Integer getSquareSize() {
-		return Integer.valueOf(getConfig().get(Parameters.CONFIG_SQUARE_SIZE));
+		return Integer.valueOf( getConfig().get( Parameters.CONFIG_SQUARE_SIZE ) );
 	}
 
 	public Integer getFpsWanted() {
@@ -152,7 +145,7 @@ public class Factory {
 	}
 
 	public Rectangle getBounds() {
-		return getBounds(getScreenDevice());
+		return getBounds( getScreenDevice() );
 	}
 
 	private Rectangle getBounds(int screenDevice) {
@@ -160,8 +153,12 @@ public class Factory {
 	}
 
 	public boolean isCheckProcess() {
-		return "true".equals(getConfig().get(Parameters.CONFIG_CHECK_PROCESS).toLowerCase());
+		return "true".equals( getConfig().get( Parameters.CONFIG_CHECK_PROCESS ).toLowerCase() );
 	}
+
+    public ScreenCapture getScreenCapture(){
+        return DefaultScreenCapture.getInstance();
+    }
 
 	public MonitoringFrame getAmbiFrame() {
 		return ambiFrame;
@@ -172,7 +169,7 @@ public class Factory {
 	}
 
 	public AspectRatioService newAspectRatioService() {
-		return new AspectRatioService(getBounds(), currentBounds, robot);
+		return new AspectRatioService(getBounds(), currentBounds, getScreenCapture());
 	}
 
 	public ProcessCheckerService newProcessCheckerService() {
@@ -180,7 +177,7 @@ public class Factory {
 	}
 
 	public MonitoringProcess newMonitoringProcess() {
-		return new MonitoringProcess(updateColorsService, ambiFrame, simpleFPSFrame, robot, currentBounds);
+		return new MonitoringProcess(updateColorsService, ambiFrame, simpleFPSFrame, getScreenCapture(), currentBounds);
 	}
 
 	public int getLedTotalNumber() {
@@ -188,12 +185,12 @@ public class Factory {
 	}
 
 	public UpdateColorsService newUpdateColorsService() {
-		updateColorsService = new UpdateColorsService(robot, getArduinoSender(), ambiFrame, currentBounds, getSquareAnalyser(), getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B(), getSmoothing());
+		updateColorsService = new UpdateColorsService(getScreenCapture(), getArduinoSender(), ambiFrame, currentBounds, getSquareAnalyser(), getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B(), getSmoothing());
 		return updateColorsService;
 	}
 
 	public SquareAnalyser getSquareAnalyser() {
-		return SquareAnalyser.valueOf(getConfig().get(Parameters.CONFIG_SQUARE_ANALYSER));
+		return SquareAnalyser.valueOf( getConfig().get( Parameters.CONFIG_SQUARE_ANALYSER ) );
 	}
 
 	public UpdateColorsService getUpdateColorsService() {
@@ -210,7 +207,7 @@ public class Factory {
 
 	public Point getMonitoringLocation() {
 		String[] values = getConfig().get(Parameters.CONFIG_MONITORING_XY).split(separator);
-		return new Point(Integer.valueOf(values[0]), Integer.valueOf(values[1]));
+		return new Point(Integer.valueOf(values[0]), Integer.valueOf( values[1] ));
 	}
 
 	public void saveMonitoringLocation(int x, int y) {

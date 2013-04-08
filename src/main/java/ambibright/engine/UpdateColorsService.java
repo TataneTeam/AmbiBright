@@ -1,20 +1,19 @@
 package ambibright.engine;
 
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.awt.image.BufferedImage;
 
+import ambibright.engine.capture.ScreenCapture;
 import ambibright.engine.colorAnalyser.SquareAnalyser;
 import ambibright.ihm.MonitoringFrame;
 import ambibright.ressources.CurrentBounds;
 
 /**
- * Created with IntelliJ IDEA. User: Nico Date: 23/03/13 Time: 22:00 To change
- * this template use File | Settings | File Templates.
+ * Compute the colors in screen and sends them to the Arduino
  */
 public class UpdateColorsService implements Runnable {
 
-	private final Robot robot;
+	private final ScreenCapture screenCapture;
 	// on pourrait changer ce comportement pour mettre une liste d'observer qui
 	// consomment les couleurs pour totalement découpler le traitement
 	private final ArduinoSender arduino;
@@ -29,8 +28,8 @@ public class UpdateColorsService implements Runnable {
 	private int fps = 0;
 	private int screenAnalysePitch;
 
-	public UpdateColorsService(Robot robot, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue, int smoothing) {
-		this.robot = robot;
+	public UpdateColorsService(ScreenCapture screenCapture, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue, int smoothing) {
+		this.screenCapture = screenCapture;
 		this.arduino = arduino;
 		this.monitoringFrame = monitoringFrame;
 		this.currentBounds = currentBounds;
@@ -58,7 +57,7 @@ public class UpdateColorsService implements Runnable {
 	// L > T > R
 	private int[][] getColors() {
 		pos = 0;
-		image = robot.createScreenCapture(currentBounds.getBounds());
+		image = screenCapture.captureScreen(currentBounds.getBounds());
 
 		// Compute for all screen parts
 		for (Rectangle bound : currentBounds.getZones()) {
