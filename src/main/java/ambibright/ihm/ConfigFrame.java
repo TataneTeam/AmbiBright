@@ -101,14 +101,12 @@ public class ConfigFrame extends JFrame {
 		for (final ColorAlgorithm algo : colorAlgorithmList) {
 			float value = Float.parseFloat(Factory.get().getConfig().get(algo.getParameter()));
 			float inter = algo.getMaxValue() - algo.getMinValue();
-			int percent = (int) ((value / inter) * 100);
-			final JSlider slider = new JSlider(0, 100, percent * 100);
+			int percent = (int) (((value - algo.getMinValue()) / inter) * 100);
+			final JSlider slider = new JSlider(0, 100, percent);
 			slider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					float inter = algo.getMaxValue() - algo.getMinValue();
-					float percent = ((float) slider.getValue()) / 100f;
-					float value = algo.getMaxValue() - (inter * percent);
+					float value = getValueFromSlider( algo.getMinValue(), algo.getMaxValue(), slider.getValue() );
 					algo.updateParameter(value);
 				}
 			});
@@ -139,9 +137,7 @@ public class ConfigFrame extends JFrame {
 
 				for (Map.Entry<Parameters, JSlider> entry : colorAlgoSliders.entrySet()) {
 					ColorAlgorithm algo = colorAlgoMap.get(entry.getKey());
-					float inter = algo.getMaxValue() - algo.getMinValue();
-					float percent = ((float) entry.getValue().getValue()) / 100f;
-					float value = algo.getMaxValue() - (inter * percent);
+					float value = getValueFromSlider( algo.getMinValue(), algo.getMaxValue(), entry.getValue().getValue() );
 					algo.updateParameter(value);
 					config.put(entry.getKey(), Float.toString(value));
 				}
@@ -224,5 +220,11 @@ public class ConfigFrame extends JFrame {
 		setLocationRelativeTo(getParent());
 		setVisible(true);
 	}
+
+    private float getValueFromSlider(float min, float max, float sliderValue){
+        float inter = max - min;
+        float percent = sliderValue / 100f;
+        return min + (inter * percent);
+    }
 
 }
