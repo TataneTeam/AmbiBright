@@ -1,4 +1,4 @@
-package ambibright.engine.squareAnalyser.temp;
+package ambibright.engine.squareAnalyser.algo;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
