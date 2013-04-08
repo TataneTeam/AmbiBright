@@ -1,12 +1,12 @@
 package ambibright.engine;
 
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.Set;
 
-import ambibright.engine.capture.ScreenCapture;
-import ambibright.engine.colorAnalyser.SquareAnalyser;
-import ambibright.ihm.MonitoringFrame;
 import ambibright.ressources.CurrentBounds;
+import ambibright.engine.colorAnalyser.SquareAnalyser;
+import ambibright.engine.capture.ScreenCapture;
 
 /**
  * Compute the colors in screen and sends them to the Arduino
@@ -14,24 +14,19 @@ import ambibright.ressources.CurrentBounds;
 public class UpdateColorsService implements Runnable {
 
 	private final ScreenCapture screenCapture;
-	// on pourrait changer ce comportement pour mettre une liste d'observer qui
-	// consomment les couleurs pour totalement découpler le traitement
-	private final ArduinoSender arduino;
-	private final MonitoringFrame monitoringFrame;
+	private final Set<ColorsChangeObserver> observers;
 	private final int[][] result;
+	private final int[][] old;
+	private final byte[] arduinoArray;
 	private final CurrentBounds currentBounds;
 	private final SquareAnalyser colorAnalyser;
 	private int deltaR, deltaG, deltaB, smoothing;
 	private int pos;
-	private BufferedImage image;
-	private final int[][] old;
-	private int fps = 0;
 	private int screenAnalysePitch;
 
-	public UpdateColorsService(ScreenCapture screenCapture, ArduinoSender arduino, MonitoringFrame monitoringFrame, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue, int smoothing) {
+	public UpdateColorsService(ScreenCapture screenCapture, Set<ColorsChangeObserver> observers, CurrentBounds currentBounds, SquareAnalyser colorAnalyser, int screenAnalysePitch, int nbLed, int red, int green, int blue, int smoothing, byte[] arduinoArray) {
 		this.screenCapture = screenCapture;
-		this.arduino = arduino;
-		this.monitoringFrame = monitoringFrame;
+		this.observers = observers;
 		this.currentBounds = currentBounds;
 		this.colorAnalyser = colorAnalyser;
 		this.screenAnalysePitch = screenAnalysePitch;
@@ -40,61 +35,59 @@ public class UpdateColorsService implements Runnable {
 		this.deltaB = blue;
 		this.old = new int[nbLed][3];
 		this.result = new int[nbLed][3];
+		this.arduinoArray = arduinoArray;
 		this.smoothing = smoothing;
 	}
 
 	public void run() {
 		try {
-			fps++;
-			byte[] colors = getColorsToSend(getColors());
-			arduino.write(colors);
-			monitoringFrame.refresh(colors);
+
+			BufferedImage image = screenCapture.captureScreen(currentBounds.getBounds());
+
+			byte[] colors = getColorsToSend(getColors(image));
+
+			// Notify the observers
+			for (ColorsChangeObserver observer : observers) {
+				observer.onColorsChange(image, colors);
+			}
+
+			// Flushing the image
+			image.flush();
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	// L > T > R
-	private int[][] getColors() {
+	private int[][] getColors(BufferedImage image) {
 		pos = 0;
-		image = screenCapture.captureScreen(currentBounds.getBounds());
 
 		// Compute for all screen parts
 		for (Rectangle bound : currentBounds.getZones()) {
 			result[pos++] = colorAnalyser.getColor(image, bound, screenAnalysePitch);
 		}
 
-		// Flushing the image
-		image.flush();
-		image = null;
-
 		return result;
 	}
 
 	private byte[] getColorsToSend(int[][] colors) {
-		byte[] result = arduino.getArray();
 		int j = 6;
 		for (int i = 0; i < colors.length; i++) {
 			old[i][0] = ((colors[i][0] * smoothing) + old[i][0]) / (1 + smoothing);
 			old[i][1] = ((colors[i][1] * smoothing) + old[i][1]) / (1 + smoothing);
 			old[i][2] = ((colors[i][2] * smoothing) + old[i][2]) / (1 + smoothing);
-			result[j++] = (byte) (Math.min(Math.max((old[i][0]) + deltaR, 0), 255));
-			result[j++] = (byte) (Math.min(Math.max((old[i][1]) + deltaG, 0), 255));
-			result[j++] = (byte) (Math.min(Math.max((old[i][2]) + deltaB, 0), 255));
+			arduinoArray[j++] = (byte) (Math.min(Math.max((old[i][0]) + deltaR, 0), 255));
+			arduinoArray[j++] = (byte) (Math.min(Math.max((old[i][1]) + deltaG, 0), 255));
+			arduinoArray[j++] = (byte) (Math.min(Math.max((old[i][2]) + deltaB, 0), 255));
 		}
-		return result;
+		return arduinoArray;
 	}
 
 	public void setDeltaRGB(int red, int green, int blue) {
 		this.deltaR = red;
 		this.deltaG = green;
 		this.deltaB = blue;
-	}
-
-	public int getAndResetIterationNumber() {
-		int result = fps;
-		fps = 0;
-		return result;
 	}
 
 }

@@ -1,39 +1,30 @@
 package ambibright.ihm;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.GridLayout;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.RenderingHints;
+import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import ambibright.ressources.Factory;
+import ambibright.engine.ColorsChangeObserver;
 
-public class MonitoringFrame extends JFrame {
+public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 
 	private static final int squareSize = 40;
+	private final FpsCounter fpsCounter;
 	private JPanel[][] cells;
 	private JLabel imageLabel;
-	int rows, cols, i, imageHeight, j;
+	private int rows, cols, i, imageHeight, j;
 
 	public MonitoringFrame(int rows, int cols, Image icon) {
 		super(Factory.appName + " - Monitoring Frame");
 		setIconImage(icon);
 		this.rows = rows;
 		this.cols = cols;
+		this.fpsCounter = new FpsCounter();
 
 		JLayeredPane lpane = new JLayeredPane();
 		add(lpane);
@@ -70,6 +61,7 @@ public class MonitoringFrame extends JFrame {
 
 			public void windowActivated(WindowEvent e) {
 				setLocation(Factory.get().getMonitoringLocation());
+				Factory.get().getManager().addObserver(MonitoringFrame.this);
 			}
 		});
 
@@ -81,6 +73,7 @@ public class MonitoringFrame extends JFrame {
 	}
 
 	private void hideFrame() {
+		Factory.get().getManager().removeObserver(this);
 		Factory.get().saveMonitoringLocation(getLocation().x, getLocation().y);
 		setVisible(false);
 	}
@@ -89,35 +82,8 @@ public class MonitoringFrame extends JFrame {
 		cells[x][y].setBackground(color);
 	}
 
-	public void refresh(byte[] colors) {
-		if (isVisible()) {
-			j = 6;
-			// Left from bottom to up
-			for (i = 0; i < rows; i++) {
-				setColor(rows - 1 - i, 0, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
-			}
-			// Top from left to right
-			for (i = 1; i < cols; i++) {
-				setColor(0, i, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
-			}
-			// Right from to to bottom
-			for (i = 1; i < rows; i++) {
-				setColor(i, cols - 1, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
-			}
-		}
-	}
-
 	public void setInfo(String string) {
 		setTitle(Factory.appName + " - Monitoring Frame - " + string);
-	}
-
-	public void setImage(BufferedImage image) {
-		if (isVisible()) {
-			addZones(image, Factory.get().getCurrentBounds().getZones());
-			imageHeight = image.getHeight() * imageLabel.getWidth() / image.getWidth();
-			imageLabel.setIcon(resizeImage(image, imageLabel.getWidth(), imageHeight));
-			imageLabel.setSize(imageLabel.getWidth(), imageHeight);
-		}
 	}
 
 	public BufferedImage addZones(BufferedImage image, Rectangle[] bounds) {
@@ -157,4 +123,30 @@ public class MonitoringFrame extends JFrame {
 		return isVisible();
 	}
 
+	@Override
+	public void onColorsChange(BufferedImage image, byte[] colors) {
+		// updating fps
+		int fps = fpsCounter.fps();
+		setInfo(fps + " fps");
+
+        // update image
+        addZones(image, Factory.get().getCurrentBounds().getZones());
+        imageHeight = image.getHeight() * imageLabel.getWidth() / image.getWidth();
+        imageLabel.setIcon(resizeImage(image, imageLabel.getWidth(), imageHeight));
+        imageLabel.setSize(imageLabel.getWidth(), imageHeight);
+
+		j = 6;
+		// Left from bottom to up
+		for (i = 0; i < rows; i++) {
+			setColor(rows - 1 - i, 0, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
+		}
+		// Top from left to right
+		for (i = 1; i < cols; i++) {
+			setColor(0, i, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
+		}
+		// Right from to to bottom
+		for (i = 1; i < rows; i++) {
+			setColor(i, cols - 1, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
+		}
+	}
 }

@@ -3,13 +3,14 @@ package ambibright.engine;
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
 
+import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Enumeration;
 
-public class ArduinoSender {
+public class ArduinoSender implements ColorsChangeObserver{
 
 	public static final String defaultTestString = "Ada";
 
@@ -87,4 +88,9 @@ public class ArduinoSender {
 		}
 	}
 
+    @Override
+    public void onColorsChange( BufferedImage image, byte[] colors )
+    {
+        write( colors );
+    }
 }

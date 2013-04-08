@@ -4,15 +4,15 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.net.URL;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 
 import ambibright.engine.ArduinoSender;
 import ambibright.engine.AspectRatioService;
+import ambibright.engine.ColorsChangeObserver;
 import ambibright.engine.Manager;
-import ambibright.engine.MonitoringProcess;
 import ambibright.engine.ProcessCheckerService;
 import ambibright.engine.UpdateColorsService;
 import ambibright.engine.capture.DefaultScreenCapture;
@@ -176,16 +176,12 @@ public class Factory {
 		return new ProcessCheckerService(manager, getProcessList());
 	}
 
-	public MonitoringProcess newMonitoringProcess() {
-		return new MonitoringProcess(updateColorsService, ambiFrame, simpleFPSFrame, getScreenCapture(), currentBounds);
-	}
-
 	public int getLedTotalNumber() {
 		return 2 * getLedNBLeft() + getLedNBTop() - 2;
 	}
 
-	public UpdateColorsService newUpdateColorsService() {
-		updateColorsService = new UpdateColorsService(getScreenCapture(), getArduinoSender(), ambiFrame, currentBounds, getSquareAnalyser(), getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B(), getSmoothing());
+	public UpdateColorsService newUpdateColorsService(Set<ColorsChangeObserver> observers) {
+		updateColorsService = new UpdateColorsService(getScreenCapture(), observers, currentBounds, getSquareAnalyser(), getAnalysePitch(), getLedTotalNumber(), getRGB_R(), getRGB_G(), getRGB_B(), getSmoothing(), getArduinoSender().getArray());
 		return updateColorsService;
 	}
 
