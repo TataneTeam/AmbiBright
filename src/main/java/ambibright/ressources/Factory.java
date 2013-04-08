@@ -3,6 +3,7 @@ package ambibright.ressources;
 import java.awt.*;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -58,7 +59,9 @@ public class Factory {
 		this.config = new Config(configFileName);
 		this.config.init();
 
-		colorAlgorithmList = Arrays.asList(new ColorAlgorithmBrightness(config), new ColorAlgorithmGamma(config), new ColorAlgorithmHue(config), new ColorAlgorithmSaturation(config));
+        // TODO fix the algorithm first
+        colorAlgorithmList = Collections.emptyList();
+        //colorAlgorithmList = Arrays.asList(new ColorAlgorithmBrightness(config), new ColorAlgorithmGamma(config), new ColorAlgorithmHue(config), new ColorAlgorithmSaturation(config));
 
 		this.ambiFont = new AmbiFont();
 
