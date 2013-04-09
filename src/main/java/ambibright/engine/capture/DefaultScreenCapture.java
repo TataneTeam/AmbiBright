@@ -3,11 +3,16 @@ package ambibright.engine.capture;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Default implementation of {@link ScreenCapture} that uses
  * {@link Robot#createScreenCapture(java.awt.Rectangle)} to capture the screen.
  */
 public class DefaultScreenCapture implements ScreenCapture {
+
+    private static final Logger logger = LoggerFactory.getLogger( DefaultScreenCapture.class );
 
 	private static DefaultScreenCapture instance;
 
@@ -24,6 +29,7 @@ public class DefaultScreenCapture implements ScreenCapture {
 		try {
 			robot = new Robot();
 		} catch (AWTException e) {
+            logger.error( "Error instantiating a Robot", e );
 			throw new IllegalStateException(e);
 		}
 	}

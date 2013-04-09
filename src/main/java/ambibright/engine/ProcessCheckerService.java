@@ -5,13 +5,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import ambibright.ressources.Factory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Created with IntelliJ IDEA. User: Nico Date: 23/03/13 Time: 21:17 To change
- * this template use File | Settings | File Templates.
+ * Checks if any of the configured process is running
  */
 public class ProcessCheckerService implements Runnable {
+
+    private static final Logger logger = LoggerFactory.getLogger( ProcessCheckerService.class );
+
 	private static final String PROCESS_CMD = System.getenv("windir") + "\\system32\\" + "tasklist.exe /FO CSV /NH";
+
 	private final Manager manager;
 	private final String apps;
 
@@ -23,8 +28,10 @@ public class ProcessCheckerService implements Runnable {
 	public void run() {
 		boolean shouldRun = false;
 		if (!Factory.get().isCheckProcess()) {
+            logger.debug( "Checking process is disabled" );
 			shouldRun = true;
 		} else {
+            logger.debug( "Checking if any of the process '{}' is currently running", apps );
 			BufferedReader input = null;
 			try {
 				String line;
@@ -38,16 +45,17 @@ public class ProcessCheckerService implements Runnable {
 					}
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error( "Error while checking process", e );
 			} finally {
 				if (null != input) {
 					try {
 						input.close();
 					} catch (IOException e) {
-						e.printStackTrace();
+						logger.warn( "Error closing the input", e );
 					}
 				}
 			}
+            logger.debug( "Process found : {}", shouldRun );
 		}
 
 		if (shouldRun) {

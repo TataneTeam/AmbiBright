@@ -9,12 +9,15 @@ import java.util.concurrent.TimeUnit;
 import javax.swing.JOptionPane;
 
 import ambibright.ressources.Factory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Created with IntelliJ IDEA. User: Nico Date: 24/03/13 Time: 16:53 To change
- * this template use File | Settings | File Templates.
+ * Manages the thread of the application.
  */
 public class Manager {
+
+    private static final Logger logger = LoggerFactory.getLogger( Manager.class );
 
     private final Set<ColorsChangeObserver> observers;
 
@@ -31,17 +34,25 @@ public class Manager {
     }
 
 	public void start() {
+        logger.info("Starting");
+
 		processCheckerServiceExecutor = Executors.newScheduledThreadPool(1);
 		processCheckerServiceExecutor.scheduleAtFixedRate( Factory.get().newProcessCheckerService(), 0,
             Factory.get().getDelayCheckProcess(), TimeUnit.MILLISECONDS );
+
+        logger.info("Started");
 	}
 
 	public void stop() {
+        logger.info("Stopping");
+
 		if (null != processCheckerServiceExecutor ) {
 			processCheckerServiceExecutor.shutdown();
 			processCheckerServiceExecutor = null;
 		}
 		stopColorsProcessing();
+
+        logger.info("Stopped");
 	}
 
 	public void restart() {
@@ -51,14 +62,14 @@ public class Manager {
 
 	public void startColorsProcessing() {
 		if (!isRunning) {
-			System.out.println("Starting");
+			logger.info("Starting color processing");
 
             ArduinoSender arduino = Factory.get().getArduinoSender();
 			try {
                 arduino.open(Factory.get().getArduinoSerial(), Factory.get().getArduinoDataRate());
                 observers.add( arduino );
 			} catch (Exception e) {
-				e.printStackTrace();
+				logger.error( "Arduino connection error", e );
 				// If the communication with the arduino failed, we remove it from the observers
 				observers.remove( arduino );
 				JOptionPane.showMessageDialog(null, "Arduino connection error:\n" + e, Factory.appName, JOptionPane.ERROR_MESSAGE);
@@ -81,13 +92,13 @@ public class Manager {
 			}
 
 			isRunning = true;
-			System.out.println("Started");
+			logger.info("Color processing started");
 		}
 	}
 
 	public void stopColorsProcessing() {
 		if (isRunning) {
-			System.out.println("Stopping");
+			logger.info("Stopping color processing");
 			aspectRatioServiceExecutor.shutdown();
 			aspectRatioServiceExecutor = null;
 
@@ -100,15 +111,17 @@ public class Manager {
 			Factory.get().getBlackScreenManager().removeBlackScreens();
 
 			isRunning = false;
-			System.out.println("Stopped");
+			logger.info("Color processing stopped");
 		}
 	}
 
     public void addObserver(ColorsChangeObserver observer) {
         observers.add(observer);
+        logger.debug( "Added the color change observer : {}", observer );
     }
 
     public void removeObserver(ColorsChangeObserver observer) {
         observers.remove(observer);
+        logger.debug( "Removed the color change observer : {}", observer );
     }
 }

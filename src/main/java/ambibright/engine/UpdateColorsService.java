@@ -9,11 +9,15 @@ import ambibright.ressources.CurrentBounds;
 import ambibright.engine.squareAnalyser.SquareAnalyser;
 import ambibright.engine.color.ColorAlgorithm;
 import ambibright.engine.capture.ScreenCapture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Compute the colors in screen and sends them to the Arduino
  */
 public class UpdateColorsService implements Runnable {
+
+    private static final Logger logger = LoggerFactory.getLogger( UpdateColorsService.class );
 
 	private final ScreenCapture screenCapture;
 	private final Set<ColorsChangeObserver> observers;
@@ -45,6 +49,7 @@ public class UpdateColorsService implements Runnable {
 
 	public void run() {
 		try {
+            logger.debug( "Processing colors" );
 
 			BufferedImage image = screenCapture.captureScreen(currentBounds.getBounds());
 
@@ -58,8 +63,9 @@ public class UpdateColorsService implements Runnable {
 			// Flushing the image
 			image.flush();
 
+            logger.debug( "Colors processed" );
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error( "Error while processing the colors", e );
 		}
 	}
 

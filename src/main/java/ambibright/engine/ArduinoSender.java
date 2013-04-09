@@ -2,6 +2,8 @@ package ambibright.engine;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -12,6 +14,8 @@ import java.util.Enumeration;
 
 public class ArduinoSender implements ColorsChangeObserver{
 
+    private static final Logger logger = LoggerFactory.getLogger( ArduinoSender.class );
+
 	public static final String defaultTestString = "Ada";
 
 	@SuppressWarnings("rawtypes")
@@ -19,10 +23,10 @@ public class ArduinoSender implements ColorsChangeObserver{
 		String result = null;
 		CommPortIdentifier portId;
 		SerialPort serialPort = null;
-		Enumeration portList = CommPortIdentifier.getPortIdentifiers();
+		Enumeration<CommPortIdentifier> portList = CommPortIdentifier.getPortIdentifiers();
 		while (portList.hasMoreElements()) {
+            portId = portList.nextElement();
 			try {
-				portId = (CommPortIdentifier) portList.nextElement();
 				serialPort = portId.open("Arduino", 500);
 				serialPort.setSerialPortParams(dataRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 				serialPort.enableReceiveThreshold(1);
@@ -32,11 +36,12 @@ public class ArduinoSender implements ColorsChangeObserver{
 					break;
 				}
 			} catch (Exception e) {
+                logger.debug( "Error communicating with the arduino at port {}", portId, e );
 			} finally {
 				try {
 					serialPort.close();
 				} catch (Exception e) {
-					e.printStackTrace();
+					logger.error( "Error closing the serial port", e );
 				}
 			}
 		}
@@ -82,9 +87,11 @@ public class ArduinoSender implements ColorsChangeObserver{
 
 	public void write(byte[] array) {
 		try {
+            logger.debug( "Writing data to the Arduino" );
 			output.write(array);
+            logger.debug( "Data written" );
 		} catch (Exception e) {
-			e.printStackTrace();
+			logger.error( "Error writing data to the Arduino", e );
 		}
 	}
 
