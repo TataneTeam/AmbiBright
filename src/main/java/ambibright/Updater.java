@@ -41,8 +41,7 @@ public class Updater {
 				if (ze.isDirectory()) {
 					new File(ze.getName()).mkdirs();
 				}
-				// we overwrite all the files but *.bat
-				else if (!ze.getName().endsWith(".bat")) {
+				else {
 					File f = new File(ze.getName());
 					OutputStream fos = new BufferedOutputStream(new FileOutputStream(f));
 

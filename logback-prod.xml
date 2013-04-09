@@ -1,0 +1,23 @@
+<configuration>
+  <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <file>logs/log.txt</file>
+    <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+      <!-- daily rollover -->
+      <fileNamePattern>logs/log-%d{yyyy-MM-dd}.txt.zip</fileNamePattern>
+
+      <!-- keep 5 days' worth of history -->
+      <maxHistory>5</maxHistory>
+    </rollingPolicy>
+    <encoder>
+      <pattern>%d{HH:mm:ss.SSS} [%-5level] %logger : %msg%n</pattern>
+    </encoder>
+  </appender>
+
+  <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+    <appender-ref ref="FILE" />
+  </appender>
+
+  <root level="warn">
+    <appender-ref ref="FILE" />
+  </root>
+</configuration>

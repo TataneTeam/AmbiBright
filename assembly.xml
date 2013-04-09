@@ -12,6 +12,12 @@
       <lineEnding>dos</lineEnding>
     </file>
     <file>
+      <source>logback-prod.xml</source>
+      <outputDirectory>/</outputDirectory>
+      <destName>logback.xml</destName>
+      <lineEnding>dos</lineEnding>
+    </file>
+    <file>
       <source>${project.build.directory}/${project.build.finalName}.jar</source>
       <destName>AmbiBright.jar</destName>
       <outputDirectory>/</outputDirectory>
