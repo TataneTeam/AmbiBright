@@ -5,14 +5,14 @@ import ambibright.ressources.Config.Parameters;
 
 public class ColorAlgorithmGamma extends ColorAlgorithm {
 
-	private final float gamma;
+	private float gamma;
 
 	public ColorAlgorithmGamma( Config config ) {
         super(config);
-		gamma = 1 / configValue;
 	}
 
     public void apply(int[] color) {
+		gamma = 1 / configValue;
 		color[0] = (int) (255 * Math.pow(color[0] / 255, gamma));
 		color[1] = (int) (255 * Math.pow(color[1] / 255, gamma));
 		color[2] = (int) (255 * Math.pow(color[2] / 255, gamma));
