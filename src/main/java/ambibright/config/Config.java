@@ -283,7 +283,7 @@ public class Config {
 
 	public void setValue(Field field, boolean value) {
 		try {
-			field.setBoolean(this, Boolean.valueOf(value));
+			field.setBoolean(this, value);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException("Error setting a value", e);
