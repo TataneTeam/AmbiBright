@@ -1,38 +1,33 @@
 package ambibright.ihm;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
-import javax.swing.JDialog;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import ambibright.ressources.Config.Parameters;
-import ambibright.ressources.Factory;
+import ambibright.config.Config;
 
 public class ColorFrame extends JDialog implements ChangeListener {
 
+	private final Config config;
 	private JPanel back;
 	private JColorChooser colorChooser;
 	private RGBColorManager colorManager;
 	private boolean isCheckApp;
 	private JLayeredPane lpane;
 
-	public ColorFrame(Rectangle bounds, AmbiFont ambiFont) {
+	public ColorFrame(Rectangle bounds, AmbiFont ambiFont, Config pConfig) {
 		super();
 
-		isCheckApp = Factory.get().isCheckProcess();
-		Factory.get().getConfig().put(Parameters.CONFIG_CHECK_PROCESS, "false");
+		this.config = pConfig;
+
+		isCheckApp = config.isCheckProcess();
+		config.setCheckProcess(false);
 
 		lpane = new JLayeredPane();
 		lpane.setOpaque(false);
@@ -48,7 +43,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		colorChooser.setBorder(BorderFactory.createTitledBorder("Choose background color"));
 		colorChooser.setPreviewPanel(new JPanel());
 
-		colorManager = new RGBColorManager(ambiFont);
+		colorManager = new RGBColorManager(ambiFont, config);
 
 		JButton close = new JButton("Save");
 		close.setOpaque(false);
@@ -56,7 +51,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 				restorConfig();
-				Factory.get().getConfig().save();
+				config.save();
 			}
 		});
 
@@ -66,12 +61,11 @@ public class ColorFrame extends JDialog implements ChangeListener {
 			}
 		});
 
-		int y = 0;
 		lpane.add(back, JLayeredPane.DEFAULT_LAYER);
 		back.setBounds(0, 0, bounds.width, bounds.height);
 
 		lpane.add(colorChooser, JLayeredPane.POPUP_LAYER);
-		y = (bounds.height - colorChooser.getPreferredSize().height) / 2;
+		int y = (bounds.height - colorChooser.getPreferredSize().height) / 4;
 		colorChooser.setBounds((bounds.width - colorChooser.getPreferredSize().width) / 2, y, colorChooser.getPreferredSize().width, colorChooser.getPreferredSize().height);
 
 		lpane.add(colorManager, JLayeredPane.POPUP_LAYER);
@@ -93,7 +87,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 	}
 
 	private void restorConfig() {
-		Factory.get().getConfig().put(Parameters.CONFIG_CHECK_PROCESS, isCheckApp + "");
+		config.setCheckProcess(isCheckApp);
 	}
 
 }

@@ -1,8 +1,5 @@
 package ambibright.engine;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
-
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -13,11 +10,14 @@ import java.util.Enumeration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import ambibright.config.Config;
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+
 public class ArduinoSender implements ColorsChangeObserver {
 
-	private static final Logger logger = LoggerFactory.getLogger(ArduinoSender.class);
-
 	public static final String defaultTestString = "Ada";
+	private static final Logger logger = LoggerFactory.getLogger(ArduinoSender.class);
 
 	@SuppressWarnings("rawtypes")
 	public static String getArduinoPort(int dataRate, String testString) {
@@ -49,12 +49,17 @@ public class ArduinoSender implements ColorsChangeObserver {
 		return result;
 	}
 
-	private final byte[] array;
+	private final Config config;
+	private byte[] array;
 	private SerialPort serialPort;
 	private OutputStream output;
 
-	public ArduinoSender(int ledNumberLeftRight, int ledNumberTop) {
-		int totalLeds = ledNumberLeftRight * 2 + ledNumberTop - 2;
+	public ArduinoSender(Config config) {
+		this.config = config;
+	}
+
+	public void open() throws Exception {
+		int totalLeds = config.getNbLedLeft() * 2 + config.getNbLedTop() - 2;
 		array = new byte[6 + totalLeds * 3];
 		array[0] = 'A';
 		array[1] = 'd';
@@ -62,12 +67,10 @@ public class ArduinoSender implements ColorsChangeObserver {
 		array[3] = (byte) ((totalLeds - 1) >> 8);
 		array[4] = (byte) ((totalLeds - 1) & 0xff);
 		array[5] = (byte) (array[3] ^ array[4] ^ 0x55);
-	}
 
-	public void open(String port, int dataRate) throws Exception {
-		CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(port);
+		CommPortIdentifier portId = CommPortIdentifier.getPortIdentifier(config.getArduinoSerialPort());
 		serialPort = portId.open(this.getClass().getName(), 500);
-		serialPort.setSerialPortParams(dataRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+		serialPort.setSerialPortParams(config.getArduinoDataRate(), SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
 		output = serialPort.getOutputStream();
 	}
 

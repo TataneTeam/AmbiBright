@@ -4,35 +4,37 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
+import ambibright.config.Config;
+import ambibright.config.ConfigReadOnly;
+import ambibright.ressources.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ambibright.ressources.Factory;
 
 /**
  * Checks if any of the configured process is running
  */
 public class ProcessCheckerService implements Runnable {
 
-	private static final Logger logger = LoggerFactory.getLogger(ProcessCheckerService.class);
+    private static final Logger logger = LoggerFactory.getLogger( ProcessCheckerService.class );
 
 	private static final String PROCESS_CMD = System.getenv("windir") + "\\system32\\" + "tasklist.exe /FO CSV /NH";
 
 	private final Manager manager;
-	private final String apps;
+	private final ConfigReadOnly config;
 
-	public ProcessCheckerService(Manager manager, String processList) {
+	public ProcessCheckerService(Manager manager, ConfigReadOnly config) {
 		this.manager = manager;
-		this.apps = processList;
+		this.config = config;
 	}
 
 	public void run() {
 		boolean shouldRun = false;
-		if (!Factory.get().isCheckProcess()) {
-			logger.debug("Checking process is disabled");
+		if (!config.isCheckProcess()) {
+            logger.debug( "Checking process is disabled" );
 			shouldRun = true;
 		} else {
-			logger.debug("Checking if any of the process '{}' is currently running", apps);
+            String apps = config.getCheckProcessList();
+            logger.debug( "Checking if any of the process '{}' is currently running", apps );
 			BufferedReader input = null;
 			try {
 				String line;
@@ -46,17 +48,17 @@ public class ProcessCheckerService implements Runnable {
 					}
 				}
 			} catch (Exception e) {
-				logger.error("Error while checking process", e);
+				logger.error( "Error while checking process", e );
 			} finally {
 				if (null != input) {
 					try {
 						input.close();
 					} catch (IOException e) {
-						logger.warn("Error closing the input", e);
+						logger.warn( "Error closing the input", e );
 					}
 				}
 			}
-			logger.debug("Process found : {}", shouldRun);
+            logger.debug( "Process found : {}", shouldRun );
 		}
 
 		if (shouldRun) {

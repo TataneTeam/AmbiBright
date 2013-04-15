@@ -1,7 +1,6 @@
 package ambibright.engine.color;
 
-import ambibright.ressources.Config;
-import ambibright.ressources.Config.Parameters;
+import ambibright.config.Config;
 
 public class ColorAlgorithmGamma extends ColorAlgorithm {
 
@@ -12,26 +11,10 @@ public class ColorAlgorithmGamma extends ColorAlgorithm {
 	}
 
 	public void apply(int[] color) {
-		gamma = 1 / configValue;
+		gamma = 1 / config.getGamma();
 		color[0] = (int) (255 * Math.pow(color[0] / 255, gamma));
 		color[1] = (int) (255 * Math.pow(color[1] / 255, gamma));
 		color[2] = (int) (255 * Math.pow(color[2] / 255, gamma));
-	}
-
-	public String getName() {
-		return "Color Gamma";
-	}
-
-	public float getMinValue() {
-		return 0;
-	}
-
-	public float getMaxValue() {
-		return Float.MAX_VALUE;
-	}
-
-	public Parameters getParameter() {
-		return Parameters.CONFIG_COLOR_GAMMA;
 	}
 
 }

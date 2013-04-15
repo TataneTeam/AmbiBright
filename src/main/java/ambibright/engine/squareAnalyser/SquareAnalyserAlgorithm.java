@@ -5,6 +5,6 @@ import java.awt.image.BufferedImage;
 
 public interface SquareAnalyserAlgorithm {
 
-	public int[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch);
+	int[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch);
 
 }

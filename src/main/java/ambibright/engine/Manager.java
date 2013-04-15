@@ -8,51 +8,49 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
 
+import ambibright.ressources.Factory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ambibright.ressources.Factory;
 
 /**
  * Manages the thread of the application.
  */
 public class Manager {
 
-	private static final Logger logger = LoggerFactory.getLogger(Manager.class);
+    private static final Logger logger = LoggerFactory.getLogger( Manager.class );
 
-	private final Set<ColorsChangeObserver> observers;
+    private final Set<ColorsChangeObserver> observers;
 
 	private ScheduledExecutorService processCheckerServiceExecutor;
 	private ScheduledExecutorService aspectRatioServiceExecutor;
 	private ScheduledExecutorService colorServiceExecutor;
 
-	private UpdateColorsService updateColorsService;
-
 	private boolean isRunning = false;
 
-	public Manager() {
-		this.observers = new CopyOnWriteArraySet<ColorsChangeObserver>();
-	}
+    public Manager(){
+        this.observers = new CopyOnWriteArraySet<ColorsChangeObserver>();
+    }
 
 	public void start() {
-		logger.info("Starting");
+        logger.info("Starting");
 
 		processCheckerServiceExecutor = Executors.newScheduledThreadPool(1);
-		processCheckerServiceExecutor.scheduleAtFixedRate(Factory.get().newProcessCheckerService(), 0, Factory.get().getDelayCheckProcess(), TimeUnit.MILLISECONDS);
+		processCheckerServiceExecutor.scheduleAtFixedRate( Factory.get().newProcessCheckerService(), 0,
+            Factory.get().getConfig().getCheckProcessDelay(), TimeUnit.MILLISECONDS );
 
-		logger.info("Started");
+        logger.info("Started");
 	}
 
 	public void stop() {
-		logger.info("Stopping");
+        logger.info("Stopping");
 
-		if (null != processCheckerServiceExecutor) {
+		if (null != processCheckerServiceExecutor ) {
 			processCheckerServiceExecutor.shutdown();
 			processCheckerServiceExecutor = null;
 		}
 		stopColorsProcessing();
 
-		logger.info("Stopped");
+        logger.info("Stopped");
 	}
 
 	public void restart() {
@@ -64,29 +62,28 @@ public class Manager {
 		if (!isRunning) {
 			logger.info("Starting color processing");
 
-			ArduinoSender arduino = Factory.get().getArduinoSender();
+            ArduinoSender arduino = Factory.get().getArduinoSender();
 			try {
-				arduino.open(Factory.get().getArduinoSerial(), Factory.get().getArduinoDataRate());
-				observers.add(arduino);
+                arduino.open();
+                observers.add( arduino );
 			} catch (Exception e) {
-				logger.error("Arduino connection error", e);
-				// If the communication with the arduino failed, we remove it
-				// from the observers
-				observers.remove(arduino);
+				logger.error( "Arduino connection error", e );
+				// If the communication with the arduino failed, we remove it from the observers
+				observers.remove( arduino );
 				JOptionPane.showMessageDialog(null, "Arduino connection error:\n" + e, Factory.appName, JOptionPane.ERROR_MESSAGE);
 			}
 
 			aspectRatioServiceExecutor = Executors.newScheduledThreadPool(1);
-			aspectRatioServiceExecutor.scheduleAtFixedRate(Factory.get().newAspectRatioService(), 0, Factory.get().getDelayCheckRatio(), TimeUnit.MILLISECONDS);
-
-			updateColorsService = Factory.get().newUpdateColorsService(observers);
+			aspectRatioServiceExecutor.scheduleAtFixedRate( Factory.get().newAspectRatioService(), 0,
+                Factory.get().getConfig().getCheckRatioDelay(), TimeUnit.MILLISECONDS );
 
 			colorServiceExecutor = Executors.newScheduledThreadPool(1);
-			colorServiceExecutor.scheduleAtFixedRate(updateColorsService, 50, 1000 / Factory.get().getFpsWanted(), TimeUnit.MILLISECONDS);
+			colorServiceExecutor.scheduleAtFixedRate( Factory.get().newUpdateColorsService(observers), 50, 1000 / Factory.get()
+                .getConfig().getFps(), TimeUnit.MILLISECONDS );
 
-			Factory.get().getSimpleFPSFrame().setVisible(Factory.get().isShowFPSFrame());
+			Factory.get().getSimpleFPSFrame().setVisible(Factory.get().getConfig().isShowFpsFrame());
 
-			if (Factory.get().isBlackOtherScreens()) {
+			if (Factory.get().getConfig().isBlackOtherScreens()) {
 				Factory.get().getBlackScreenManager().createBlackScreens(Factory.get().getBounds());
 			}
 
@@ -106,7 +103,7 @@ public class Manager {
 
 			Factory.get().getAmbiFrame().setInfo("Not running");
 			Factory.get().getArduinoSender().close();
-			Factory.get().getSimpleFPSFrame().setVisible(false);
+			Factory.get().getSimpleFPSFrame().setVisible( false );
 			Factory.get().getBlackScreenManager().removeBlackScreens();
 
 			isRunning = false;
@@ -114,13 +111,13 @@ public class Manager {
 		}
 	}
 
-	public void addObserver(ColorsChangeObserver observer) {
-		observers.add(observer);
-		logger.debug("Added the color change observer : {}", observer);
-	}
+    public void addObserver(ColorsChangeObserver observer) {
+        observers.add(observer);
+        logger.debug( "Added the color change observer : {}", observer );
+    }
 
-	public void removeObserver(ColorsChangeObserver observer) {
-		observers.remove(observer);
-		logger.debug("Removed the color change observer : {}", observer);
-	}
+    public void removeObserver(ColorsChangeObserver observer) {
+        observers.remove(observer);
+        logger.debug( "Removed the color change observer : {}", observer );
+    }
 }

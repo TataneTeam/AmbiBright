@@ -1,31 +1,29 @@
 package ambibright.ihm;
 
-import java.awt.CheckboxMenuItem;
-import java.awt.Image;
-import java.awt.Menu;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
-import java.awt.SystemTray;
-import java.awt.TrayIcon;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.List;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
-import ambibright.engine.color.ColorAlgorithm;
-import ambibright.ressources.Config;
-import ambibright.ressources.Config.Parameters;
+import ambibright.ressources.CheckUpdate;
 import ambibright.ressources.Factory;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.config.Config;
 
 public class Tray extends TrayIcon {
 
+	private final Config config;
 	private final CheckboxMenuItem showFPSFrame, checkProcess, blackScreens;
+    private final CheckUpdate checkUpdate;
 
-	public Tray(Image icon, final AmbiFont ambiFont, final Config config, final List<ColorAlgorithm> colorAlgorithmList) {
+	public Tray(Image icon, final AmbiFont ambiFont, final Config pConfig) {
 		super(icon);
+		this.config = pConfig;
+        this.checkUpdate = new CheckUpdate(config.getUpdateUrl());
 		setToolTip(Factory.appName);
 		setImageAutoSize(true);
 		setPopupMenu(new PopupMenu());
@@ -35,10 +33,22 @@ public class Tray extends TrayIcon {
 			e.printStackTrace();
 		}
 
+        final MenuItem checkUpdateItem = new MenuItem(" Check for update");
+        checkUpdateItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                checkUpdateItem.setEnabled( false );
+                checkUpdate.setUrl(config.getUpdateUrl());
+                checkUpdate.manage();
+                checkUpdateItem.setEnabled( true );
+            }
+        });
+        getPopupMenu().add(ambiFont.setFont(checkUpdateItem));
+        getPopupMenu().addSeparator();
+
 		MenuItem configItem = new MenuItem(" Configuration");
 		configItem.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new ConfigFrame(ambiFont, config, colorAlgorithmList);
+				new ConfigFrame(ambiFont, config);
 			}
 		});
 		getPopupMenu().add(ambiFont.setFont(configItem));
@@ -46,33 +56,33 @@ public class Tray extends TrayIcon {
 		Menu configMenu = new Menu(" Quick Configuration");
 		getPopupMenu().add(ambiFont.setFont(configMenu));
 		blackScreens = new CheckboxMenuItem(" Black other screens");
-		blackScreens.setState("true".equals(config.get(Parameters.CONFIG_BLACK_OTHER_SCREENS)));
+		blackScreens.setState(config.isBlackOtherScreens());
 		blackScreens.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				boolean newValue = !Factory.get().isBlackOtherScreens();
-				config.put(Parameters.CONFIG_BLACK_OTHER_SCREENS, newValue + "");
+				boolean newValue = !config.isBlackOtherScreens();
+				config.setBlackOtherScreens(newValue);
 				config.save();
 				showInfo("Black other screens: " + (newValue ? "ON" : "OFF"));
 			}
 		});
 		configMenu.add(ambiFont.setFont(blackScreens));
 		checkProcess = new CheckboxMenuItem(" Check for Process");
-		checkProcess.setState("true".equals(config.get(Parameters.CONFIG_CHECK_PROCESS)));
+		checkProcess.setState(config.isCheckProcess());
 		checkProcess.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				boolean newValue = !Factory.get().isCheckProcess();
-				config.put(Parameters.CONFIG_CHECK_PROCESS, newValue + "");
+				boolean newValue = !config.isCheckProcess();
+				config.setCheckProcess(newValue);
 				config.save();
 				showInfo("Check for process: " + (newValue ? "ON" : "OFF"));
 			}
 		});
 		configMenu.add(ambiFont.setFont(checkProcess));
 		showFPSFrame = new CheckboxMenuItem(" Show FPS Frame");
-		showFPSFrame.setState("true".equals(config.get(Parameters.CONFIG_SHOW_FPS_FRAME)));
+		showFPSFrame.setState(config.isShowFpsFrame());
 		showFPSFrame.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				boolean newValue = !Factory.get().isShowFPSFrame();
-				config.put(Parameters.CONFIG_SHOW_FPS_FRAME, newValue + "");
+				boolean newValue = !config.isShowFpsFrame();
+				config.setShowFpsFrame(newValue);
 				config.save();
 				Factory.get().getSimpleFPSFrame().setVisible(newValue);
 				showInfo("Show FPS Frame: " + (newValue ? "ON" : "OFF"));
@@ -128,9 +138,9 @@ public class Tray extends TrayIcon {
 	}
 
 	public void updateCheckBox() {
-		showFPSFrame.setState(Factory.get().isShowFPSFrame());
-		checkProcess.setState(Factory.get().isCheckProcess());
-		blackScreens.setState(Factory.get().isBlackOtherScreens());
+		showFPSFrame.setState(config.isShowFpsFrame());
+		checkProcess.setState(config.isCheckProcess());
+		blackScreens.setState(config.isBlackOtherScreens());
 	}
 
 }
