@@ -15,7 +15,7 @@ import java.util.Properties;
 
 import ambibright.engine.squareAnalyser.SquareAnalyser;
 
-public class Config implements ConfigReadOnly {
+public class Config {
 
 	public static final String GROUP_CONFIG = "GROUP_CONFIG";
 	public static final String GROUP_COLOR = "GROUP_COLOR";
@@ -74,7 +74,7 @@ public class Config implements ConfigReadOnly {
 	@Configurable(label = "FPS", key = CONFIG_FPS, defaultValue = "24")
 	private volatile int fps;
 	@Configurable(label = "Delay check ratio", key = CONFIG_DELAY_CHECK_RATIO, defaultValue = "1000")
-	private int checkRatioDelay;
+	private volatile int checkRatioDelay;
 	@Configurable(label = "Delay check process", key = CONFIG_DELAY_CHECK_PROCESS, defaultValue = "5000")
 	private volatile int checkProcessDelay;
 	@Configurable(label = "Monitoring frame position", key = CONFIG_MONITORING_XY, defaultValue = "0 0", group = GROUP_MANUAL)
@@ -329,12 +329,10 @@ public class Config implements ConfigReadOnly {
 		changes.removePropertyChangeListener(propertyName, listener);
 	}
 
-	@Override
 	public int getLedTotalNumber() {
 		return getNbLedLeft() * 2 + getNbLedTop() - 2;
 	}
 
-	@Override
 	public int getNbLedTop() {
 		return nbLedTop;
 	}
@@ -345,7 +343,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_LED_NB_TOP, oldValue, nbLedTop);
 	}
 
-	@Override
 	public int getNbLedLeft() {
 		return nbLedLeft;
 	}
@@ -356,7 +353,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_LED_NB_LEFT, oldValue, nbLedLeft);
 	}
 
-	@Override
 	public int getScreenDevice() {
 		return screenDevice;
 	}
@@ -367,7 +363,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_SCREEN_DEVICE, oldValue, screenDevice);
 	}
 
-	@Override
 	public String getArduinoSerialPort() {
 		return arduinoSerialPort;
 	}
@@ -378,7 +373,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_ARDUINO_PORT, oldValue, arduinoSerialPort);
 	}
 
-	@Override
 	public int getArduinoDataRate() {
 		return arduinoDataRate;
 	}
@@ -389,7 +383,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_ARDUINO_DATA_RATE, oldValue, arduinoDataRate);
 	}
 
-	@Override
 	public String getCheckProcessList() {
 		return checkProcessList;
 	}
@@ -400,7 +393,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_PROCESS_LIST, oldValue, checkProcessList);
 	}
 
-	@Override
 	public int getDeltaRed() {
 		return deltaRed;
 	}
@@ -411,7 +403,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_RGB_R, oldValue, deltaRed);
 	}
 
-	@Override
 	public int getDeltaGreen() {
 		return deltaGreen;
 	}
@@ -422,7 +413,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_RGB_G, oldValue, deltaGreen);
 	}
 
-	@Override
 	public int getDeltaBlue() {
 		return deltaBlue;
 	}
@@ -433,7 +423,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_RGB_B, oldValue, deltaBlue);
 	}
 
-	@Override
 	public boolean isCheckProcess() {
 		return checkProcess;
 	}
@@ -444,7 +433,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_CHECK_PROCESS, oldValue, checkProcess);
 	}
 
-	@Override
 	public int getSquareSize() {
 		return squareSize;
 	}
@@ -455,7 +443,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_SQUARE_SIZE, oldValue, squareSize);
 	}
 
-	@Override
 	public int getAnalysePitch() {
 		return analysePitch;
 	}
@@ -466,7 +453,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_ANALYSE_PITCH, oldValue, analysePitch);
 	}
 
-	@Override
 	public int getFps() {
 		return fps;
 	}
@@ -477,7 +463,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_FPS, oldValue, fps);
 	}
 
-	@Override
 	public int getCheckRatioDelay() {
 		return checkRatioDelay;
 	}
@@ -488,7 +473,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_DELAY_CHECK_RATIO, oldValue, checkRatioDelay);
 	}
 
-	@Override
 	public int getCheckProcessDelay() {
 		return checkProcessDelay;
 	}
@@ -499,7 +483,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_DELAY_CHECK_PROCESS, oldValue, checkProcessDelay);
 	}
 
-	@Override
 	public String getMonitoringFramePosition() {
 		return monitoringFramePosition;
 	}
@@ -510,7 +493,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_MONITORING_XY, oldValue, monitoringFramePosition);
 	}
 
-	@Override
 	public SquareAnalyser getSquareAnalyser() {
 		return squareAnalyser;
 	}
@@ -521,7 +503,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_SQUARE_ANALYSER, oldValue, squareAnalyser);
 	}
 
-	@Override
 	public String getUpdateUrl() {
 		return updateUrl;
 	}
@@ -532,7 +513,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_UPDATE_URL, oldValue, updateUrl);
 	}
 
-	@Override
 	public int getSmoothing() {
 		return smoothing;
 	}
@@ -543,7 +523,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_SMOOTHING, oldValue, smoothing);
 	}
 
-	@Override
 	public boolean isShowFpsFrame() {
 		return showFpsFrame;
 	}
@@ -554,7 +533,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_SHOW_FPS_FRAME, oldValue, showFpsFrame);
 	}
 
-	@Override
 	public boolean isBlackOtherScreens() {
 		return blackOtherScreens;
 	}
@@ -565,7 +543,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_BLACK_OTHER_SCREENS, oldValue, blackOtherScreens);
 	}
 
-	@Override
 	public float getGamma() {
 		return gamma;
 	}
@@ -576,7 +553,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_COLOR_GAMMA, oldValue, gamma);
 	}
 
-	@Override
 	public float getHue() {
 		return hue;
 	}
@@ -587,7 +563,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_COLOR_HUE, oldValue, hue);
 	}
 
-	@Override
 	public float getSaturation() {
 		return saturation;
 	}
@@ -598,7 +573,6 @@ public class Config implements ConfigReadOnly {
 		changes.firePropertyChange(CONFIG_COLOR_SATURATION, oldValue, saturation);
 	}
 
-	@Override
 	public float getBrightness() {
 		return brightness;
 	}

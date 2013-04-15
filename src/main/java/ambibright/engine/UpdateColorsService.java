@@ -5,23 +5,21 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Set;
 
-import ambibright.config.Config;
-import ambibright.config.ConfigReadOnly;
-import ambibright.ressources.CurrentBounds;
-import ambibright.engine.squareAnalyser.SquareAnalyser;
-import ambibright.engine.color.ColorAlgorithm;
-import ambibright.engine.capture.ScreenCapture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ambibright.ressources.CurrentBounds;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.config.Config;
 
 /**
  * Compute the colors in screen and sends them to the Arduino
  */
 public class UpdateColorsService implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger( UpdateColorsService.class );
-
-    private final ConfigReadOnly config;
+	private static final Logger logger = LoggerFactory.getLogger(UpdateColorsService.class);
+	private final Config config;
 	private final ScreenCapture screenCapture;
 	private final Set<ColorsChangeObserver> observers;
 	private final List<ColorAlgorithm> colorAlgorithmList;
@@ -31,15 +29,16 @@ public class UpdateColorsService implements Runnable {
 	private final CurrentBounds currentBounds;
 	private int pos;
 
-	public UpdateColorsService(ConfigReadOnly config, ScreenCapture screenCapture, Set<ColorsChangeObserver> observers, List<ColorAlgorithm> colorAlgorithmList, CurrentBounds currentBounds, byte[] arduinoArray) {
-		this.config=config;
-        this.screenCapture = screenCapture;
+	public UpdateColorsService(Config config, ScreenCapture screenCapture, Set<ColorsChangeObserver> observers, List<ColorAlgorithm> colorAlgorithmList, CurrentBounds currentBounds, byte[] arduinoArray) {
+		this.config = config;
+		this.screenCapture = screenCapture;
 		this.observers = observers;
 		this.colorAlgorithmList = colorAlgorithmList;
 		this.currentBounds = currentBounds;
 
-        // TODO see if we can recreate them on property change to keep a singleton instance of this service
-        int totalNbLed = config.getLedTotalNumber();
+		// TODO see if we can recreate them on property change to keep a
+		// singleton instance of this service
+		int totalNbLed = config.getLedTotalNumber();
 		this.old = new int[totalNbLed][3];
 		this.result = new int[totalNbLed][3];
 		this.arduinoArray = arduinoArray;
@@ -47,7 +46,7 @@ public class UpdateColorsService implements Runnable {
 
 	public void run() {
 		try {
-            logger.debug( "Processing colors" );
+			logger.debug("Processing colors");
 
 			BufferedImage image = screenCapture.captureScreen(currentBounds.getBounds());
 
@@ -61,9 +60,9 @@ public class UpdateColorsService implements Runnable {
 			// Flushing the image
 			image.flush();
 
-            logger.debug( "Colors processed" );
+			logger.debug("Colors processed");
 		} catch (Exception e) {
-			logger.error( "Error while processing the colors", e );
+			logger.error("Error while processing the colors", e);
 		}
 	}
 
