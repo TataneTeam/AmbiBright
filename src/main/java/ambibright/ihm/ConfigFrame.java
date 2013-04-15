@@ -1,23 +1,31 @@
 package ambibright.ihm;
 
-import java.awt.*;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import ambibright.ressources.Factory;
-import ambibright.ressources.Config.Parameters;
-import ambibright.ressources.Config;
-import ambibright.ressources.CheckUpdate;
-import ambibright.engine.squareAnalyser.SquareAnalyser;
-import ambibright.engine.color.ColorAlgorithm;
 import ambibright.engine.ArduinoSender;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
+import ambibright.ressources.CheckUpdate;
+import ambibright.ressources.Config;
+import ambibright.ressources.Config.Parameters;
+import ambibright.ressources.Factory;
 
 public class ConfigFrame extends JFrame {
 
@@ -106,7 +114,7 @@ public class ConfigFrame extends JFrame {
 			slider.addChangeListener(new ChangeListener() {
 				@Override
 				public void stateChanged(ChangeEvent e) {
-					float value = getValueFromSlider( algo.getMinValue(), algo.getMaxValue(), slider.getValue() );
+					float value = getValueFromSlider(algo.getMinValue(), algo.getMaxValue(), slider.getValue());
 					algo.updateParameter(value);
 				}
 			});
@@ -137,7 +145,7 @@ public class ConfigFrame extends JFrame {
 
 				for (Map.Entry<Parameters, JSlider> entry : colorAlgoSliders.entrySet()) {
 					ColorAlgorithm algo = colorAlgoMap.get(entry.getKey());
-					float value = getValueFromSlider( algo.getMinValue(), algo.getMaxValue(), entry.getValue().getValue() );
+					float value = getValueFromSlider(algo.getMinValue(), algo.getMaxValue(), entry.getValue().getValue());
 					algo.updateParameter(value);
 					config.put(entry.getKey(), Float.toString(value));
 				}
@@ -221,10 +229,10 @@ public class ConfigFrame extends JFrame {
 		setVisible(true);
 	}
 
-    private float getValueFromSlider(float min, float max, float sliderValue){
-        float inter = max - min;
-        float percent = sliderValue / 100f;
-        return min + (inter * percent);
-    }
+	private float getValueFromSlider(float min, float max, float sliderValue) {
+		float inter = max - min;
+		float percent = sliderValue / 100f;
+		return min + (inter * percent);
+	}
 
 }

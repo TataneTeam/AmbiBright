@@ -40,8 +40,7 @@ public class Updater {
 			while ((ze = zis.getNextEntry()) != null) {
 				if (ze.isDirectory()) {
 					new File(ze.getName()).mkdirs();
-				}
-				else {
+				} else {
 					File f = new File(ze.getName());
 					OutputStream fos = new BufferedOutputStream(new FileOutputStream(f));
 

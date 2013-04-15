@@ -1,35 +1,33 @@
 package ambibright.ressources;
 
-import java.awt.*;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
 
-import ambibright.engine.color.ColorAlgorithmBrightness;
-import ambibright.engine.color.ColorAlgorithmGamma;
-import ambibright.engine.color.ColorAlgorithmHue;
-import ambibright.engine.color.ColorAlgorithmSaturation;
-import ambibright.ressources.Config.Parameters;
-import ambibright.ihm.Tray;
-import ambibright.ihm.SimpleFPSFrame;
-import ambibright.ihm.MonitoringFrame;
-import ambibright.ihm.ColorFrame;
-import ambibright.ihm.BlackScreenManager;
-import ambibright.ihm.AmbiFont;
-import ambibright.engine.squareAnalyser.SquareAnalyser;
-import ambibright.engine.color.ColorAlgorithm;
-import ambibright.engine.capture.ScreenCapture;
-import ambibright.engine.capture.DefaultScreenCapture;
-import ambibright.engine.UpdateColorsService;
-import ambibright.engine.ProcessCheckerService;
-import ambibright.engine.Manager;
-import ambibright.engine.ColorsChangeObserver;
-import ambibright.engine.AspectRatioService;
 import ambibright.engine.ArduinoSender;
+import ambibright.engine.AspectRatioService;
+import ambibright.engine.ColorsChangeObserver;
+import ambibright.engine.Manager;
+import ambibright.engine.ProcessCheckerService;
+import ambibright.engine.UpdateColorsService;
+import ambibright.engine.capture.DefaultScreenCapture;
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
+import ambibright.ihm.AmbiFont;
+import ambibright.ihm.BlackScreenManager;
+import ambibright.ihm.ColorFrame;
+import ambibright.ihm.MonitoringFrame;
+import ambibright.ihm.SimpleFPSFrame;
+import ambibright.ihm.Tray;
+import ambibright.ressources.Config.Parameters;
 
 public class Factory {
 	public static final String appName = "AmbiBright";
@@ -59,16 +57,18 @@ public class Factory {
 		this.config = new Config(configFileName);
 		this.config.init();
 
-        // TODO fix the algorithm first
-        colorAlgorithmList = Collections.emptyList();
-        //colorAlgorithmList = Arrays.asList(new ColorAlgorithmBrightness(config), new ColorAlgorithmGamma(config), new ColorAlgorithmHue(config), new ColorAlgorithmSaturation(config));
+		// TODO fix the algorithm first
+		colorAlgorithmList = Collections.emptyList();
+		// colorAlgorithmList = Arrays.asList(new
+		// ColorAlgorithmBrightness(config), new ColorAlgorithmGamma(config),
+		// new ColorAlgorithmHue(config), new ColorAlgorithmSaturation(config));
 
 		this.ambiFont = new AmbiFont();
 
 		this.fullScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[getScreenDevice()].getDefaultConfiguration().getBounds();
 		this.currentBounds = new CurrentBounds(fullScreenBounds, getLedNBLeft(), getLedNBTop(), getSquareSize());
 
-		this.tray = new Tray(getImageIcon(), ambiFont, config,colorAlgorithmList);
+		this.tray = new Tray(getImageIcon(), ambiFont, config, colorAlgorithmList);
 		this.ambiFrame = new MonitoringFrame(getLedNBLeft(), getLedNBTop(), getImageIcon());
 		this.arduinoSender = new ArduinoSender(getLedNBLeft(), getLedNBTop());
 		this.manager = new Manager();

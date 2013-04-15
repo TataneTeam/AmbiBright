@@ -2,8 +2,6 @@ package ambibright.engine;
 
 import gnu.io.CommPortIdentifier;
 import gnu.io.SerialPort;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -12,9 +10,12 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Enumeration;
 
-public class ArduinoSender implements ColorsChangeObserver{
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-    private static final Logger logger = LoggerFactory.getLogger( ArduinoSender.class );
+public class ArduinoSender implements ColorsChangeObserver {
+
+	private static final Logger logger = LoggerFactory.getLogger(ArduinoSender.class);
 
 	public static final String defaultTestString = "Ada";
 
@@ -25,7 +26,7 @@ public class ArduinoSender implements ColorsChangeObserver{
 		SerialPort serialPort = null;
 		Enumeration<CommPortIdentifier> portList = CommPortIdentifier.getPortIdentifiers();
 		while (portList.hasMoreElements()) {
-            portId = portList.nextElement();
+			portId = portList.nextElement();
 			try {
 				serialPort = portId.open("Arduino", 500);
 				serialPort.setSerialPortParams(dataRate, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
@@ -36,12 +37,12 @@ public class ArduinoSender implements ColorsChangeObserver{
 					break;
 				}
 			} catch (Exception e) {
-                logger.debug( "Error communicating with the arduino at port {}", portId, e );
+				logger.debug("Error communicating with the arduino at port {}", portId, e);
 			} finally {
 				try {
 					serialPort.close();
 				} catch (Exception e) {
-					logger.error( "Error closing the serial port", e );
+					logger.error("Error closing the serial port", e);
 				}
 			}
 		}
@@ -87,17 +88,16 @@ public class ArduinoSender implements ColorsChangeObserver{
 
 	public void write(byte[] array) {
 		try {
-            logger.debug( "Writing data to the Arduino" );
+			logger.debug("Writing data to the Arduino");
 			output.write(array);
-            logger.debug( "Data written" );
+			logger.debug("Data written");
 		} catch (Exception e) {
-			logger.error( "Error writing data to the Arduino", e );
+			logger.error("Error writing data to the Arduino", e);
 		}
 	}
 
-    @Override
-    public void onColorsChange( BufferedImage image, byte[] colors )
-    {
-        write( colors );
-    }
+	@Override
+	public void onColorsChange(BufferedImage image, byte[] colors) {
+		write(colors);
+	}
 }

@@ -1,23 +1,24 @@
 package ambibright.engine;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Set;
 
-import ambibright.ressources.CurrentBounds;
-import ambibright.engine.squareAnalyser.SquareAnalyser;
-import ambibright.engine.color.ColorAlgorithm;
-import ambibright.engine.capture.ScreenCapture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
+import ambibright.ressources.CurrentBounds;
 
 /**
  * Compute the colors in screen and sends them to the Arduino
  */
 public class UpdateColorsService implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger( UpdateColorsService.class );
+	private static final Logger logger = LoggerFactory.getLogger(UpdateColorsService.class);
 
 	private final ScreenCapture screenCapture;
 	private final Set<ColorsChangeObserver> observers;
@@ -49,7 +50,7 @@ public class UpdateColorsService implements Runnable {
 
 	public void run() {
 		try {
-            logger.debug( "Processing colors" );
+			logger.debug("Processing colors");
 
 			BufferedImage image = screenCapture.captureScreen(currentBounds.getBounds());
 
@@ -63,9 +64,9 @@ public class UpdateColorsService implements Runnable {
 			// Flushing the image
 			image.flush();
 
-            logger.debug( "Colors processed" );
+			logger.debug("Colors processed");
 		} catch (Exception e) {
-			logger.error( "Error while processing the colors", e );
+			logger.error("Error while processing the colors", e);
 		}
 	}
 

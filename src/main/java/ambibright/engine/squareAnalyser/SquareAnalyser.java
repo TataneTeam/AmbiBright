@@ -5,10 +5,11 @@ import java.awt.image.BufferedImage;
 
 import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoAverage;
 import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoMain;
+import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoMainAverage;
 
 public enum SquareAnalyser {
 
-	AverageColors(new SquareAnalyzerAlgoAverage()), MainColor(new SquareAnalyzerAlgoMain());
+	AverageColors(new SquareAnalyzerAlgoAverage()), MainColor(new SquareAnalyzerAlgoMain()), MainAverageColor(new SquareAnalyzerAlgoMainAverage());
 
 	private SquareAnalyserAlgorithm squareAnalyserAlgorithm;
 

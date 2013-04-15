@@ -1,12 +1,14 @@
 package ambibright.ihm;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import javax.swing.*;
+import javax.swing.JDialog;
+import javax.swing.JLabel;
 
-import ambibright.ressources.Factory;
 import ambibright.engine.ColorsChangeObserver;
+import ambibright.ressources.Factory;
 
 import com.sun.awt.AWTUtilities;
 

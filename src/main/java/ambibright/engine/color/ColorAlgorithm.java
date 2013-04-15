@@ -44,8 +44,8 @@ public abstract class ColorAlgorithm {
 	public void updateParameter(float value) {
 		configValue = value;
 	}
-	
-	public String toString(){
+
+	public String toString() {
 		return getName();
 	}
 

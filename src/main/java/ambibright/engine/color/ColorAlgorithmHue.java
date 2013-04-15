@@ -10,12 +10,12 @@ public class ColorAlgorithmHue extends ColorAlgorithm {
 	private float[] hsbVals;
 	private int current;
 
-	public ColorAlgorithmHue( Config config ) {
-        super(config);
+	public ColorAlgorithmHue(Config config) {
+		super(config);
 		hsbVals = new float[3];
 	}
 
-    public void apply(int[] color) {
+	public void apply(int[] color) {
 		Color.RGBtoHSB(color[0], color[1], color[2], hsbVals);
 		current = Color.HSBtoRGB(hsbVals[0] + configValue, hsbVals[1], hsbVals[2]);
 		color[0] = (current & 0x00ff0000) >> 16;
@@ -23,19 +23,19 @@ public class ColorAlgorithmHue extends ColorAlgorithm {
 		color[2] = current & 0x000000ff;
 	}
 
-    public String getName() {
+	public String getName() {
 		return "Color Hue";
 	}
 
-    public float getMinValue() {
+	public float getMinValue() {
 		return Float.MIN_VALUE;
 	}
 
-    public float getMaxValue() {
+	public float getMaxValue() {
 		return Float.MAX_VALUE;
 	}
 
-    public Parameters getParameter() {
+	public Parameters getParameter() {
 		return Parameters.CONFIG_COLOR_HUE;
 	}
 

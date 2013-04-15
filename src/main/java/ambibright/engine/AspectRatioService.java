@@ -3,17 +3,18 @@ package ambibright.engine;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import ambibright.engine.capture.ScreenCapture;
-import ambibright.ressources.CurrentBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.ressources.CurrentBounds;
 
 /**
  * Checks for changes in aspect ratio and update the bounds if any
  */
 public class AspectRatioService implements Runnable {
 
-    private static final Logger logger = LoggerFactory.getLogger( AspectRatioService.class );
+	private static final Logger logger = LoggerFactory.getLogger(AspectRatioService.class);
 
 	private static final int blackLimit = 6;
 	private final Rectangle fullScreenBounds;
@@ -27,7 +28,7 @@ public class AspectRatioService implements Runnable {
 	private int x = 0;
 	private int testY, testX;
 
-	public AspectRatioService(Rectangle fullScreenBounds, CurrentBounds currentBounds, ScreenCapture screenCapture ) {
+	public AspectRatioService(Rectangle fullScreenBounds, CurrentBounds currentBounds, ScreenCapture screenCapture) {
 		this.fullScreenBounds = fullScreenBounds;
 		this.currentBounds = currentBounds;
 		this.screenCapture = screenCapture;
@@ -35,10 +36,10 @@ public class AspectRatioService implements Runnable {
 	}
 
 	public void run() {
-        logger.debug( "Checking if aspect ratio changed" );
+		logger.debug("Checking if aspect ratio changed");
 
 		// Get current image
-        BufferedImage image = screenCapture.captureScreen(fullScreenBounds);
+		BufferedImage image = screenCapture.captureScreen(fullScreenBounds);
 
 		// Detect top
 		y = fullScreenBounds.height / 4;
@@ -67,12 +68,12 @@ public class AspectRatioService implements Runnable {
 
 		Rectangle newBounds = new Rectangle(fullScreenBounds.x + x, fullScreenBounds.y + y, fullScreenBounds.width - (2 * x), fullScreenBounds.height - (2 * y));
 		if (!lastScreenBounds.equals(newBounds)) {
-            logger.info( "Aspect ratio changed. New bounds : {}", newBounds );
+			logger.info("Aspect ratio changed. New bounds : {}", newBounds);
 			lastScreenBounds = newBounds;
 			currentBounds.updateBounds(newBounds);
-		}else{
-            logger.debug( "Aspect ratio didn't change" );
-        }
+		} else {
+			logger.debug("Aspect ratio didn't change");
+		}
 	}
 
 	private boolean isBlack(int color) {

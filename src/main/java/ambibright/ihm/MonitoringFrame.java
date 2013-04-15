@@ -1,15 +1,27 @@
 package ambibright.ihm;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.GridLayout;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 
-import ambibright.ressources.Factory;
 import ambibright.engine.ColorsChangeObserver;
+import ambibright.ressources.Factory;
 
 public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 
@@ -129,11 +141,11 @@ public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 		int fps = fpsCounter.fps();
 		setInfo(fps + " fps");
 
-        // update image
-        addZones(image, Factory.get().getCurrentBounds().getZones());
-        imageHeight = image.getHeight() * imageLabel.getWidth() / image.getWidth();
-        imageLabel.setIcon(resizeImage(image, imageLabel.getWidth(), imageHeight));
-        imageLabel.setSize(imageLabel.getWidth(), imageHeight);
+		// update image
+		addZones(image, Factory.get().getCurrentBounds().getZones());
+		imageHeight = image.getHeight() * imageLabel.getWidth() / image.getWidth();
+		imageLabel.setIcon(resizeImage(image, imageLabel.getWidth(), imageHeight));
+		imageLabel.setSize(imageLabel.getWidth(), imageHeight);
 
 		j = 6;
 		// Left from bottom to up
