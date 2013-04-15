@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.*;
 import javax.swing.event.CaretEvent;
@@ -20,18 +22,42 @@ import ambibright.config.Configurable;
 import ambibright.config.Config;
 
 /**
- * Created with IntelliJ IDEA. User: Nico Date: 15/04/13 Time: 19:32 To change
- * this template use File | Settings | File Templates.
+ * Factory used to generate component from config field
  */
 public class ComponentFactory {
+
 	private final Container container;
 	private final AmbiFont ambiFont;
 	private final Config config;
+	private final Map<String, JComponent> propertyToComponent = new HashMap<String, JComponent>();
 
 	public ComponentFactory(Container container, AmbiFont ambiFont, Config config) {
 		this.container = container;
 		this.ambiFont = ambiFont;
 		this.config = config;
+	}
+
+	public void createComponents(Collection<Field> fields) {
+		for (Field field : fields) {
+			Configurable configurable = field.getAnnotation(Configurable.class);
+			JComponent component;
+			if (field.isAnnotationPresent(PredefinedList.class)) {
+				component = createComboBox(field, configurable, field.getAnnotation(PredefinedList.class).provider());
+			} else if (field.isAnnotationPresent(IntInterval.class)) {
+				component = createIntSlider(field, configurable, field.getAnnotation(IntInterval.class));
+			} else if (field.isAnnotationPresent(FloatInterval.class)) {
+				component = createFloatSlider(field, configurable, field.getAnnotation(FloatInterval.class));
+			} else if (boolean.class == field.getType()) {
+				component = createCheckBox(field, configurable);
+			} else {
+				component = createTextField(field, configurable);
+			}
+			propertyToComponent.put(configurable.key(), component);
+		}
+	}
+
+	public JComponent getComponent(String property) {
+		return propertyToComponent.get(property);
 	}
 
 	public JCheckBox createCheckBox(final Field field, Configurable configurable) {
@@ -105,23 +131,6 @@ public class ComponentFactory {
 		container.add(ambiFont.setFontBold(new JLabel(" " + configurable.label())));
 		container.add(ambiFont.setFont(slider));
 		return slider;
-	}
-
-	public void createComponents(Collection<Field> fields) {
-		for (Field field : fields) {
-			Configurable configurable = field.getAnnotation(Configurable.class);
-			if (field.isAnnotationPresent(PredefinedList.class)) {
-				createComboBox(field, configurable, field.getAnnotation(PredefinedList.class).provider());
-			} else if (field.isAnnotationPresent(IntInterval.class)) {
-				createIntSlider(field, configurable, field.getAnnotation(IntInterval.class));
-			} else if (field.isAnnotationPresent(FloatInterval.class)) {
-				createFloatSlider(field, configurable, field.getAnnotation(FloatInterval.class));
-			} else if (boolean.class == field.getType()) {
-				createCheckBox(field, configurable);
-			} else {
-				createTextField(field, configurable);
-			}
-		}
 	}
 
 	public JTextField createTextField(final Field field, Configurable configurable) {
