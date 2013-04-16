@@ -1,12 +1,15 @@
 package ambibright.ressources;
 
-import java.awt.*;
+import java.awt.GraphicsEnvironment;
+import java.awt.Image;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.*;
+import javax.swing.ImageIcon;
 
 import ambibright.ihm.Tray;
 import ambibright.ihm.SimpleFPSFrame;
@@ -66,7 +69,7 @@ public class Factory {
 		this.tray = new Tray(getImageIcon(), ambiFont, config);
 		this.ambiFrame = new MonitoringFrame(getConfig().getNbLedLeft(), getConfig().getNbLedTop(), getImageIcon());
 		this.arduinoSender = new ArduinoSender(getConfig());
-		this.manager = new Manager();
+		this.manager = new Manager(config);
 		this.simpleFPSFrame = new SimpleFPSFrame();
 		this.blackScreenManager = new BlackScreenManager();
 	}
