@@ -44,7 +44,6 @@ public class Factory {
 
 	private final Config config;
 	private final AmbiFont ambiFont;
-	private final Tray tray;
 	private final MonitoringFrame ambiFrame;
 	private final ArduinoSender arduinoSender;
 	private final Rectangle fullScreenBounds;
@@ -66,7 +65,7 @@ public class Factory {
 		this.fullScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[getConfig().getScreenDevice()].getDefaultConfiguration().getBounds();
 		this.currentBounds = new CurrentBounds(fullScreenBounds, getConfig().getNbLedLeft(), config.getNbLedTop(), config.getSquareSize());
 
-		this.tray = new Tray(getImageIcon(), ambiFont, config);
+		new Tray(getImageIcon(), ambiFont, config);
 		this.ambiFrame = new MonitoringFrame(getConfig().getNbLedLeft(), getConfig().getNbLedTop(), getImageIcon());
 		this.arduinoSender = new ArduinoSender(getConfig());
 		this.manager = new Manager(config);
@@ -145,10 +144,6 @@ public class Factory {
 	public void saveMonitoringLocation(int x, int y) {
 		getConfig().setMonitoringFramePosition(x + separator + y);
 		getConfig().save();
-	}
-
-	public Tray getTray() {
-		return tray;
 	}
 
 	public SimpleFPSFrame getSimpleFPSFrame() {

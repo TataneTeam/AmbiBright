@@ -53,7 +53,6 @@ public class ConfigFrame extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				config.save();
 				originalConfig = null;
-				Factory.get().getTray().updateCheckBox();
 				Factory.get().getManager().restart();
 				dispose();
 			}
