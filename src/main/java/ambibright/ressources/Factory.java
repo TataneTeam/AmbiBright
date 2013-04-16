@@ -5,7 +5,7 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.net.URL;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -17,10 +17,6 @@ import ambibright.ihm.MonitoringFrame;
 import ambibright.ihm.ColorFrame;
 import ambibright.ihm.BlackScreenManager;
 import ambibright.ihm.AmbiFont;
-import ambibright.engine.color.ColorAlgorithmSaturation;
-import ambibright.engine.color.ColorAlgorithmHue;
-import ambibright.engine.color.ColorAlgorithmGamma;
-import ambibright.engine.color.ColorAlgorithmBrightness;
 import ambibright.engine.color.ColorAlgorithm;
 import ambibright.engine.capture.ScreenCapture;
 import ambibright.engine.capture.DefaultScreenCapture;
@@ -57,8 +53,10 @@ public class Factory {
 		this.config = Config.getInstance();
 
 		// TODO fix the algorithm first
-		// colorAlgorithmList = Collections.emptyList();
-		colorAlgorithmList = Arrays.asList(new ColorAlgorithmBrightness(config), new ColorAlgorithmGamma(config), new ColorAlgorithmHue(config), new ColorAlgorithmSaturation(config));
+		colorAlgorithmList = Collections.emptyList();
+		// colorAlgorithmList = Arrays.asList(new
+		// ColorAlgorithmBrightness(config), new ColorAlgorithmGamma(config),
+		// new ColorAlgorithmHue(config), new ColorAlgorithmSaturation(config));
 
 		this.ambiFont = new AmbiFont();
 
