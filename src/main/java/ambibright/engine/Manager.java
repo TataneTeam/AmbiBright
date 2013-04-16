@@ -42,13 +42,15 @@ public class Manager {
 
 	private synchronized void onChangeCheckProcess(boolean checkProcess) {
 		if (checkProcess && null == processCheckerServiceExecutor) {
-            stopColorsProcessing();
+			stopColorsProcessing();
 			processCheckerServiceExecutor = Executors.newScheduledThreadPool(1);
 			processCheckerServiceExecutor.scheduleAtFixedRate(Factory.get().newProcessCheckerService(), 0, Factory.get().getConfig().getCheckProcessDelay(), TimeUnit.MILLISECONDS);
-		} else if (!checkProcess && null != processCheckerServiceExecutor) {
-			processCheckerServiceExecutor.shutdown();
-			processCheckerServiceExecutor = null;
-            startColorsProcessing();
+		} else if (!checkProcess) {
+			if (null != processCheckerServiceExecutor) {
+				processCheckerServiceExecutor.shutdown();
+				processCheckerServiceExecutor = null;
+			}
+			startColorsProcessing();
 		}
 	}
 
