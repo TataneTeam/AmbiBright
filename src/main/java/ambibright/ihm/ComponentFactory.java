@@ -1,16 +1,23 @@
 package ambibright.ihm;
 
-import java.awt.*;
+import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.swing.*;
-import javax.swing.event.CaretEvent;
-import javax.swing.event.CaretListener;
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -62,15 +69,17 @@ public class ComponentFactory {
 
 	public JCheckBox createCheckBox(final Field field, Configurable configurable) {
 		final JCheckBox checkbox = new JCheckBox();
-		checkbox.setSelected(config.getValueAsBoolean(field));
+		checkbox.setSelected((Boolean) config.getValue(field));
 		checkbox.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				config.setValue(field, checkbox.isSelected());
 			}
 		});
-		container.add(ambiFont.setFontBold(new JLabel(" " + configurable.label())));
-		container.add(ambiFont.setFont(checkbox));
+
+		addLabel(configurable);
+		addComponent(configurable, checkbox);
+
 		return checkbox;
 	}
 
@@ -94,28 +103,32 @@ public class ComponentFactory {
 				config.setValue(field, provider.getValueFromItem(comboBox.getSelectedItem()));
 			}
 		});
-		comboBox.setSelectedItem(provider.getItemFromValue(config.getValueAsObject(field)));
-		container.add(ambiFont.setFontBold(new JLabel(" " + configurable.label())));
-		container.add(ambiFont.setFont(comboBox));
+		comboBox.setSelectedItem(provider.getItemFromValue(config.getValue(field)));
+
+		addLabel(configurable);
+		addComponent(configurable, comboBox);
+
 		return comboBox;
 	}
 
 	public JSlider createIntSlider(final Field field, Configurable configurable, IntInterval interval) {
-		final JSlider slider = new JSlider(interval.min(), interval.max(), config.getValueAsInt(field));
+		final JSlider slider = new JSlider(interval.min(), interval.max(), (Integer) config.getValue(field));
 		slider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				config.setValue(field, slider.getValue());
 			}
 		});
-		container.add(ambiFont.setFontBold(new JLabel(" " + configurable.label())));
-		container.add(ambiFont.setFont(slider));
+
+		addLabel(configurable);
+		addComponent(configurable, slider);
+
 		return slider;
 	}
 
 	public JSlider createFloatSlider(final Field field, Configurable configurable, final FloatInterval interval) {
 		float inter = interval.max() - interval.min();
-		int percent = (int) (((config.getValueAsFloat(field) - interval.min()) / inter) * interval.precision());
+		int percent = (int) (((((Integer) config.getValue(field)) - interval.min()) / inter) * interval.precision());
 
 		final JSlider slider = new JSlider(0, interval.precision(), percent);
 		slider.addChangeListener(new ChangeListener() {
@@ -128,22 +141,59 @@ public class ComponentFactory {
 			}
 		});
 
-		container.add(ambiFont.setFontBold(new JLabel(" " + configurable.label())));
-		container.add(ambiFont.setFont(slider));
+		addLabel(configurable);
+		addComponent(configurable, slider);
+
 		return slider;
 	}
 
 	public JTextField createTextField(final Field field, Configurable configurable) {
-		final JTextField textField = new JTextField(config.getValueAsString(field));
-		textField.addCaretListener(new CaretListener() {
+		final JFormattedTextField textField = new JFormattedTextField(new JFormattedTextField.AbstractFormatter() {
+			@Override
+			public Object stringToValue(String text) throws ParseException {
+				try {
+					if (field.getType() == int.class) {
+						return Integer.parseInt(text);
+					} else if (field.getType() == float.class) {
+						return Float.parseFloat(text);
+					}
+				} catch (NumberFormatException e) {
+					throw new ParseException(e.getMessage(), 0);
+				}
+				return text;
+			}
 
 			@Override
-			public void caretUpdate(CaretEvent e) {
-				config.setValue(field, textField.getText());
+			public String valueToString(Object value) throws ParseException {
+				return null == value ? null : value.toString();
 			}
 		});
-		container.add(ambiFont.setFontBold(new JLabel(" " + configurable.label())));
-		container.add(ambiFont.setFont(textField));
+		textField.setValue(config.getValue(field));
+		textField.addPropertyChangeListener("value", new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				config.setValue(field, evt.getNewValue());
+			}
+		});
+
+		addLabel(configurable);
+		addComponent(configurable, textField);
+
 		return textField;
+	}
+
+	private void addLabel(Configurable configurable) {
+		JLabel label = new JLabel(" " + configurable.label());
+		if (!configurable.description().isEmpty()) {
+			label.setToolTipText(configurable.description());
+		}
+		container.add(ambiFont.setFontBold(label));
+	}
+
+	private void addComponent(Configurable configurable, JComponent component) {
+		if (!configurable.description().isEmpty()) {
+			component.setToolTipText(configurable.description());
+		}
+		container.add(ambiFont.setFontBold(component));
 	}
 }

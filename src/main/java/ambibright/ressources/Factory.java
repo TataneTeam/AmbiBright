@@ -52,8 +52,7 @@ public class Factory {
 	private final List<ColorAlgorithm> colorAlgorithmList;
 
 	private Factory() {
-		this.config = new Config();
-		this.config.init();
+		this.config = Config.getInstance();
 
 		// TODO fix the algorithm first
 		// colorAlgorithmList = Collections.emptyList();

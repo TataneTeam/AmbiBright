@@ -46,6 +46,16 @@ public class Config {
 	public static final String CONFIG_COLOR_SATURATION = "CONFIG_COLOR_SATURATION";
 	public static final String CONFIG_COLOR_BRIGHTNESS = "CONFIG_COLOR_BRIGHTNESS";
 	private static final String configFileName = "AmbiBright.properties";
+	private static final Config instance;
+	static {
+		instance = new Config();
+		instance.init();
+	}
+
+	public static Config getInstance() {
+		return instance;
+	}
+
 	@Configurable(label = "Top LED number", key = CONFIG_LED_NB_TOP, defaultValue = "24")
 	private volatile int nbLedTop;
 	@Configurable(label = "Left/Right LED number", key = CONFIG_LED_NB_LEFT, defaultValue = "14")
@@ -108,7 +118,10 @@ public class Config {
 	private Map<String, List<Field>> groupToFields = new LinkedHashMap<String, List<Field>>();
 	private PropertyChangeSupport changes = new PropertyChangeSupport(this);
 
-	public void init() {
+	private Config() {
+	}
+
+	private void init() {
 		keyToField.clear();
 		Properties properties = loadIfExists();
 		for (Field field : getClass().getDeclaredFields()) {
@@ -117,14 +130,14 @@ public class Config {
 				keyToField.put(configurable.key(), field);
 				fieldToKey.put(field, configurable.key());
 
-                List<Field> fieldsByGroup = groupToFields.get( configurable.group() );
-                if(null == fieldsByGroup){
-                    fieldsByGroup = new ArrayList<Field>(  );
-                    groupToFields.put( configurable.group(), fieldsByGroup );
-                }
-                fieldsByGroup.add( field );
+				List<Field> fieldsByGroup = groupToFields.get(configurable.group());
+				if (null == fieldsByGroup) {
+					fieldsByGroup = new ArrayList<Field>();
+					groupToFields.put(configurable.group(), fieldsByGroup);
+				}
+				fieldsByGroup.add(field);
 
-                String value;
+				String value;
 				if (configurable.forceValue()) {
 					value = configurable.defaultValue();
 				} else if (isSet(properties, configurable.key())) {
@@ -132,11 +145,32 @@ public class Config {
 				} else {
 					value = configurable.defaultValue();
 				}
-				setValue(field, value);
+				setStringToFieldValue(field, value);
 			}
 		}
 		if (null == properties) {
 			save();
+		}
+	}
+
+	private void setStringToFieldValue(Field field, String value) {
+		try {
+			if (String.class == field.getType()) {
+				field.set(this, value);
+			} else if (boolean.class == field.getType()) {
+				field.setBoolean(this, Boolean.valueOf(value));
+			} else if (int.class == field.getType()) {
+				field.setInt(this, Integer.valueOf(value));
+			} else if (float.class == field.getType()) {
+				field.setFloat(this, Float.valueOf(value));
+			} else if (field.getType().isEnum()) {
+				field.set(this, Enum.valueOf((Class<? extends Enum>) field.getType(), value));
+			} else {
+				throw new IllegalArgumentException("Unknown type");
+			}
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new IllegalArgumentException("Error setting a value", e);
 		}
 	}
 
@@ -174,7 +208,7 @@ public class Config {
 		for (Field field : getClass().getDeclaredFields()) {
 			Configurable configurable = field.getAnnotation(Configurable.class);
 			if (null != configurable) {
-				String value = getValueAsString(field);
+				String value = convertFieldValueToString(field);
 				properties.put(configurable.key(), value);
 			}
 		}
@@ -194,11 +228,7 @@ public class Config {
 		}
 	}
 
-	public Collection<Field> getFieldsByGroup(String group) {
-		return groupToFields.get( group );
-	}
-
-	public String getValueAsString(Field field) {
+	private String convertFieldValueToString(Field field) {
 		String value;
 		try {
 			if (String.class == field.getType()) {
@@ -221,16 +251,11 @@ public class Config {
 		return value;
 	}
 
-	public boolean getValueAsBoolean(Field field) {
-		try {
-			return field.getBoolean(this);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("Error retrieving a value", e);
-		}
+	public Collection<Field> getFieldsByGroup(String group) {
+		return groupToFields.get(group);
 	}
 
-	public Object getValueAsObject(Field field) {
+	public Object getValue(Field field) {
 		try {
 			return field.get(this);
 		} catch (IllegalAccessException e) {
@@ -239,60 +264,11 @@ public class Config {
 		}
 	}
 
-	public int getValueAsInt(Field field) {
-		try {
-			return field.getInt(this);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("Error retrieving a value", e);
-		}
-	}
-
-	public float getValueAsFloat(Field field) {
-		try {
-			return field.getFloat(this);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("Error retrieving a value", e);
-		}
-	}
-
-	public void setValue(Field field, String value) {
-		try {
-			Object oldValue = field.get(this);
-			if (String.class == field.getType()) {
-				field.set(this, value);
-			} else if (boolean.class == field.getType()) {
-				field.setBoolean(this, Boolean.valueOf(value));
-			} else if (int.class == field.getType()) {
-				field.setInt(this, Integer.valueOf(value));
-			} else if (float.class == field.getType()) {
-				field.setFloat(this, Float.valueOf(value));
-			} else if (field.getType().isEnum()) {
-				field.set(this, Enum.valueOf((Class<? extends Enum>) field.getType(), value));
-			} else {
-				throw new IllegalArgumentException("Unknown type");
-			}
-			Object newValue = field.get(this);
-			changes.firePropertyChange(fieldToKey.get(field), oldValue, newValue);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("Error setting a value", e);
-		}
-	}
-
-	public void setValue(Field field, boolean value) {
-		try {
-			field.setBoolean(this, value);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("Error setting a value", e);
-		}
-	}
-
 	public void setValue(Field field, Object value) {
 		try {
+			Object oldValue = field.get(this);
 			field.set(this, value);
+			changes.firePropertyChange(fieldToKey.get(field), oldValue, value);
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException("Error setting a value", e);
