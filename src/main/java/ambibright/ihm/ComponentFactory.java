@@ -7,8 +7,11 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.reflect.Field;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.JCheckBox;
@@ -37,6 +40,7 @@ public class ComponentFactory {
 	private final AmbiFont ambiFont;
 	private final Config config;
 	private final Map<String, JComponent> propertyToComponent = new HashMap<String, JComponent>();
+	private final List<Config.PropertyChangeRegistration> propertyChangeRegistrations = new ArrayList<Config.PropertyChangeRegistration>();
 
 	public ComponentFactory(Container container, AmbiFont ambiFont, Config config) {
 		this.container = container;
@@ -67,6 +71,14 @@ public class ComponentFactory {
 		return propertyToComponent.get(property);
 	}
 
+	public void clearPropertyChangeListeners() {
+		Iterator<Config.PropertyChangeRegistration> iterator = propertyChangeRegistrations.iterator();
+		while (iterator.hasNext()) {
+			iterator.next().removeListener();
+			iterator.remove();
+		}
+	}
+
 	public JCheckBox createCheckBox(final Field field, Configurable configurable) {
 		final JCheckBox checkbox = new JCheckBox();
 		checkbox.setSelected((Boolean) config.getValue(field));
@@ -74,6 +86,12 @@ public class ComponentFactory {
 			@Override
 			public void stateChanged(ChangeEvent e) {
 				config.setValue(field, checkbox.isSelected());
+			}
+		});
+		addPropertyChangeListener(configurable.key(), new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				checkbox.setSelected((Boolean) evt.getNewValue());
 			}
 		});
 
@@ -105,6 +123,13 @@ public class ComponentFactory {
 		});
 		comboBox.setSelectedItem(provider.getItemFromValue(config.getValue(field)));
 
+		addPropertyChangeListener(configurable.key(), new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				comboBox.setSelectedItem(provider.getItemFromValue(evt.getNewValue()));
+			}
+		});
+
 		addLabel(configurable);
 		addComponent(configurable, comboBox);
 
@@ -120,6 +145,13 @@ public class ComponentFactory {
 			}
 		});
 
+		addPropertyChangeListener(configurable.key(), new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				slider.setValue((Integer) evt.getNewValue());
+			}
+		});
+
 		addLabel(configurable);
 		addComponent(configurable, slider);
 
@@ -127,10 +159,7 @@ public class ComponentFactory {
 	}
 
 	public JSlider createFloatSlider(final Field field, Configurable configurable, final FloatInterval interval) {
-		float inter = interval.max() - interval.min();
-		int percent = (int) (((((Integer) config.getValue(field)) - interval.min()) / inter) * interval.precision());
-
-		final JSlider slider = new JSlider(0, interval.precision(), percent);
+		final JSlider slider = new JSlider(0, interval.precision(), getSliderValueFromFloat(interval.min(), interval.max(), interval.precision(), (Float) config.getValue(field)));
 		slider.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent e) {
@@ -141,10 +170,22 @@ public class ComponentFactory {
 			}
 		});
 
+		addPropertyChangeListener(configurable.key(), new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				slider.setValue(getSliderValueFromFloat(interval.min(), interval.max(), interval.precision(), (Float) evt.getNewValue()));
+			}
+		});
+
 		addLabel(configurable);
 		addComponent(configurable, slider);
 
 		return slider;
+	}
+
+	private int getSliderValueFromFloat(float min, float max, int precision, float value) {
+		float inter = max - min;
+		return (int) (((value - min) / inter) * precision);
 	}
 
 	public JTextField createTextField(final Field field, Configurable configurable) {
@@ -168,11 +209,19 @@ public class ComponentFactory {
 				return null == value ? null : value.toString();
 			}
 		});
+
 		textField.setValue(config.getValue(field));
 		textField.addPropertyChangeListener("value", new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				config.setValue(field, evt.getNewValue());
+			}
+		});
+
+		addPropertyChangeListener(configurable.key(), new PropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent evt) {
+				textField.setValue(evt.getNewValue());
 			}
 		});
 
@@ -195,5 +244,9 @@ public class ComponentFactory {
 			component.setToolTipText(configurable.description());
 		}
 		container.add(ambiFont.setFontBold(component));
+	}
+
+	public void addPropertyChangeListener(String property, PropertyChangeListener listener) {
+		propertyChangeRegistrations.add(config.addPropertyChangeListener(property, listener));
 	}
 }

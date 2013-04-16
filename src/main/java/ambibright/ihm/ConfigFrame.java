@@ -1,12 +1,15 @@
 package ambibright.ihm;
 
-import java.awt.*;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
 import java.util.Collection;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 
 import ambibright.ressources.Factory;
 import ambibright.engine.ArduinoSender;
@@ -15,6 +18,7 @@ import ambibright.config.Config;
 public class ConfigFrame extends JFrame {
 
 	private final Config config;
+	private final ComponentFactory factory;
 	private Config originalConfig;
 	private JButton findPortBtn;
 
@@ -28,7 +32,7 @@ public class ConfigFrame extends JFrame {
 
 		setLayout(new GridLayout(fields.size() + 2, 2));
 
-		final ComponentFactory factory = new ComponentFactory(this, ambiFont, config);
+		factory = new ComponentFactory(this, ambiFont, config);
 		factory.createComponents(fields);
 
 		findPortBtn = new JButton("Try to find the port");
@@ -72,6 +76,7 @@ public class ConfigFrame extends JFrame {
 
 	@Override
 	public void hide() {
+        factory.clearPropertyChangeListeners();
 		if (null != originalConfig) {
 			config.restore(originalConfig);
 		}

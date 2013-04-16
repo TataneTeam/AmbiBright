@@ -17,6 +17,22 @@ import ambibright.engine.squareAnalyser.SquareAnalyser;
 
 public class Config {
 
+	public static class PropertyChangeRegistration {
+		private Config config;
+		private String property;
+		private PropertyChangeListener listener;
+
+		private PropertyChangeRegistration(Config config, String property, PropertyChangeListener listener) {
+			this.config = config;
+			this.property = property;
+			this.listener = listener;
+		}
+
+		public void removeListener() {
+			config.removePropertyChangeListener(property, listener);
+		}
+	}
+
 	public static final String GROUP_CONFIG = "GROUP_CONFIG";
 	public static final String GROUP_COLOR = "GROUP_COLOR";
 	public static final String GROUP_MANUAL = "GROUP_MANUAL";
@@ -69,11 +85,14 @@ public class Config {
 	private volatile int arduinoDataRate;
 	@Configurable(label = "Check for Process list", key = CONFIG_PROCESS_LIST, defaultValue = "XBMC.exe vlc.exe")
 	private volatile String checkProcessList;
-	@Configurable(label = "Red", key = CONFIG_RGB_R, defaultValue = "0", group = GROUP_MANUAL)
+	@Configurable(label = "Red", key = CONFIG_RGB_R, defaultValue = "0", group = GROUP_COLOR)
+	@IntInterval(min = -150, max = 150)
 	private volatile int deltaRed;
-	@Configurable(label = "Green", key = CONFIG_RGB_G, defaultValue = "0", group = GROUP_MANUAL)
+	@Configurable(label = "Green", key = CONFIG_RGB_G, defaultValue = "0", group = GROUP_COLOR)
+	@IntInterval(min = -150, max = 150)
 	private volatile int deltaGreen;
-	@Configurable(label = "Blue", key = CONFIG_RGB_B, defaultValue = "0", group = GROUP_MANUAL)
+	@Configurable(label = "Blue", key = CONFIG_RGB_B, defaultValue = "0", group = GROUP_COLOR)
+	@IntInterval(min = -150, max = 150)
 	private volatile int deltaBlue;
 	@Configurable(label = "Check for Process", key = CONFIG_CHECK_PROCESS, defaultValue = "true")
 	private volatile boolean checkProcess;
@@ -145,7 +164,7 @@ public class Config {
 				} else {
 					value = configurable.defaultValue();
 				}
-				setStringToFieldValue(field, value);
+				setValue(field, convertStringToFieldValue(field, value));
 			}
 		}
 		if (null == properties) {
@@ -153,24 +172,19 @@ public class Config {
 		}
 	}
 
-	private void setStringToFieldValue(Field field, String value) {
-		try {
-			if (String.class == field.getType()) {
-				field.set(this, value);
-			} else if (boolean.class == field.getType()) {
-				field.setBoolean(this, Boolean.valueOf(value));
-			} else if (int.class == field.getType()) {
-				field.setInt(this, Integer.valueOf(value));
-			} else if (float.class == field.getType()) {
-				field.setFloat(this, Float.valueOf(value));
-			} else if (field.getType().isEnum()) {
-				field.set(this, Enum.valueOf((Class<? extends Enum>) field.getType(), value));
-			} else {
-				throw new IllegalArgumentException("Unknown type");
-			}
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new IllegalArgumentException("Error setting a value", e);
+	private Object convertStringToFieldValue(Field field, String value) {
+		if (String.class == field.getType()) {
+			return value;
+		} else if (boolean.class == field.getType()) {
+			return Boolean.valueOf(value);
+		} else if (int.class == field.getType()) {
+			return Integer.valueOf(value);
+		} else if (float.class == field.getType()) {
+			return Float.valueOf(value);
+		} else if (field.getType().isEnum()) {
+			return Enum.valueOf((Class<? extends Enum>) field.getType(), value);
+		} else {
+			throw new IllegalArgumentException("Unknown type");
 		}
 	}
 
@@ -290,15 +304,27 @@ public class Config {
 	public void restore(Config config) {
 		for (Field field : keyToField.values()) {
 			try {
-				field.set(this, field.get(config));
+				setValue(field, field.get(config));
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
-	public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+	public void resetToDefault(Collection<Field> fields) {
+		for (Field field : fields) {
+			resetToDefault(field);
+		}
+	}
+
+	public void resetToDefault(Field field) {
+		String defaultValue = field.getAnnotation(Configurable.class).defaultValue();
+		setValue(field, convertStringToFieldValue(field, defaultValue));
+	}
+
+	public PropertyChangeRegistration addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		changes.addPropertyChangeListener(propertyName, listener);
+		return new PropertyChangeRegistration(this, propertyName, listener);
 	}
 
 	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
