@@ -5,12 +5,14 @@ import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
 import javax.swing.ImageIcon;
 
+import ambibright.engine.color.ColorAlgorithmGamma;
 import ambibright.ihm.Tray;
 import ambibright.ihm.SimpleFPSFrame;
 import ambibright.ihm.MonitoringFrame;
@@ -47,16 +49,17 @@ public class Factory {
 	private final Manager manager;
 	private final SimpleFPSFrame simpleFPSFrame;
 	private final BlackScreenManager blackScreenManager;
-	private final List<ColorAlgorithm> colorAlgorithmList;
+	private final List<? extends ColorAlgorithm> colorAlgorithmList;
 
 	private Factory() {
 		this.config = Config.getInstance();
 
 		// TODO fix the algorithm first
-		colorAlgorithmList = Collections.emptyList();
-		// colorAlgorithmList = Arrays.asList(new
-		// ColorAlgorithmBrightness(config), new ColorAlgorithmGamma(config),
-		// new ColorAlgorithmHue(config), new ColorAlgorithmSaturation(config));
+//		colorAlgorithmList = Collections.emptyList();
+        colorAlgorithmList = Arrays.asList(new ColorAlgorithmGamma( config ));
+//		colorAlgorithmList = Arrays.asList(new
+//		ColorAlgorithmBrightness(config), new ColorAlgorithmGamma(config),
+//		new ColorAlgorithmHue(config), new ColorAlgorithmSaturation(config));
 
 		this.ambiFont = new AmbiFont();
 

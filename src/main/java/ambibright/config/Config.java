@@ -120,8 +120,8 @@ public class Config {
 	private volatile boolean showFpsFrame;
 	@Configurable(label = "Black other screens", key = CONFIG_BLACK_OTHER_SCREENS, defaultValue = "false")
 	private volatile boolean blackOtherScreens;
-	@Configurable(label = "Gamma", key = CONFIG_COLOR_GAMMA, defaultValue = "2.2", group = GROUP_COLOR)
-	@FloatInterval(min = 0f, max = Float.MAX_VALUE)
+	@Configurable(label = "Gamma", key = CONFIG_COLOR_GAMMA, defaultValue = "1", group = GROUP_COLOR)
+	@FloatInterval(min = 0.05f, max = 5.05f)
 	private volatile float gamma;
 	@Configurable(label = "Hue", key = CONFIG_COLOR_HUE, defaultValue = "0", group = GROUP_COLOR)
 	@FloatInterval(min = Float.MIN_VALUE, max = Float.MAX_VALUE)

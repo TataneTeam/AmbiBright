@@ -22,14 +22,14 @@ public class UpdateColorsService implements Runnable {
 	private final Config config;
 	private final ScreenCapture screenCapture;
 	private final Set<ColorsChangeObserver> observers;
-	private final List<ColorAlgorithm> colorAlgorithmList;
+	private final List<? extends ColorAlgorithm> colorAlgorithmList;
 	private final int[][] result;
 	private final int[][] old;
 	private final byte[] arduinoArray;
 	private final CurrentBounds currentBounds;
 	private int pos;
 
-	public UpdateColorsService(Config config, ScreenCapture screenCapture, Set<ColorsChangeObserver> observers, List<ColorAlgorithm> colorAlgorithmList, CurrentBounds currentBounds, byte[] arduinoArray) {
+	public UpdateColorsService(Config config, ScreenCapture screenCapture, Set<ColorsChangeObserver> observers, List<? extends ColorAlgorithm> colorAlgorithmList, CurrentBounds currentBounds, byte[] arduinoArray) {
 		this.config = config;
 		this.screenCapture = screenCapture;
 		this.observers = observers;
