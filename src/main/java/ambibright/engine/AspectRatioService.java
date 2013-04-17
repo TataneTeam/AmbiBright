@@ -56,7 +56,7 @@ public class AspectRatioService implements Runnable {
 		x = fullScreenBounds.width / 4;
 		for (testY = 0; testY < fullScreenBounds.height; testY += fullScreenBounds.height / 5) {
 			for (testX = 0; testX < fullScreenBounds.width / 4; testX++) {
-				if (!isBlack(image.getRGB(testX, testY))) {
+				if (!isBlack(image.getRGB(testX, testY)) && !isBlack(image.getRGB(fullScreenBounds.width - testX - 1 , testY))) {
 					x = Math.min(x, testX);
 					break;
 				}
