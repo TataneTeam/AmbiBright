@@ -14,6 +14,7 @@ public class ColorAlgorithmHSB extends ColorAlgorithm {
 		hsbVals = new float[3];
 	}
 
+	@Override
 	public void apply(int[] color) {
 		Color.RGBtoHSB(color[0], color[1], color[2], hsbVals);
 		current = Color.HSBtoRGB(minMaxValue(hsbVals[0] + config.getHue()), minMaxValue(hsbVals[1] + config.getSaturation()), minMaxValue(hsbVals[2] + config.getBrightness()));

@@ -24,12 +24,12 @@ import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import ambibright.config.PredefinedList;
-import ambibright.config.ListProvider;
-import ambibright.config.IntInterval;
-import ambibright.config.FloatInterval;
-import ambibright.config.Configurable;
 import ambibright.config.Config;
+import ambibright.config.Configurable;
+import ambibright.config.FloatInterval;
+import ambibright.config.IntInterval;
+import ambibright.config.ListProvider;
+import ambibright.config.PredefinedList;
 
 /**
  * Factory used to generate component from config field

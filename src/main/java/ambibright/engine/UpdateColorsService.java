@@ -1,6 +1,6 @@
 package ambibright.engine;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Set;
@@ -8,10 +8,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ambibright.ressources.CurrentBounds;
-import ambibright.engine.color.ColorAlgorithm;
-import ambibright.engine.capture.ScreenCapture;
 import ambibright.config.Config;
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.ressources.CurrentBounds;
 
 /**
  * Compute the colors in screen and sends them to the Arduino
@@ -44,6 +44,7 @@ public class UpdateColorsService implements Runnable {
 		this.arduinoArray = arduinoArray;
 	}
 
+	@Override
 	public void run() {
 		try {
 			logger.debug("Processing colors");

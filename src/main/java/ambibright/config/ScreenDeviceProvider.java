@@ -1,6 +1,7 @@
 package ambibright.config;
 
-import java.awt.*;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;

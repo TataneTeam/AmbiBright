@@ -11,24 +11,24 @@ import java.util.Set;
 
 import javax.swing.ImageIcon;
 
-import ambibright.ihm.Tray;
-import ambibright.ihm.SimpleFPSFrame;
-import ambibright.ihm.MonitoringFrame;
-import ambibright.ihm.ColorFrame;
-import ambibright.ihm.BlackScreenManager;
-import ambibright.ihm.AmbiFont;
-import ambibright.engine.color.ColorAlgorithmHSB;
-import ambibright.engine.color.ColorAlgorithmGamma;
-import ambibright.engine.color.ColorAlgorithm;
-import ambibright.engine.capture.ScreenCapture;
-import ambibright.engine.capture.DefaultScreenCapture;
-import ambibright.engine.UpdateColorsService;
-import ambibright.engine.ProcessCheckerService;
-import ambibright.engine.Manager;
-import ambibright.engine.ColorsChangeObserver;
-import ambibright.engine.AspectRatioService;
-import ambibright.engine.ArduinoSender;
 import ambibright.config.Config;
+import ambibright.engine.ArduinoSender;
+import ambibright.engine.AspectRatioService;
+import ambibright.engine.ColorsChangeObserver;
+import ambibright.engine.Manager;
+import ambibright.engine.ProcessCheckerService;
+import ambibright.engine.UpdateColorsService;
+import ambibright.engine.capture.DefaultScreenCapture;
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.engine.color.ColorAlgorithmGamma;
+import ambibright.engine.color.ColorAlgorithmHSB;
+import ambibright.ihm.AmbiFont;
+import ambibright.ihm.BlackScreenManager;
+import ambibright.ihm.ColorFrame;
+import ambibright.ihm.MonitoringFrame;
+import ambibright.ihm.SimpleFPSFrame;
+import ambibright.ihm.Tray;
 
 public class Factory {
 	public static final String appName = "AmbiBright";
@@ -125,7 +125,7 @@ public class Factory {
 	}
 
 	public ColorFrame getNewColorFrame() {
-		return new ColorFrame(Factory.get().getBounds(), ambiFont, getConfig());
+		return new ColorFrame(Factory.get().getBounds(), ambiFont, getConfig(), currentBounds);
 	}
 
 	public CurrentBounds getCurrentBounds() {

@@ -3,6 +3,7 @@ package ambibright.ihm;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Frame;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
 import java.awt.Image;
@@ -63,14 +64,17 @@ public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 			}
 		}
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowIconified(WindowEvent e) {
 				hideFrame();
 			}
 
+			@Override
 			public void windowClosing(WindowEvent e) {
 				hideFrame();
 			}
 
+			@Override
 			public void windowActivated(WindowEvent e) {
 				setLocation(Factory.get().getMonitoringLocation());
 				Factory.get().getManager().addObserver(MonitoringFrame.this);
@@ -131,7 +135,7 @@ public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 
 	public boolean display() {
 		setVisible(!isVisible());
-		setState(JFrame.NORMAL);
+		setState(Frame.NORMAL);
 		return isVisible();
 	}
 
@@ -150,15 +154,15 @@ public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 		j = 6;
 		// Left from bottom to up
 		for (i = 0; i < rows; i++) {
-			setColor(rows - 1 - i, 0, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
+			setColor(rows - 1 - i, 0, new Color(colors[j++] & 0xFF, colors[j++] & 0xFF, colors[j++] & 0xFF));
 		}
 		// Top from left to right
 		for (i = 1; i < cols; i++) {
-			setColor(0, i, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
+			setColor(0, i, new Color(colors[j++] & 0xFF, colors[j++] & 0xFF, colors[j++] & 0xFF));
 		}
 		// Right from to to bottom
 		for (i = 1; i < rows; i++) {
-			setColor(i, cols - 1, new Color((int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF, (int) colors[j++] & 0xFF));
+			setColor(i, cols - 1, new Color(colors[j++] & 0xFF, colors[j++] & 0xFF, colors[j++] & 0xFF));
 		}
 	}
 }

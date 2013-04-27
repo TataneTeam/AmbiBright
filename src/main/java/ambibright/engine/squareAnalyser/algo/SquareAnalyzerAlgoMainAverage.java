@@ -19,6 +19,7 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 		map = new HashMap<Integer, Integer>();
 	}
 
+	@Override
 	public int[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch) {
 
 		// Reset vars

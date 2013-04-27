@@ -1,5 +1,6 @@
-package ambibright.engine;
+package ambibright;
 
+import ambibright.engine.ArduinoSender;
 import ambibright.ressources.Factory;
 
 public class DisplayColorTest {

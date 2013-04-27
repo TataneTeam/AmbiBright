@@ -7,20 +7,19 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Retention( RetentionPolicy.RUNTIME)
-@Target({ElementType.FIELD})
-public @interface Configurable
-{
-    String key();
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ ElementType.FIELD })
+public @interface Configurable {
+	String key();
 
-    String label();
+	String label();
 
-    String description() default "";
+	String description() default "";
 
-    String defaultValue();
+	String defaultValue();
 
-    boolean forceValue() default false;
+	boolean forceValue() default false;
 
-    String group() default Config.GROUP_CONFIG;
+	String group() default Config.GROUP_CONFIG;
 
 }

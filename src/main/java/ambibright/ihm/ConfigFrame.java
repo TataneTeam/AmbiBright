@@ -11,9 +11,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
-import ambibright.ressources.Factory;
-import ambibright.engine.ArduinoSender;
 import ambibright.config.Config;
+import ambibright.engine.ArduinoSender;
+import ambibright.ressources.Factory;
 
 public class ConfigFrame extends JFrame {
 
@@ -37,6 +37,7 @@ public class ConfigFrame extends JFrame {
 
 		findPortBtn = new JButton("Try to find the port");
 		findPortBtn.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				findPortBtn.setEnabled(false);
 				String port = ArduinoSender.getArduinoPort(config.getArduinoDataRate(), ArduinoSender.defaultTestString);
@@ -50,6 +51,7 @@ public class ConfigFrame extends JFrame {
 
 		JButton save = new JButton("Save");
 		save.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				config.save();
 				originalConfig = null;
@@ -61,6 +63,7 @@ public class ConfigFrame extends JFrame {
 
 		JButton cancel = new JButton("Cancel");
 		cancel.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				dispose();
 			}
@@ -75,7 +78,7 @@ public class ConfigFrame extends JFrame {
 
 	@Override
 	public void hide() {
-        factory.clearPropertyChangeListeners();
+		factory.clearPropertyChangeListeners();
 		if (null != originalConfig) {
 			config.restore(originalConfig);
 		}

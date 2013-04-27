@@ -13,8 +13,8 @@ import javax.swing.JOptionPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import ambibright.ressources.Factory;
 import ambibright.config.Config;
+import ambibright.ressources.Factory;
 
 /**
  * Manages the thread of the application.

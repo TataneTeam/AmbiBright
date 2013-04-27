@@ -19,15 +19,13 @@ public class SquareAnalyserProvider implements ListProvider {
 		return list;
 	}
 
-    @Override
-    public Object getValueFromItem( Object item )
-    {
-        return item;
-    }
+	@Override
+	public Object getValueFromItem(Object item) {
+		return item;
+	}
 
-    @Override
-    public Object getItemFromValue( Object value )
-    {
-        return value;
-    }
+	@Override
+	public Object getItemFromValue(Object value) {
+		return value;
+	}
 }

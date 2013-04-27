@@ -12,6 +12,7 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import ambibright.config.Config;
 
@@ -33,6 +34,7 @@ public class RGBColorManager extends JPanel {
 
 		JButton reset = new JButton("Reset");
 		reset.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent arg0) {
 				config.resetToDefault(fields);
 			}
@@ -40,6 +42,7 @@ public class RGBColorManager extends JPanel {
 
 		all = new JCheckBox("Same value for all primary color");
 		all.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				componentFactory.getComponent(Config.CONFIG_RGB_G).setEnabled(!all.isSelected());
 				componentFactory.getComponent(Config.CONFIG_RGB_B).setEnabled(!all.isSelected());
@@ -50,7 +53,7 @@ public class RGBColorManager extends JPanel {
 				}
 			}
 		});
-		all.setHorizontalAlignment(JLabel.CENTER);
+		all.setHorizontalAlignment(SwingConstants.CENTER);
 		componentFactory.addPropertyChangeListener(Config.CONFIG_RGB_R, new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
@@ -65,7 +68,6 @@ public class RGBColorManager extends JPanel {
 		add(ambiFont.setFont(all), 7);
 
 		add(ambiFont.setFont(reset));
-		setOpaque(false);
 		reset.setOpaque(false);
 	}
 

@@ -24,6 +24,7 @@ public class ProcessCheckerService implements Runnable {
 		this.config = config;
 	}
 
+	@Override
 	public void run() {
 		boolean shouldRun = false;
 

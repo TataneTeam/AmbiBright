@@ -3,9 +3,10 @@ package ambibright.engine.color;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import ambibright.config.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ambibright.config.Config;
 
 /**
  * Algorithm used to apply gamma correction. <a href=
@@ -14,7 +15,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ColorAlgorithmGamma extends ColorAlgorithm {
 
-    private static final Logger logger = LoggerFactory.getLogger( ColorAlgorithmGamma.class );
+	private static final Logger logger = LoggerFactory.getLogger(ColorAlgorithmGamma.class);
 
 	private int[] gammaTable;
 
@@ -25,7 +26,7 @@ public class ColorAlgorithmGamma extends ColorAlgorithm {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
 				buildGammaTable((Float) evt.getNewValue());
-            }
+			}
 		});
 	}
 
@@ -33,16 +34,17 @@ public class ColorAlgorithmGamma extends ColorAlgorithm {
 	 * Called when a new gamma value is set to rebuild the gamma table.
 	 */
 	private synchronized void buildGammaTable(float gamma) {
-        logger.debug( "Building new gamma table for the value : {}", gamma );
+		logger.debug("Building new gamma table for the value : {}", gamma);
 		int[] table = new int[256];
 		float ginv = 1 / gamma;
-        double colors = 255.0;
+		double colors = 255.0;
 		for (int i = 0; i < table.length; i++) {
 			table[i] = (int) Math.round(colors * Math.pow(i / colors, ginv));
 		}
 		gammaTable = table;
 	}
 
+	@Override
 	public void apply(int[] color) {
 		color[0] = gammaTable[color[0]];
 		color[1] = gammaTable[color[1]];

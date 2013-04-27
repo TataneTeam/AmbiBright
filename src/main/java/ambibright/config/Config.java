@@ -124,7 +124,7 @@ public class Config {
 	@FloatInterval(min = 0.05f, max = 5.05f)
 	private volatile float gamma;
 	@Configurable(label = "Hue", key = CONFIG_COLOR_HUE, defaultValue = "0", group = GROUP_COLOR)
-    @FloatInterval(min = -1f, max = 1f)
+	@FloatInterval(min = -1f, max = 1f)
 	private volatile float hue;
 	@Configurable(label = "Saturation", key = CONFIG_COLOR_SATURATION, defaultValue = "0", group = GROUP_COLOR)
 	@FloatInterval(min = -1f, max = 1f)

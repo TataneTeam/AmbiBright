@@ -9,6 +9,7 @@ public class SquareAnalyzerAlgoAverage implements SquareAnalyserAlgorithm {
 
 	private int current, red, green, blue, nbPixel, posX, posY;
 
+	@Override
 	public int[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch) {
 		red = 0;
 		green = 0;

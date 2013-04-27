@@ -1,5 +1,8 @@
 package ambibright.engine;
 
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
+
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -11,15 +14,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ambibright.config.Config;
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
 
 public class ArduinoSender implements ColorsChangeObserver {
 
 	public static final String defaultTestString = "Ada";
 	private static final Logger logger = LoggerFactory.getLogger(ArduinoSender.class);
 
-	@SuppressWarnings("rawtypes")
 	public static String getArduinoPort(int dataRate, String testString) {
 		String result = null;
 		CommPortIdentifier portId;

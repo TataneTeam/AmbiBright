@@ -1,6 +1,7 @@
 package ambibright.ihm;
 
 import java.awt.CheckboxMenuItem;
+import java.awt.Frame;
 import java.awt.Image;
 import java.awt.Menu;
 import java.awt.MenuItem;
@@ -14,11 +15,9 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
-import javax.swing.JFrame;
-
-import ambibright.ressources.Factory;
-import ambibright.ressources.CheckUpdate;
 import ambibright.config.Config;
+import ambibright.ressources.CheckUpdate;
+import ambibright.ressources.Factory;
 
 public class Tray extends TrayIcon {
 
@@ -41,6 +40,7 @@ public class Tray extends TrayIcon {
 
 		final MenuItem checkUpdateItem = new MenuItem(" Check for update");
 		checkUpdateItem.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				checkUpdateItem.setEnabled(false);
 				checkUpdate.setUrl(config.getUpdateUrl());
@@ -53,6 +53,7 @@ public class Tray extends TrayIcon {
 
 		MenuItem configItem = new MenuItem(" Configuration");
 		configItem.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				new ConfigFrame(ambiFont, config);
 			}
@@ -64,6 +65,7 @@ public class Tray extends TrayIcon {
 		blackScreens = new CheckboxMenuItem(" Black other screens");
 		blackScreens.setState(config.isBlackOtherScreens());
 		blackScreens.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent e) {
 				boolean newValue = !config.isBlackOtherScreens();
 				config.setBlackOtherScreens(newValue);
@@ -82,6 +84,7 @@ public class Tray extends TrayIcon {
 		checkProcess = new CheckboxMenuItem(" Check for Process");
 		checkProcess.setState(config.isCheckProcess());
 		checkProcess.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent e) {
 				boolean newValue = !config.isCheckProcess();
 				config.setCheckProcess(newValue);
@@ -100,6 +103,7 @@ public class Tray extends TrayIcon {
 		showFPSFrame = new CheckboxMenuItem(" Show FPS Frame");
 		showFPSFrame.setState(config.isShowFpsFrame());
 		showFPSFrame.addItemListener(new ItemListener() {
+			@Override
 			public void itemStateChanged(ItemEvent e) {
 				boolean newValue = !config.isShowFpsFrame();
 				config.setShowFpsFrame(newValue);
@@ -118,6 +122,7 @@ public class Tray extends TrayIcon {
 
 		MenuItem colorFrame = new MenuItem(" Show Color Frame");
 		colorFrame.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Factory.get().getNewColorFrame();
 			}
@@ -125,9 +130,10 @@ public class Tray extends TrayIcon {
 		getPopupMenu().add(ambiFont.setFont(colorFrame));
 		MenuItem ambiFrame = new MenuItem(" Show Monitoring Frame");
 		ambiFrame.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Factory.get().getAmbiFrame().setVisible(true);
-				Factory.get().getAmbiFrame().setState(JFrame.NORMAL);
+				Factory.get().getAmbiFrame().setState(Frame.NORMAL);
 			}
 		});
 		getPopupMenu().add(ambiFont.setFont(ambiFrame));
@@ -135,6 +141,7 @@ public class Tray extends TrayIcon {
 
 		MenuItem stop = new MenuItem(" Stop");
 		stop.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Factory.get().getManager().stop();
 			}
@@ -142,6 +149,7 @@ public class Tray extends TrayIcon {
 		getPopupMenu().add(ambiFont.setFont(stop));
 		MenuItem restart = new MenuItem(" Restart");
 		restart.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Factory.get().getManager().restart();
 			}
@@ -151,6 +159,7 @@ public class Tray extends TrayIcon {
 		getPopupMenu().addSeparator();
 		MenuItem exit = new MenuItem(" Close");
 		exit.addActionListener(new ActionListener() {
+			@Override
 			public void actionPerformed(ActionEvent e) {
 				Factory.get().getManager().stop();
 				System.exit(0);
@@ -160,7 +169,7 @@ public class Tray extends TrayIcon {
 	}
 
 	public void showInfo(String text) {
-		displayMessage( Factory.appName, text, TrayIcon.MessageType.INFO );
+		displayMessage(Factory.appName, text, TrayIcon.MessageType.INFO);
 	}
 
 }

@@ -45,6 +45,7 @@ public class BlackScreenManager {
 			super();
 			getContentPane().setBackground(Color.black);
 			addMouseListener(new MouseAdapter() {
+				@Override
 				public void mouseReleased(MouseEvent e) {
 					if (e.getButton() == MouseEvent.BUTTON1) {
 						setAlwaysOnTop(!isAlwaysOnTop());
@@ -52,6 +53,7 @@ public class BlackScreenManager {
 				}
 			});
 			addKeyListener(new KeyAdapter() {
+				@Override
 				public void keyReleased(KeyEvent e) {
 					if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 						dispose();
