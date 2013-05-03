@@ -10,13 +10,13 @@ import ambibright.engine.capture.Image;
 public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 
 	public static final float mainColorPourcentage = 0.4f;
-	private Map<Image.RGB, Integer> map;
-	private Image.RGB maxColor;
+	private Map<Image.RgbColor, Integer> map;
+	private Image.RgbColor maxColor;
 	private int posX, posY, nbPixel;
 	private int red, green, blue, max, currentOccur;
 
 	public SquareAnalyzerAlgoMainAverage() {
-		map = new HashMap<Image.RGB, Integer>();
+		map = new HashMap<Image.RgbColor, Integer>();
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 
 		for (posX = 0; posX < bound.width && posX + bound.x < image.getWidth(); posX += screenAnalysePitch) {
 			for (posY = 0; posY < bound.height && posY + bound.y < image.getHeight(); posY += screenAnalysePitch) {
-				Image.RGB current = image.getRGB(bound.x + posX, bound.y + posY);
+				Image.RgbColor current = image.getRGB(bound.x + posX, bound.y + posY);
 				nbPixel++;
 
 				// For average

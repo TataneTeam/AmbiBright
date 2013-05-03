@@ -7,7 +7,7 @@ import ambibright.engine.squareAnalyser.SquareAnalyserAlgorithm;
 
 public class SquareAnalyzerAlgoAverage implements SquareAnalyserAlgorithm {
 
-    private Image.RGB current;
+    private Image.RgbColor current;
 	private int red, green, blue, nbPixel, posX, posY;
 
 	@Override
@@ -18,7 +18,7 @@ public class SquareAnalyzerAlgoAverage implements SquareAnalyserAlgorithm {
 		nbPixel = 0;
 		for (posX = 0; posX < bound.width; posX += screenAnalysePitch) {
 			for (posY = 0; posY < bound.height; posY += screenAnalysePitch) {
-				current = image.getRGB(bound.x + posX, bound.y + posY);
+                current = image.getRGB(bound.x + posX, bound.y + posY);
 				red += current.red();
 				green += current.green();
 				blue += current.blue();

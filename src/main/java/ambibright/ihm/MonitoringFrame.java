@@ -139,18 +139,20 @@ public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 
 	@Override
 	public void onColorsChange(ambibright.engine.capture.Image image, byte[] colors) {
-        // retrieve BufferedImage from image
-        BufferedImage bufferedImage = image.getBufferedImage();
 
 		// updating fps
 		int fps = fpsCounter.fps();
 		setInfo(fps + " fps");
 
-		// update image
-		addZones(bufferedImage, Factory.get().getCurrentBounds().getZones());
-		imageHeight = bufferedImage.getHeight() * imageLabel.getWidth() / bufferedImage.getWidth();
-		imageLabel.setIcon(resizeImage(bufferedImage, imageLabel.getWidth(), imageHeight));
-		imageLabel.setSize(imageLabel.getWidth(), imageHeight);
+		// retrieve BufferedImage from image
+		BufferedImage bufferedImage = image.getBufferedImage();
+		if (null != bufferedImage) {
+			// update image
+			addZones(bufferedImage, Factory.get().getCurrentBounds().getZones());
+			imageHeight = bufferedImage.getHeight() * imageLabel.getWidth() / bufferedImage.getWidth();
+			imageLabel.setIcon(resizeImage(bufferedImage, imageLabel.getWidth(), imageHeight));
+			imageLabel.setSize(imageLabel.getWidth(), imageHeight);
+		}
 
 		j = 6;
 		// Left from bottom to up

@@ -9,12 +9,12 @@ import ambibright.engine.capture.Image;
 
 public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 
-	private Map<Image.RGB, Integer> map;
+	private Map<Image.RgbColor, Integer> map;
 	private int posX, posY, nbPixel;
-	private Image.RGB current;
+	private Image.RgbColor current;
 
 	public SquareAnalyzerAlgoMain() {
-		map = new HashMap<Image.RGB, Integer>();
+		map = new HashMap<Image.RgbColor, Integer>();
 	}
 
 	@Override
@@ -31,7 +31,7 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 			}
 		}
 		nbPixel = -1;
-		for (Image.RGB key : map.keySet()) {
+		for (Image.RgbColor key : map.keySet()) {
 			if (map.get(key) > nbPixel) {
 				nbPixel = map.get(key);
 				current = key;

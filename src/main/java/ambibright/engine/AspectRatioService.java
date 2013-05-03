@@ -76,7 +76,7 @@ public class AspectRatioService implements Runnable {
 		}
 	}
 
-	private boolean isBlack(Image.RGB color) {
+	private boolean isBlack(Image.RgbColor color) {
 		return (color.red() + color.blue() + color.green()) <= blackLimit;
 	}
 }

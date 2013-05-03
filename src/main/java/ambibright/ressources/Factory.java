@@ -1,5 +1,6 @@
 package ambibright.ressources;
 
+import javax.swing.ImageIcon;
 import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
@@ -8,8 +9,6 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
-import javax.swing.ImageIcon;
 
 import ambibright.config.Config;
 import ambibright.engine.ArduinoSender;
@@ -50,9 +49,13 @@ public class Factory {
 	private final SimpleFPSFrame simpleFPSFrame;
 	private final BlackScreenManager blackScreenManager;
 	private final List<? extends ColorAlgorithm> colorAlgorithmList;
+    private ScreenCapture screenCapture;
 
 	private Factory() {
 		this.config = Config.getInstance();
+
+        this.screenCapture = DefaultScreenCapture.getInstance();
+//        this.screenCapture = new JnaScreenCapture();
 
 		colorAlgorithmList = Arrays.asList(new ColorAlgorithmGamma(config), new ColorAlgorithmHSB(config));
 
@@ -101,7 +104,7 @@ public class Factory {
 	}
 
 	public ScreenCapture getScreenCapture() {
-		return DefaultScreenCapture.getInstance();
+		return screenCapture;
 	}
 
 	public MonitoringFrame getAmbiFrame() {

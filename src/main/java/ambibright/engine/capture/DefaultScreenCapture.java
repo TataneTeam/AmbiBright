@@ -14,71 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultScreenCapture implements ScreenCapture {
 
-	private static class RGBImpl implements Image.RGB {
-		private final int red, green, blue;
-
-		private RGBImpl(int color) {
-			red = (color & 0x00ff0000) >> 16;
-			green = (color & 0x0000ff00) >> 8;
-			blue = color & 0x000000ff;
-		}
-
-		@Override
-		public int red() {
-			return red;
-		}
-
-		@Override
-		public int green() {
-			return green;
-		}
-
-		@Override
-		public int blue() {
-			return blue;
-		}
-
-        @Override
-        public boolean equals( Object o )
-        {
-            if ( this == o )
-            {
-                return true;
-            }
-            if ( o == null || getClass() != o.getClass() )
-            {
-                return false;
-            }
-
-            RGBImpl rgb = (RGBImpl) o;
-
-            if ( blue != rgb.blue )
-            {
-                return false;
-            }
-            if ( green != rgb.green )
-            {
-                return false;
-            }
-            if ( red != rgb.red )
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int result = red;
-            result = 31 * result + green;
-            result = 31 * result + blue;
-            return result;
-        }
-    }
-
-	private static class ImageImpl implements Image {
+    private static class ImageImpl implements Image {
 
 		private final BufferedImage image;
 
@@ -87,8 +23,8 @@ public class DefaultScreenCapture implements ScreenCapture {
 		}
 
 		@Override
-		public RGB getRGB(int x, int y) {
-			return new RGBImpl(image.getRGB(x, y));
+		public RgbColor getRGB(int x, int y) {
+			return new RgbColorImpl(image.getRGB(x, y));
 		}
 
 		@Override
