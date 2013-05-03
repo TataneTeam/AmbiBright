@@ -1,10 +1,10 @@
 package ambibright.engine;
 
-import java.awt.image.BufferedImage;
+import ambibright.engine.capture.Image;
 
 /**
  * Observes the colors' changes
  */
 public interface ColorsChangeObserver {
-	void onColorsChange(BufferedImage image, byte[] colors);
+	void onColorsChange(Image image, byte[] colors);
 }

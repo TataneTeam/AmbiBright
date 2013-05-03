@@ -1,5 +1,11 @@
 package ambibright.ihm;
 
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JPanel;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,13 +19,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
-import javax.swing.JPanel;
 
 import ambibright.engine.ColorsChangeObserver;
 import ambibright.ressources.Factory;
@@ -102,7 +101,7 @@ public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 		setTitle(Factory.appName + " - Monitoring Frame - " + string);
 	}
 
-	public BufferedImage addZones(BufferedImage image, Rectangle[] bounds) {
+	public void addZones(BufferedImage image, Rectangle[] bounds) {
 		Graphics2D graphics2D = image.createGraphics();
 		graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 		graphics2D.setColor(Color.GREEN);
@@ -111,7 +110,6 @@ public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 			graphics2D.drawRect(bound.x, bound.y, bound.width, bound.height);
 		}
 		graphics2D.dispose();
-		return image;
 	}
 
 	public ImageIcon resizeImage(BufferedImage image, int width, int height) {
@@ -140,15 +138,18 @@ public class MonitoringFrame extends JFrame implements ColorsChangeObserver {
 	}
 
 	@Override
-	public void onColorsChange(BufferedImage image, byte[] colors) {
+	public void onColorsChange(ambibright.engine.capture.Image image, byte[] colors) {
+        // retrieve BufferedImage from image
+        BufferedImage bufferedImage = image.getBufferedImage();
+
 		// updating fps
 		int fps = fpsCounter.fps();
 		setInfo(fps + " fps");
 
 		// update image
-		addZones(image, Factory.get().getCurrentBounds().getZones());
-		imageHeight = image.getHeight() * imageLabel.getWidth() / image.getWidth();
-		imageLabel.setIcon(resizeImage(image, imageLabel.getWidth(), imageHeight));
+		addZones(bufferedImage, Factory.get().getCurrentBounds().getZones());
+		imageHeight = bufferedImage.getHeight() * imageLabel.getWidth() / bufferedImage.getWidth();
+		imageLabel.setIcon(resizeImage(bufferedImage, imageLabel.getWidth(), imageHeight));
 		imageLabel.setSize(imageLabel.getWidth(), imageHeight);
 
 		j = 6;

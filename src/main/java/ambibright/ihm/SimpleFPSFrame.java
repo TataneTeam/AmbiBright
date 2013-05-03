@@ -1,15 +1,13 @@
 package ambibright.ihm;
 
-import java.awt.Color;
-import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
-
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import java.awt.Color;
+import java.awt.Rectangle;
 
 import ambibright.engine.ColorsChangeObserver;
+import ambibright.engine.capture.Image;
 import ambibright.ressources.Factory;
-
 import com.sun.awt.AWTUtilities;
 
 public class SimpleFPSFrame extends JDialog implements ColorsChangeObserver {
@@ -50,7 +48,7 @@ public class SimpleFPSFrame extends JDialog implements ColorsChangeObserver {
 	}
 
 	@Override
-	public void onColorsChange(BufferedImage image, byte[] colors) {
+	public void onColorsChange(Image image, byte[] colors) {
 		int fps = fpsCounter.fps();
 		text.setText(fps + " fps");
 		pack();

@@ -1,19 +1,17 @@
 package ambibright.engine;
 
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
-
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Enumeration;
 
+import ambibright.config.Config;
+import ambibright.engine.capture.Image;
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ambibright.config.Config;
 
 public class ArduinoSender implements ColorsChangeObserver {
 
@@ -100,7 +98,7 @@ public class ArduinoSender implements ColorsChangeObserver {
 	}
 
 	@Override
-	public void onColorsChange(BufferedImage image, byte[] colors) {
+	public void onColorsChange(Image image, byte[] colors) {
 		write(colors);
 	}
 }

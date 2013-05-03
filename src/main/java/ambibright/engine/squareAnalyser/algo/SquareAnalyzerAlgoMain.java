@@ -1,23 +1,24 @@
 package ambibright.engine.squareAnalyser.algo;
 
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 
 import ambibright.engine.squareAnalyser.SquareAnalyserAlgorithm;
+import ambibright.engine.capture.Image;
 
 public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 
-	private Map<Integer, Integer> map;
-	private int posX, posY, current, nbPixel;
+	private Map<Image.RGB, Integer> map;
+	private int posX, posY, nbPixel;
+	private Image.RGB current;
 
 	public SquareAnalyzerAlgoMain() {
-		map = new HashMap<Integer, Integer>();
+		map = new HashMap<Image.RGB, Integer>();
 	}
 
 	@Override
-	public int[] getColor(BufferedImage image, Rectangle bound, int screenAnalysePitch) {
+	public int[] getColor(Image image, Rectangle bound, int screenAnalysePitch) {
 		map.clear();
 		for (posX = 0; posX < bound.width && posX + bound.x < image.getWidth(); posX += screenAnalysePitch) {
 			for (posY = 0; posY < bound.height && posY + bound.y < image.getHeight(); posY += screenAnalysePitch) {
@@ -30,13 +31,13 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 			}
 		}
 		nbPixel = -1;
-		for (int key : map.keySet()) {
+		for (Image.RGB key : map.keySet()) {
 			if (map.get(key) > nbPixel) {
 				nbPixel = map.get(key);
 				current = key;
 			}
 		}
-		return new int[] { (current & 0x00ff0000) >> 16, (current & 0x0000ff00) >> 8, current & 0x000000ff };
+		return new int[] { current.red(), current.green(), current.blue() };
 	}
 
 }

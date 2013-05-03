@@ -1,13 +1,12 @@
 package ambibright.engine;
 
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
+import ambibright.engine.capture.Image;
 import ambibright.engine.capture.ScreenCapture;
 import ambibright.ressources.CurrentBounds;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Checks for changes in aspect ratio and update the bounds if any
@@ -40,7 +39,7 @@ public class AspectRatioService implements Runnable {
 		logger.debug("Checking if aspect ratio changed");
 
 		// Get current image
-		BufferedImage image = screenCapture.captureScreen(fullScreenBounds);
+		Image image = screenCapture.captureScreen(fullScreenBounds);
 
 		// Detect top
 		y = fullScreenBounds.height / 4;
@@ -77,10 +76,7 @@ public class AspectRatioService implements Runnable {
 		}
 	}
 
-	private boolean isBlack(int color) {
-		red = (color & 0x00ff0000) >> 16;
-		green = (color & 0x0000ff00) >> 8;
-		blue = color & 0x000000ff;
-		return (red + blue + green) <= blackLimit;
+	private boolean isBlack(Image.RGB color) {
+		return (color.red() + color.blue() + color.green()) <= blackLimit;
 	}
 }
