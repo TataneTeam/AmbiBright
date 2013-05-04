@@ -7,19 +7,13 @@ import java.awt.image.BufferedImage;
  */
 public interface Image {
 
-	interface RgbColor {
-		int red();
-
-		int green();
-
-		int blue();
-	}
-
 	int getWidth();
 
 	int getHeight();
 
 	RgbColor getRGB(int x, int y);
+
+    RgbColor getRGB(int x, int y, RgbColor rgb);
 
 	BufferedImage getBufferedImage();
 

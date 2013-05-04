@@ -4,17 +4,18 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
-import ambibright.engine.squareAnalyser.SquareAnalyserAlgorithm;
 import ambibright.engine.capture.Image;
+import ambibright.engine.capture.RgbColor;
+import ambibright.engine.squareAnalyser.SquareAnalyserAlgorithm;
 
 public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 
-	private Map<Image.RgbColor, Integer> map;
+	private Map<RgbColor, Integer> map;
 	private int posX, posY, nbPixel;
-	private Image.RgbColor current;
+	private RgbColor current;
 
 	public SquareAnalyzerAlgoMain() {
-		map = new HashMap<Image.RgbColor, Integer>();
+		map = new HashMap<RgbColor, Integer>();
 	}
 
 	@Override
@@ -31,7 +32,7 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 			}
 		}
 		nbPixel = -1;
-		for (Image.RgbColor key : map.keySet()) {
+		for (RgbColor key : map.keySet()) {
 			if (map.get(key) > nbPixel) {
 				nbPixel = map.get(key);
 				current = key;

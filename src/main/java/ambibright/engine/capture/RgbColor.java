@@ -1,31 +1,25 @@
 package ambibright.engine.capture;
 
-class RgbColorImpl implements Image.RgbColor {
-	private final int red, green, blue;
+public class RgbColor {
+	private int red, green, blue;
 
-	RgbColorImpl(int color) {
-		red = (color & 0x00ff0000) >> 16;
-		green = (color & 0x0000ff00) >> 8;
-		blue = color & 0x000000ff;
+	public RgbColor() {
 	}
 
-	RgbColorImpl(int red, int green, int blue) {
+	void update(int red, int green, int blue) {
 		this.red = red;
 		this.green = green;
 		this.blue = blue;
 	}
 
-	@Override
 	public int red() {
 		return red;
 	}
 
-	@Override
 	public int green() {
 		return green;
 	}
 
-	@Override
 	public int blue() {
 		return blue;
 	}
@@ -39,7 +33,7 @@ class RgbColorImpl implements Image.RgbColor {
 			return false;
 		}
 
-		RgbColorImpl rgbColor = (RgbColorImpl) o;
+		RgbColor rgbColor = (RgbColor) o;
 
 		if (blue != rgbColor.blue) {
 			return false;

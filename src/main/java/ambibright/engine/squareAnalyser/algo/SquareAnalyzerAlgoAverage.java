@@ -2,12 +2,17 @@ package ambibright.engine.squareAnalyser.algo;
 
 import java.awt.Rectangle;
 
-import ambibright.engine.capture.Image;
 import ambibright.engine.squareAnalyser.SquareAnalyserAlgorithm;
+import ambibright.engine.capture.RgbColor;
+import ambibright.engine.capture.Image;
 
 public class SquareAnalyzerAlgoAverage implements SquareAnalyserAlgorithm {
 
-    private Image.RgbColor current;
+	/**
+	 * RgbColor used to store the value. We create only one instance and update
+	 * it to avoid the creation of million of objects.
+	 */
+	private final RgbColor current = new RgbColor();
 	private int red, green, blue, nbPixel, posX, posY;
 
 	@Override
@@ -18,7 +23,7 @@ public class SquareAnalyzerAlgoAverage implements SquareAnalyserAlgorithm {
 		nbPixel = 0;
 		for (posX = 0; posX < bound.width; posX += screenAnalysePitch) {
 			for (posY = 0; posY < bound.height; posY += screenAnalysePitch) {
-                current = image.getRGB(bound.x + posX, bound.y + posY);
+				image.getRGB(bound.x + posX, bound.y + posY, current);
 				red += current.red();
 				green += current.green();
 				blue += current.blue();

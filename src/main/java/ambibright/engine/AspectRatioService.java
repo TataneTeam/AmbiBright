@@ -2,11 +2,13 @@ package ambibright.engine;
 
 import java.awt.Rectangle;
 
-import ambibright.engine.capture.Image;
-import ambibright.engine.capture.ScreenCapture;
-import ambibright.ressources.CurrentBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ambibright.ressources.CurrentBounds;
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.engine.capture.RgbColor;
+import ambibright.engine.capture.Image;
 
 /**
  * Checks for changes in aspect ratio and update the bounds if any
@@ -14,11 +16,15 @@ import org.slf4j.LoggerFactory;
 public class AspectRatioService implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(AspectRatioService.class);
-
 	private static final int blackLimit = 6;
 	private final Rectangle fullScreenBounds;
 	private final CurrentBounds currentBounds;
 	private final ScreenCapture screenCapture;
+	/**
+	 * RgbColor used to store the value. We create only one instance and update
+	 * it to avoid the creation of million of objects.
+	 */
+	private final RgbColor color = new RgbColor();
 	private Rectangle lastScreenBounds;
 	private int red = 0;
 	private int green = 0;
@@ -45,7 +51,7 @@ public class AspectRatioService implements Runnable {
 		y = fullScreenBounds.height / 4;
 		for (testX = 0; testX < fullScreenBounds.width; testX += fullScreenBounds.width / 5) {
 			for (testY = 0; testY < fullScreenBounds.height / 4; testY++) {
-				if (!isBlack(image.getRGB(testX, testY))) {
+				if (!isBlack(image.getRGB(testX, testY, color))) {
 					y = Math.min(y, testY);
 					break;
 				}
@@ -56,7 +62,7 @@ public class AspectRatioService implements Runnable {
 		x = fullScreenBounds.width / 4;
 		for (testY = 0; testY < fullScreenBounds.height; testY += fullScreenBounds.height / 5) {
 			for (testX = 0; testX < fullScreenBounds.width / 4; testX++) {
-				if (!isBlack(image.getRGB(testX, testY)) && !isBlack(image.getRGB(fullScreenBounds.width - testX - 1, testY))) {
+				if (!isBlack(image.getRGB(testX, testY, color)) && !isBlack(image.getRGB(fullScreenBounds.width - testX - 1, testY, color))) {
 					x = Math.min(x, testX);
 					break;
 				}
@@ -76,7 +82,7 @@ public class AspectRatioService implements Runnable {
 		}
 	}
 
-	private boolean isBlack(Image.RgbColor color) {
+	private boolean isBlack(RgbColor color) {
 		return (color.red() + color.blue() + color.green()) <= blackLimit;
 	}
 }

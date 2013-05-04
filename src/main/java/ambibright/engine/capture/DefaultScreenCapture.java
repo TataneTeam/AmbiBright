@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultScreenCapture implements ScreenCapture {
 
-    private static class ImageImpl implements Image {
+	private static class ImageImpl implements Image {
 
 		private final BufferedImage image;
 
@@ -24,7 +24,14 @@ public class DefaultScreenCapture implements ScreenCapture {
 
 		@Override
 		public RgbColor getRGB(int x, int y) {
-			return new RgbColorImpl(image.getRGB(x, y));
+			return getRGB(x, y, new RgbColor());
+		}
+
+		@Override
+		public RgbColor getRGB(int x, int y, RgbColor rgb) {
+			int color = image.getRGB(x, y);
+			rgb.update((color & 0x00ff0000) >> 16, (color & 0x0000ff00) >> 8, color & 0x000000ff);
+			return rgb;
 		}
 
 		@Override
@@ -32,24 +39,21 @@ public class DefaultScreenCapture implements ScreenCapture {
 			return image;
 		}
 
-        @Override
-        public void flush()
-        {
-            image.flush();
-        }
+		@Override
+		public void flush() {
+			image.flush();
+		}
 
-        @Override
-        public int getWidth()
-        {
-            return image.getWidth();
-        }
+		@Override
+		public int getWidth() {
+			return image.getWidth();
+		}
 
-        @Override
-        public int getHeight()
-        {
-            return image.getHeight();
-        }
-    }
+		@Override
+		public int getHeight() {
+			return image.getHeight();
+		}
+	}
 
 	private static final Logger logger = LoggerFactory.getLogger(DefaultScreenCapture.class);
 	private static DefaultScreenCapture instance;

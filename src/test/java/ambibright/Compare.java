@@ -8,6 +8,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 
 import ambibright.engine.capture.ScreenCapture;
+import ambibright.engine.capture.RgbColor;
 import ambibright.engine.capture.JnaScreenCapture;
 import ambibright.engine.capture.Image;
 import ambibright.engine.capture.DefaultScreenCapture;
@@ -44,12 +45,12 @@ public class Compare {
 
 		System.out.println("Capture With Robot Class " + (finishTime - startTime) / nbIteration);
 
-		Image.RgbColor color;
+		RgbColor color = new RgbColor();
 
 		startTime = System.currentTimeMillis();
 		for (int w = 0; w < nbIteration; w++) {
 			for (int h = 0; h < nbIteration; h++) {
-				color = jnaImage.getRGB(w, h);
+				jnaImage.getRGB(w, h, color);
 				// System.out.print(color);
 			}
 		}
@@ -61,7 +62,7 @@ public class Compare {
 		startTime = System.currentTimeMillis();
 		for (int w = 0; w < nbIteration; w++) {
 			for (int h = 0; h < nbIteration; h++) {
-				color = robotImage.getRGB(w, h);
+				robotImage.getRGB(w, h, color);
 				// System.out.print(color);
 			}
 		}

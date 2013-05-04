@@ -4,7 +4,6 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import com.sun.jna.Native;
-import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinGDI;
 import com.sun.jna.platform.win32.WinNT;
@@ -40,51 +39,10 @@ public class JnaScreenCapture implements ScreenCapture {
 	private static class ImageImpl implements Image {
 
 		private final int width, height;
-		private Pointer pointer;
-
-		private ImageImpl(int width, int height, Pointer pointer) {
-			this.width = width;
-			this.height = height;
-			this.pointer = pointer;
-		}
-
-		@Override
-		public int getWidth() {
-			return width;
-		}
-
-		@Override
-		public int getHeight() {
-			return height;
-		}
-
-		@Override
-		public RgbColor getRGB(int x, int y) {
-			byte[] color = pointer.getByteArray(4 * ((y * width) + x), 3);
-			int b = color[0] & 0xff;
-			int g = color[1] & 0xff;
-			int r = color[2] & 0xff;
-			return new RgbColorImpl(r, g, b);
-		}
-
-		@Override
-		public BufferedImage getBufferedImage() {
-			return null;
-		}
-
-		@Override
-		public void flush() {
-			pointer = null;
-		}
-	}
-
-	private static class ImageArrayImpl implements Image {
-
-		private final int width, height;
 		private byte[] pointer;
 		private BufferedImage bufferedImage;
 
-		private ImageArrayImpl(int width, int height, byte[] pointer) {
+		private ImageImpl(int width, int height, byte[] pointer) {
 			this.width = width;
 			this.height = height;
 			this.pointer = pointer;
@@ -102,11 +60,14 @@ public class JnaScreenCapture implements ScreenCapture {
 
 		@Override
 		public RgbColor getRGB(int x, int y) {
+			return getRGB(x, y, new RgbColor());
+		}
+
+		@Override
+		public RgbColor getRGB(int x, int y, RgbColor rgb) {
 			int pos = 4 * ((y * width) + x);
-			int b = pointer[pos++] & 0xff;
-			int g = pointer[pos++] & 0xff;
-			int r = pointer[pos] & 0xff;
-			return new RgbColorImpl(r, g, b);
+			rgb.update(pointer[pos + 2] & 0xff, pointer[pos + 1] & 0xff, pointer[pos] & 0xff);
+            return rgb;
 		}
 
 		@Override
@@ -160,13 +121,9 @@ public class JnaScreenCapture implements ScreenCapture {
 			bi.bmiHeader.biCompression = WinGDI.BI_RGB;
 			bi.bmiHeader.biSizeImage = 4 * bounds.width * bounds.height;
 
-			// Pointer pointer = new Memory(bi.bmiHeader.biSizeImage);
-			// GDI.GetDIBits(blitDC, outputBitmap, 0, bounds.height, pointer,
-			// bi, WinGDI.DIB_RGB_COLORS);
-			// return new ImageImpl(bounds.width, bounds.height, pointer);
 			byte[] datas = new byte[bi.bmiHeader.biSizeImage];
 			GDI.GetDIBits(blitDC, outputBitmap, 0, bounds.height, datas, bi, WinGDI.DIB_RGB_COLORS);
-			return new ImageArrayImpl(bounds.width, bounds.height, datas);
+			return new ImageImpl(bounds.width, bounds.height, datas);
 		} finally {
 			if (null != blitDC) {
 				GDI.DeleteDC(blitDC);
