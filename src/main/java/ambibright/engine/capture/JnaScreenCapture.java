@@ -23,10 +23,6 @@ public class JnaScreenCapture implements ScreenCapture {
 		HDC GetDC(HWND hWnd);
 
 		boolean GetDIBits(HDC dc, HBITMAP bmp, int startScan, int scanLines, byte[] pixels, BITMAPINFO bi, int usage);
-
-		boolean GetDIBits(HDC dc, HBITMAP bmp, int startScan, int scanLines, short[] pixels, BITMAPINFO bi, int usage);
-
-		boolean GetDIBits(HDC dc, HBITMAP bmp, int startScan, int scanLines, int[] pixels, BITMAPINFO bi, int usage);
 	}
 
 	interface User32 extends com.sun.jna.platform.win32.User32 {

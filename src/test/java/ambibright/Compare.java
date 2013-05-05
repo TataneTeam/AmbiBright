@@ -7,68 +7,70 @@ package ambibright;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 
+import org.junit.Test;
+
 import ambibright.engine.capture.ScreenCapture;
 import ambibright.engine.capture.RgbColor;
+import ambibright.engine.capture.JniScreenCapture;
 import ambibright.engine.capture.JnaScreenCapture;
 import ambibright.engine.capture.Image;
 import ambibright.engine.capture.DefaultScreenCapture;
 
 public class Compare {
 
-	public static void main(String[] args) {
-
-		Image jnaImage = null;
-		Image robotImage = null;
-		Rectangle rect = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
-		long startTime, finishTime;
-
+	@Test
+	public void testScreenCapture() {
+		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
 		int nbIteration = 1000;
 
-		// on fait un premier dans le vent pour charger les libs
-		ScreenCapture screenCapture = new JnaScreenCapture();
+		testScreenCapture(bounds, nbIteration, DefaultScreenCapture.getInstance());
+		testScreenCapture(bounds, nbIteration, new JnaScreenCapture());
+		testScreenCapture(bounds, nbIteration, new JniScreenCapture());
+	}
 
-		startTime = System.currentTimeMillis();
+	private void testScreenCapture(Rectangle bounds, int nbIteration, ScreenCapture screenCapture) {
+		Image image;
+
+		long startTime = System.nanoTime();
 		for (int i = 0; i < nbIteration; i++) {
-			jnaImage = screenCapture.captureScreen(rect);
+			image = screenCapture.captureScreen(bounds);
+			image.flush();
 		}
-		finishTime = System.currentTimeMillis();
+		long finishTime = System.nanoTime();
 
-		System.out.println("Capture With JNA Library: " + (finishTime - startTime) / nbIteration);
+		long nanotime = finishTime - startTime;
+		nanotime = nanotime / nbIteration;
+		System.out.println("Average screen capture time with " + screenCapture + ": " + (nanotime / 1000l) + " µs");
+	}
 
-		screenCapture = DefaultScreenCapture.getInstance();
+	@Test
+	public void testBrowsePixels() {
+		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
 
-		startTime = System.currentTimeMillis();
-		for (int i = 0; i < nbIteration; i++) {
-			robotImage = screenCapture.captureScreen(rect);
-		}
-		finishTime = System.currentTimeMillis();
+		testBrowsePixels(bounds, DefaultScreenCapture.getInstance());
+		testBrowsePixels(bounds, new JnaScreenCapture());
+		testBrowsePixels(bounds, new JniScreenCapture());
+	}
 
-		System.out.println("Capture With Robot Class " + (finishTime - startTime) / nbIteration);
-
+	private void testBrowsePixels(Rectangle bounds, ScreenCapture screenCapture) {
+		Image image = null;
 		RgbColor color = new RgbColor();
+		try {
+			image = screenCapture.captureScreen(bounds);
+			long startTime = System.nanoTime();
+			for (int w = 0; w < bounds.width; w++) {
+				for (int h = 0; h < bounds.height; h++) {
+					image.getRGB(w, h, color);
+				}
+			}
+			long finishTime = System.nanoTime();
 
-		startTime = System.currentTimeMillis();
-		for (int w = 0; w < nbIteration; w++) {
-			for (int h = 0; h < nbIteration; h++) {
-				jnaImage.getRGB(w, h, color);
-				// System.out.print(color);
+			long nanotime = finishTime - startTime;
+			System.out.println("Browsing " + (bounds.width * bounds.height) + " pixels with " + screenCapture + " " + "took " + (nanotime / 1000l) + "" + " µs");
+		} finally {
+			if (null != image) {
+				image.flush();
 			}
 		}
-		finishTime = System.currentTimeMillis();
-
-		System.out.println();
-		System.out.println("Browsing Colors With JNA " + (finishTime - startTime));
-
-		startTime = System.currentTimeMillis();
-		for (int w = 0; w < nbIteration; w++) {
-			for (int h = 0; h < nbIteration; h++) {
-				robotImage.getRGB(w, h, color);
-				// System.out.print(color);
-			}
-		}
-		finishTime = System.currentTimeMillis();
-
-		System.out.println();
-		System.out.println("Browsing Colors With Robot Class " + (finishTime - startTime));
 	}
 }

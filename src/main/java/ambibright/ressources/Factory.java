@@ -17,7 +17,7 @@ import ambibright.engine.ColorsChangeObserver;
 import ambibright.engine.Manager;
 import ambibright.engine.ProcessCheckerService;
 import ambibright.engine.UpdateColorsService;
-import ambibright.engine.capture.DefaultScreenCapture;
+import ambibright.engine.capture.JniScreenCapture;
 import ambibright.engine.capture.ScreenCapture;
 import ambibright.engine.color.ColorAlgorithm;
 import ambibright.engine.color.ColorAlgorithmGamma;
@@ -54,8 +54,9 @@ public class Factory {
 	private Factory() {
 		this.config = Config.getInstance();
 
-        this.screenCapture = DefaultScreenCapture.getInstance();
+//        this.screenCapture = DefaultScreenCapture.getInstance();
 //        this.screenCapture = new JnaScreenCapture();
+        this.screenCapture = new JniScreenCapture();
 
 		colorAlgorithmList = Arrays.asList(new ColorAlgorithmGamma(config), new ColorAlgorithmHSB(config));
 
