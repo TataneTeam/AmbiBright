@@ -7,14 +7,12 @@ package ambibright;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 
-import org.junit.Test;
-
-import ambibright.engine.capture.ScreenCapture;
-import ambibright.engine.capture.RgbColor;
-import ambibright.engine.capture.JniScreenCapture;
-import ambibright.engine.capture.JnaScreenCapture;
-import ambibright.engine.capture.Image;
 import ambibright.engine.capture.DefaultScreenCapture;
+import ambibright.engine.capture.Image;
+import ambibright.engine.capture.JniScreenCapture;
+import ambibright.engine.capture.RgbColor;
+import ambibright.engine.capture.ScreenCapture;
+import org.junit.Test;
 
 public class Compare {
 
@@ -24,7 +22,6 @@ public class Compare {
 		int nbIteration = 1000;
 
 		testScreenCapture(bounds, nbIteration, DefaultScreenCapture.getInstance());
-		testScreenCapture(bounds, nbIteration, new JnaScreenCapture());
 		testScreenCapture(bounds, nbIteration, new JniScreenCapture());
 	}
 
@@ -48,7 +45,6 @@ public class Compare {
 		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
 
 		testBrowsePixels(bounds, DefaultScreenCapture.getInstance());
-		testBrowsePixels(bounds, new JnaScreenCapture());
 		testBrowsePixels(bounds, new JniScreenCapture());
 	}
 
