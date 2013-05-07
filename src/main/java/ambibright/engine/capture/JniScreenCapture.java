@@ -48,15 +48,17 @@ public class JniScreenCapture implements ScreenCapture {
 		@Override
 		public BufferedImage getBufferedImage() {
 			if (null == bufferedImage) {
-				bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-				for (int x = 0; x < width; x++)
-					for (int y = 0; y < height; y++) {
-						int pos = 4 * ((y * width) + x);
-						int b = pointer[pos++] & 0xff;
-						int g = pointer[pos++] & 0xff;
-						int r = pointer[pos] & 0xff;
-						bufferedImage.setRGB(x, y, (0xFF << 24) | (r << 16) | (g << 8) | b);
-					}
+				bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
+				byte[] data = new byte[width * height * 3];
+				int pos = 0;
+				int dpos = 0;
+				for (int i = 0; i < width * height; i++) {
+					data[dpos++] = pointer[pos+2];
+					data[dpos++] = pointer[pos+1];
+					data[dpos++] = pointer[pos];
+					pos += 4;
+				}
+				bufferedImage.getRaster().setDataElements(0, 0, width, height, data);
 			}
 			return bufferedImage;
 		}
