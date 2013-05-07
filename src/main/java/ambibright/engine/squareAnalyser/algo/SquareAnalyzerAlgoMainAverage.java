@@ -4,20 +4,37 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
-import ambibright.engine.capture.Image;
-import ambibright.engine.capture.RgbColor;
 import ambibright.engine.squareAnalyser.SquareAnalyserAlgorithm;
+import ambibright.engine.capture.RgbColor;
+import ambibright.engine.capture.Image;
 
 public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 
-	public static final float mainColorPourcentage = 0.4f;
-	private Map<RgbColor, Integer> map;
-	private RgbColor maxColor;
-	private int posX, posY, nbPixel;
-	private int red, green, blue, max, currentOccur;
+	private class Counter {
+		private int counter = 1;
+
+		private Counter increment() {
+			counter++;
+			return this;
+		}
+
+		private int get() {
+			return counter;
+		}
+	}
+
+	private static final int mainColorPourcentage = 40;
+	private final Map<RgbColor, Counter> map;
+	private final RgbColor colorHolder;
+	// average
+	private int redAverage, greenAverage, blueAverage, nbPixel;
+	// main
+	private int redMain, greenMain, blueMain, threshold, counter;
+	private int posX, posY;
 
 	public SquareAnalyzerAlgoMainAverage() {
-		map = new HashMap<RgbColor, Integer>();
+		map = new HashMap<RgbColor, Counter>();
+		colorHolder = new RgbColor();
 	}
 
 	@Override
@@ -25,41 +42,54 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 
 		// Reset vars
 		map.clear();
-		nbPixel = 0;
-		red = 0;
-		green = 0;
-		blue = 0;
-		max = 0;
 
-		for (posX = 0; posX < bound.width && posX + bound.x < image.getWidth(); posX += screenAnalysePitch) {
-			for (posY = 0; posY < bound.height && posY + bound.y < image.getHeight(); posY += screenAnalysePitch) {
-				RgbColor current = image.getRGB(bound.x + posX, bound.y + posY);
-				nbPixel++;
+		// average
+		redAverage = 0;
+		greenAverage = 0;
+		blueAverage = 0;
+		nbPixel = 0;
+
+		// main
+		redMain = 0;
+		greenMain = 0;
+		blueMain = 0;
+		threshold = ((bound.width * bound.height) / screenAnalysePitch) * mainColorPourcentage / 100;
+		counter = -1;
+
+		for (posX = 0; posX < bound.width; posX += screenAnalysePitch) {
+			for (posY = 0; posY < bound.height; posY += screenAnalysePitch) {
+				image.getRGB(bound.x + posX, bound.y + posY, colorHolder);
 
 				// For average
-				red += current.red();
-				green += current.green();
-				blue += current.blue();
+				redAverage += colorHolder.red();
+				greenAverage += colorHolder.green();
+				blueAverage += colorHolder.blue();
+                nbPixel++;
 
-				// For max
-				if (map.containsKey(current)) {
-					currentOccur = map.get(current) + 1;
-					map.put(current, currentOccur);
-					if (currentOccur > max) {
-						max = currentOccur;
-						maxColor = current;
-					}
+				// For maxCounter
+				Counter colorCounter = map.get(colorHolder);
+				if (null == colorCounter) {
+					colorCounter = new Counter();
+					map.put(new RgbColor(colorHolder.red(), colorHolder.green(), colorHolder.blue()), colorCounter);
 				} else {
-					map.put(current, 1);
+					colorCounter.increment();
 				}
-
+                if (colorCounter.get() > counter) {
+                    counter = colorCounter.get();
+                    redMain = colorHolder.red();
+                    greenMain = colorHolder.green();
+                    blueMain = colorHolder.blue();
+                }
+                if (counter > threshold) {
+                    break;
+                }
 			}
 		}
 
-		if (max > (nbPixel * mainColorPourcentage)) {
-			return new int[] { maxColor.red(), maxColor.green(), maxColor.blue() };
+		if (counter > threshold) {
+			return new int[] { redMain, greenMain, blueMain };
 		} else {
-			return new int[] { red / nbPixel, green / nbPixel, blue / nbPixel };
+			return new int[] { redAverage / nbPixel, greenAverage / nbPixel, blueAverage / nbPixel };
 		}
 
 	}

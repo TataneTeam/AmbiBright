@@ -6,6 +6,10 @@ public class RgbColor {
 	public RgbColor() {
 	}
 
+	public RgbColor(int red, int green, int blue) {
+		update(red, green, blue);
+	}
+
 	void update(int red, int green, int blue) {
 		this.red = red;
 		this.green = green;
@@ -29,28 +33,17 @@ public class RgbColor {
 		if (this == o) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (!(o instanceof RgbColor)) {
 			return false;
 		}
-
 		RgbColor rgbColor = (RgbColor) o;
-
-		if (blue != rgbColor.blue) {
-			return false;
-		}
-		if (green != rgbColor.green) {
-			return false;
-		}
-		if (red != rgbColor.red) {
-			return false;
-		}
-
-		return true;
+		return rgbColor.red == red && rgbColor.green == green && rgbColor.blue == blue;
 	}
 
 	@Override
 	public int hashCode() {
-		int result = red;
+		int result = 17;
+		result = 31 * result + red;
 		result = 31 * result + green;
 		result = 31 * result + blue;
 		return result;

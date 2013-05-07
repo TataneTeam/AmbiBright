@@ -7,12 +7,14 @@ package ambibright;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 
-import ambibright.engine.capture.DefaultScreenCapture;
-import ambibright.engine.capture.Image;
-import ambibright.engine.capture.JniScreenCapture;
-import ambibright.engine.capture.RgbColor;
-import ambibright.engine.capture.ScreenCapture;
 import org.junit.Test;
+
+import ambibright.engine.squareAnalyser.SquareAnalyser;
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.engine.capture.RgbColor;
+import ambibright.engine.capture.JniScreenCapture;
+import ambibright.engine.capture.Image;
+import ambibright.engine.capture.DefaultScreenCapture;
 
 public class Compare {
 
@@ -67,6 +69,27 @@ public class Compare {
 			if (null != image) {
 				image.flush();
 			}
+		}
+	}
+
+	@Test
+	public void testSquareAnalyser() {
+		ScreenCapture screenCapture = new JniScreenCapture();
+		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
+		Image image = screenCapture.captureScreen(bounds);
+		bounds = new Rectangle(0, 0, 100, 50);
+		long startTime, finishTime;
+		int[] color = null;
+
+		for (SquareAnalyser squareAnalyser : SquareAnalyser.values()) {
+			startTime = System.nanoTime();
+			for (int i = 0; i < 1000; i++) {
+				color = squareAnalyser.getColor(image, bounds, 1);
+			}
+			finishTime = System.nanoTime();
+			long nanotime = (finishTime - startTime) / 1000l;
+			System.out.println("Average square analyser time with " + squareAnalyser + ": " + (nanotime / 1000l) + " " +
+                "" + "µs | color : " + color[0] + "," + color[1] + "," + color[2]);
 		}
 	}
 }
