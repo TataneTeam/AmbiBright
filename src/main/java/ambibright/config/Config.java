@@ -177,6 +177,7 @@ public class Config {
 		}
 	}
 
+    @SuppressWarnings("unchecked")
 	private Object convertStringToFieldValue(Field field, String value) {
 		if (String.class == field.getType()) {
 			return value;
@@ -239,11 +240,13 @@ public class Config {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			try {
-				stream.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+            if(null != stream){
+                try {
+                    stream.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 		}
 	}
 

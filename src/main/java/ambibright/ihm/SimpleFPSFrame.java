@@ -23,6 +23,7 @@ public class SimpleFPSFrame extends JDialog implements ColorsChangeObserver {
 		setUndecorated(true);
 		setAlwaysOnTop(true);
 		setFocusable(false);
+        // a remplacer par setBackground(new Color(0, 0, 0, 0)); si on passe un jour en jdk7+ only
 		AWTUtilities.setWindowOpaque(this, false);
 		text = new JLabel();
 		text.setForeground(Color.magenta);

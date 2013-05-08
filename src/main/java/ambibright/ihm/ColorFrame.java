@@ -1,24 +1,21 @@
 package ambibright.ihm;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridLayout;
-import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
-import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
 
 import ambibright.config.Config;
 import ambibright.ressources.CurrentBounds;
@@ -34,7 +31,6 @@ public class ColorFrame extends JDialog implements ChangeListener {
 	private JCheckBox displaySquares;
 	private List<JPanel> squares;
 	private CurrentBounds currentBounds;
-	private AmbiFont ambiFont;
 
 	public ColorFrame(Rectangle bounds, AmbiFont ambiFont, Config pConfig, CurrentBounds currentBounds) {
 		super();
@@ -42,7 +38,6 @@ public class ColorFrame extends JDialog implements ChangeListener {
 		this.originalConfig = pConfig.cloneConfig();
 		this.config = pConfig;
 		this.currentBounds = currentBounds;
-		this.ambiFont = ambiFont;
 
 		config.setCheckProcess(false);
 
@@ -113,6 +108,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 	}
 
 	@Override
+    @SuppressWarnings("deprecation")
 	public void hide() {
 		colorManager.clear();
 		if (null != originalConfig) {

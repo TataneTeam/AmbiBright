@@ -1,15 +1,14 @@
 package ambibright.ihm;
 
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextField;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.lang.reflect.Field;
 import java.util.Collection;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
 
 import ambibright.config.Config;
 import ambibright.engine.ArduinoSender;
@@ -77,6 +76,7 @@ public class ConfigFrame extends JFrame {
 	}
 
 	@Override
+    @SuppressWarnings("deprecation")
 	public void hide() {
 		factory.clearPropertyChangeListeners();
 		if (null != originalConfig) {

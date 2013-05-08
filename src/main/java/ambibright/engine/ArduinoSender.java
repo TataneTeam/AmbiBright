@@ -6,18 +6,20 @@ import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.Enumeration;
 
-import ambibright.config.Config;
-import ambibright.engine.capture.Image;
-import gnu.io.CommPortIdentifier;
-import gnu.io.SerialPort;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ambibright.engine.capture.Image;
+import ambibright.config.Config;
+import gnu.io.CommPortIdentifier;
+import gnu.io.SerialPort;
 
 public class ArduinoSender implements ColorsChangeObserver {
 
 	public static final String defaultTestString = "Ada";
 	private static final Logger logger = LoggerFactory.getLogger(ArduinoSender.class);
 
+	@SuppressWarnings("unchecked")
 	public static String getArduinoPort(int dataRate, String testString) {
 		String result = null;
 		CommPortIdentifier portId;
@@ -37,10 +39,12 @@ public class ArduinoSender implements ColorsChangeObserver {
 			} catch (Exception e) {
 				logger.debug("Error communicating with the arduino at port {}", portId, e);
 			} finally {
-				try {
-					serialPort.close();
-				} catch (Exception e) {
-					logger.error("Error closing the serial port", e);
+				if (null != serialPort) {
+					try {
+						serialPort.close();
+					} catch (Exception e) {
+						logger.error("Error closing the serial port", e);
+					}
 				}
 			}
 		}
