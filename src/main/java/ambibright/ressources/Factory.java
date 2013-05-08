@@ -55,7 +55,6 @@ public class Factory {
 		this.config = Config.getInstance();
 
 //        this.screenCapture = DefaultScreenCapture.getInstance();
-//        this.screenCapture = new JnaScreenCapture();
         this.screenCapture = new JniScreenCapture();
 
 		colorAlgorithmList = Arrays.asList(new ColorAlgorithmGamma(config), new ColorAlgorithmHSB(config));

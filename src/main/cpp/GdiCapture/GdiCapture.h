@@ -15,22 +15,6 @@ extern "C" {
 JNIEXPORT jbyteArray JNICALL Java_ambibright_engine_jni_GdiCapture_captureScreen
   (JNIEnv *, jclass, jint, jint, jint, jint);
 
-/*
- * Class:     ambibright_engine_jni_GdiCapture
- * Method:    captureScreenBuffer
- * Signature: (IIII)Ljava/nio/ByteBuffer;
- */
-JNIEXPORT jobject JNICALL Java_ambibright_engine_jni_GdiCapture_captureScreenBuffer
-  (JNIEnv *, jclass, jint, jint, jint, jint);
-
-/*
- * Class:     ambibright_engine_jni_GdiCapture
- * Method:    freeBuffer
- * Signature: (Ljava/nio/ByteBuffer;)V
- */
-JNIEXPORT void JNICALL Java_ambibright_engine_jni_GdiCapture_freeBuffer
-  (JNIEnv *, jclass, jobject);
-
 #ifdef __cplusplus
 }
 #endif
