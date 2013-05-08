@@ -2,16 +2,18 @@ package ambibright.engine.squareAnalyser;
 
 import java.awt.Rectangle;
 
-import ambibright.engine.capture.Image;
-import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoAverage;
-import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoMain;
 import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoMainAverage;
+import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoMain;
+import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoAverage;
+import ambibright.engine.capture.Image;
 
-public enum SquareAnalyser {
+public enum SquareAnalyser implements SquareAnalyserAlgorithm {
 
-	AverageColors(new SquareAnalyzerAlgoAverage()), MainColor(new SquareAnalyzerAlgoMain()), MainAverageColor(new SquareAnalyzerAlgoMainAverage());
+	AverageColors(new SquareAnalyzerAlgoAverage()),
+    MainColor(new SquareAnalyzerAlgoMain()),
+    MainAverageColor(new SquareAnalyzerAlgoMainAverage());
 
-	private SquareAnalyserAlgorithm squareAnalyserAlgorithm;
+    private SquareAnalyserAlgorithm squareAnalyserAlgorithm;
 
 	SquareAnalyser(SquareAnalyserAlgorithm squareAnalyserAlgorithm) {
 		this.squareAnalyserAlgorithm = squareAnalyserAlgorithm;

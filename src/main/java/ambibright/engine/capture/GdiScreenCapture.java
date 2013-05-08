@@ -6,9 +6,12 @@ import java.awt.image.BufferedImage;
 import ambibright.engine.jni.GdiCapture;
 
 /**
+ * Implementation of {@link ScreenCaptureMethod} that uses JNI to invoke
+ * natively the GDI capture screen method.
+ *
  * @author Nicolas Morel
  */
-public class JniScreenCapture implements ScreenCapture {
+public class GdiScreenCapture implements ScreenCaptureMethod {
 
 	private static class ImageImpl implements Image {
 
@@ -16,7 +19,7 @@ public class JniScreenCapture implements ScreenCapture {
 		private byte[] datas;
 		private BufferedImage bufferedImage;
 
-		private ImageImpl(int width, int height, byte[] datas ) {
+		private ImageImpl(int width, int height, byte[] datas) {
 			this.width = width;
 			this.height = height;
 			this.datas = datas;
@@ -40,7 +43,7 @@ public class JniScreenCapture implements ScreenCapture {
 		@Override
 		public RgbColor getRGB(int x, int y, RgbColor rgb) {
 			int pos = 4 * ((y * width) + x);
-			rgb.update( datas[pos + 2] & 0xff, datas[pos + 1] & 0xff, datas[pos] & 0xff);
+			rgb.update(datas[pos + 2] & 0xff, datas[pos + 1] & 0xff, datas[pos] & 0xff);
 			return rgb;
 		}
 
@@ -66,6 +69,9 @@ public class JniScreenCapture implements ScreenCapture {
 		public void flush() {
 			datas = null;
 		}
+	}
+
+	GdiScreenCapture() {
 	}
 
 	@Override

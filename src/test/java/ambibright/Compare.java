@@ -7,14 +7,12 @@ package ambibright;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 
-import org.junit.Test;
-
-import ambibright.engine.squareAnalyser.SquareAnalyser;
-import ambibright.engine.capture.ScreenCapture;
-import ambibright.engine.capture.RgbColor;
-import ambibright.engine.capture.JniScreenCapture;
 import ambibright.engine.capture.Image;
-import ambibright.engine.capture.DefaultScreenCapture;
+import ambibright.engine.capture.RgbColor;
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.engine.capture.ScreenCaptureMethod;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
+import org.junit.Test;
 
 public class Compare {
 
@@ -23,11 +21,11 @@ public class Compare {
 		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
 		int nbIteration = 1000;
 
-		testScreenCapture(bounds, nbIteration, DefaultScreenCapture.getInstance());
-		testScreenCapture(bounds, nbIteration, new JniScreenCapture());
+		testScreenCapture(bounds, nbIteration, ScreenCapture.Robot);
+		testScreenCapture(bounds, nbIteration, ScreenCapture.GDI);
 	}
 
-	private void testScreenCapture(Rectangle bounds, int nbIteration, ScreenCapture screenCapture) {
+	private void testScreenCapture(Rectangle bounds, int nbIteration, ScreenCaptureMethod screenCapture) {
 		Image image;
 
 		long startTime = System.nanoTime();
@@ -46,11 +44,11 @@ public class Compare {
 	public void testBrowsePixels() {
 		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
 
-		testBrowsePixels(bounds, DefaultScreenCapture.getInstance());
-		testBrowsePixels(bounds, new JniScreenCapture());
+		testBrowsePixels(bounds, ScreenCapture.Robot);
+		testBrowsePixels(bounds, ScreenCapture.GDI);
 	}
 
-	private void testBrowsePixels(Rectangle bounds, ScreenCapture screenCapture) {
+	private void testBrowsePixels(Rectangle bounds, ScreenCaptureMethod screenCapture) {
 		Image image = null;
 		RgbColor color = new RgbColor();
 		try {
@@ -74,7 +72,7 @@ public class Compare {
 
 	@Test
 	public void testSquareAnalyser() {
-		ScreenCapture screenCapture = new JniScreenCapture();
+		ScreenCaptureMethod screenCapture = ScreenCapture.GDI;
 		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
 		Image image = screenCapture.captureScreen(bounds);
 		bounds = new Rectangle(0, 0, 100, 50);

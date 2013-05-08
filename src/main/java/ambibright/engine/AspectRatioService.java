@@ -2,13 +2,12 @@ package ambibright.engine;
 
 import java.awt.Rectangle;
 
+import ambibright.config.Config;
+import ambibright.engine.capture.Image;
+import ambibright.engine.capture.RgbColor;
+import ambibright.ressources.CurrentBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ambibright.ressources.CurrentBounds;
-import ambibright.engine.capture.ScreenCapture;
-import ambibright.engine.capture.RgbColor;
-import ambibright.engine.capture.Image;
 
 /**
  * Checks for changes in aspect ratio and update the bounds if any
@@ -19,7 +18,7 @@ public class AspectRatioService implements Runnable {
 	private static final int blackLimit = 6;
 	private final Rectangle fullScreenBounds;
 	private final CurrentBounds currentBounds;
-	private final ScreenCapture screenCapture;
+	private final Config config;
 	/**
 	 * RgbColor used to store the value. We create only one instance and update
 	 * it to avoid the creation of million of objects.
@@ -33,10 +32,10 @@ public class AspectRatioService implements Runnable {
 	private int x = 0;
 	private int testY, testX;
 
-	public AspectRatioService(Rectangle fullScreenBounds, CurrentBounds currentBounds, ScreenCapture screenCapture) {
+	public AspectRatioService(Rectangle fullScreenBounds, CurrentBounds currentBounds, Config config) {
 		this.fullScreenBounds = fullScreenBounds;
 		this.currentBounds = currentBounds;
-		this.screenCapture = screenCapture;
+		this.config = config;
 		this.lastScreenBounds = fullScreenBounds;
 	}
 
@@ -45,7 +44,7 @@ public class AspectRatioService implements Runnable {
 		logger.debug("Checking if aspect ratio changed");
 
 		// Get current image
-		Image image = screenCapture.captureScreen(fullScreenBounds);
+		Image image = config.getScreenCapture().captureScreen(fullScreenBounds);
 
 		// Detect top
 		y = fullScreenBounds.height / 4;

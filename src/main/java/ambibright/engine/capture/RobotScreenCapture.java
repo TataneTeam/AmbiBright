@@ -9,10 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Default implementation of {@link ScreenCapture} that uses
+ * Default implementation of {@link ScreenCaptureMethod} that uses
  * {@link Robot#createScreenCapture(java.awt.Rectangle)} to capture the screen.
  */
-public class DefaultScreenCapture implements ScreenCapture {
+public class RobotScreenCapture implements ScreenCaptureMethod
+{
 
 	private static class ImageImpl implements Image {
 
@@ -55,19 +56,11 @@ public class DefaultScreenCapture implements ScreenCapture {
 		}
 	}
 
-	private static final Logger logger = LoggerFactory.getLogger(DefaultScreenCapture.class);
-	private static DefaultScreenCapture instance;
-
-	public static DefaultScreenCapture getInstance() {
-		if (null == instance) {
-			instance = new DefaultScreenCapture();
-		}
-		return instance;
-	}
+	private static final Logger logger = LoggerFactory.getLogger(RobotScreenCapture.class);
 
 	private final Robot robot;
 
-	private DefaultScreenCapture() {
+	RobotScreenCapture() {
 		try {
 			robot = new Robot();
 		} catch (AWTException e) {

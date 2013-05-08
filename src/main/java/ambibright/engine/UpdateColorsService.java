@@ -6,7 +6,6 @@ import java.util.Set;
 
 import ambibright.config.Config;
 import ambibright.engine.capture.Image;
-import ambibright.engine.capture.ScreenCapture;
 import ambibright.engine.color.ColorAlgorithm;
 import ambibright.ressources.CurrentBounds;
 import org.slf4j.Logger;
@@ -19,7 +18,6 @@ public class UpdateColorsService implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(UpdateColorsService.class);
 	private final Config config;
-	private final ScreenCapture screenCapture;
 	private final Set<ColorsChangeObserver> observers;
 	private final List<? extends ColorAlgorithm> colorAlgorithmList;
 	private final int[][] result;
@@ -28,9 +26,8 @@ public class UpdateColorsService implements Runnable {
 	private final CurrentBounds currentBounds;
 	private int pos;
 
-	public UpdateColorsService(Config config, ScreenCapture screenCapture, Set<ColorsChangeObserver> observers, List<? extends ColorAlgorithm> colorAlgorithmList, CurrentBounds currentBounds, byte[] arduinoArray) {
+	public UpdateColorsService(Config config, Set<ColorsChangeObserver> observers, List<? extends ColorAlgorithm> colorAlgorithmList, CurrentBounds currentBounds, byte[] arduinoArray) {
 		this.config = config;
-		this.screenCapture = screenCapture;
 		this.observers = observers;
 		this.colorAlgorithmList = colorAlgorithmList;
 		this.currentBounds = currentBounds;
@@ -48,7 +45,7 @@ public class UpdateColorsService implements Runnable {
 		try {
 			logger.debug("Processing colors");
 
-			Image image = screenCapture.captureScreen(currentBounds.getBounds());
+			Image image = config.getScreenCapture().captureScreen(currentBounds.getBounds());
 
 			byte[] colors = getColorsToSend(getColors(image));
 

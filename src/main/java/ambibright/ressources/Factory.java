@@ -17,8 +17,6 @@ import ambibright.engine.ColorsChangeObserver;
 import ambibright.engine.Manager;
 import ambibright.engine.ProcessCheckerService;
 import ambibright.engine.UpdateColorsService;
-import ambibright.engine.capture.JniScreenCapture;
-import ambibright.engine.capture.ScreenCapture;
 import ambibright.engine.color.ColorAlgorithm;
 import ambibright.engine.color.ColorAlgorithmGamma;
 import ambibright.engine.color.ColorAlgorithmHSB;
@@ -49,13 +47,9 @@ public class Factory {
 	private final SimpleFPSFrame simpleFPSFrame;
 	private final BlackScreenManager blackScreenManager;
 	private final List<? extends ColorAlgorithm> colorAlgorithmList;
-    private ScreenCapture screenCapture;
 
 	private Factory() {
 		this.config = Config.getInstance();
-
-//        this.screenCapture = DefaultScreenCapture.getInstance();
-        this.screenCapture = new JniScreenCapture();
 
 		colorAlgorithmList = Arrays.asList(new ColorAlgorithmGamma(config), new ColorAlgorithmHSB(config));
 
@@ -96,15 +90,11 @@ public class Factory {
 	}
 
 	public Rectangle getBounds() {
-		return getBounds(getConfig().getScreenDevice());
+		return getBounds( getConfig().getScreenDevice() );
 	}
 
 	private Rectangle getBounds(int screenDevice) {
 		return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
-	}
-
-	public ScreenCapture getScreenCapture() {
-		return screenCapture;
 	}
 
 	public MonitoringFrame getAmbiFrame() {
@@ -116,7 +106,7 @@ public class Factory {
 	}
 
 	public AspectRatioService newAspectRatioService() {
-		return new AspectRatioService(getBounds(), currentBounds, getScreenCapture());
+		return new AspectRatioService(getBounds(), currentBounds, getConfig());
 	}
 
 	public ProcessCheckerService newProcessCheckerService() {
@@ -124,7 +114,7 @@ public class Factory {
 	}
 
 	public UpdateColorsService newUpdateColorsService(Set<ColorsChangeObserver> observers) {
-		return new UpdateColorsService(getConfig(), getScreenCapture(), observers, colorAlgorithmList, currentBounds, getArduinoSender().getArray());
+		return new UpdateColorsService(getConfig(), observers, colorAlgorithmList, currentBounds, getArduinoSender().getArray());
 	}
 
 	public ColorFrame getNewColorFrame() {
