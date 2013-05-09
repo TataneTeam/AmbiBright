@@ -26,11 +26,6 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 	private static final int mainColorPourcentage = 40;
 	private final Map<RgbColor, Counter> map;
 	private final RgbColor colorHolder;
-	// average
-	private int redAverage, greenAverage, blueAverage, nbPixel;
-	// main
-	private int redMain, greenMain, blueMain, threshold, counter;
-	private int posX, posY;
 
 	public SquareAnalyzerAlgoMainAverage() {
 		map = new HashMap<RgbColor, Counter>();
@@ -44,20 +39,20 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyserAlgorithm {
 		map.clear();
 
 		// average
-		redAverage = 0;
-		greenAverage = 0;
-		blueAverage = 0;
-		nbPixel = 0;
+        int redAverage = 0;
+        int greenAverage = 0;
+        int blueAverage = 0;
+        int nbPixel = 0;
 
 		// main
-		redMain = 0;
-		greenMain = 0;
-		blueMain = 0;
-		threshold = ((bound.width * bound.height) / screenAnalysePitch) * mainColorPourcentage / 100;
-		counter = -1;
+        int redMain = 0;
+        int greenMain = 0;
+        int blueMain = 0;
+        int threshold = ((bound.width * bound.height) / screenAnalysePitch) * mainColorPourcentage / 100;
+        int counter = -1;
 
-		for (posX = 0; posX < bound.width; posX += screenAnalysePitch) {
-			for (posY = 0; posY < bound.height; posY += screenAnalysePitch) {
+		for (int posX = 0; posX < bound.width; posX += screenAnalysePitch) {
+			for (int posY = 0; posY < bound.height; posY += screenAnalysePitch) {
 				image.getRGB(bound.x + posX, bound.y + posY, colorHolder);
 
 				// For average

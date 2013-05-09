@@ -26,11 +26,6 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 	private final Map<RgbColor, Counter> map;
     private final RgbColor colorHolder;
 
-	private int posX, posY, nbPixel;
-	private int counter;
-	private int red, green, blue;
-	private int half;
-
 	public SquareAnalyzerAlgoMain() {
 		map = new HashMap<RgbColor, Counter>();
         colorHolder = new RgbColor();
@@ -39,15 +34,15 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
 	@Override
 	public int[] getColor(Image image, Rectangle bound, int screenAnalysePitch) {
 		map.clear();
-		counter = -1;
-		red = 0;
-		green = 0;
-		blue = 0;
+		int counter = -1;
+        int red = 0;
+        int green = 0;
+        int blue = 0;
         // no need to parse the rest of the pixel if we already found a main color
-		half = ((bound.width * bound.height) / screenAnalysePitch) / 2;
+        int half = ((bound.width * bound.height) / screenAnalysePitch) / 2;
 
-		for (posX = 0; posX < bound.width; posX += screenAnalysePitch) {
-			for (posY = 0; posY < bound.height; posY += screenAnalysePitch) {
+		for (int posX = 0; posX < bound.width; posX += screenAnalysePitch) {
+			for (int posY = 0; posY < bound.height; posY += screenAnalysePitch) {
 				image.getRGB(bound.x + posX, bound.y + posY, colorHolder);
 
 				Counter colorCounter = map.get(colorHolder);
