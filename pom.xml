@@ -186,17 +186,30 @@
         <groupId>com.alexkasko.maven</groupId>
         <artifactId>jni-headers-maven-plugin</artifactId>
         <version>${jni-headers-maven-plugin.version}</version>
+        <configuration>
+          <javahPath>${java.home}/../bin/javah.exe</javahPath>
+        </configuration>
         <executions>
           <execution>
-            <id>javah</id>
+            <id>gdi-headers</id>
             <phase>compile</phase>
             <goals>
               <goal>javah</goal>
             </goals>
             <configuration>
-              <javahPath>${java.home}/../bin/javah.exe</javahPath>
               <javahClass>ambibright.engine.jni.GdiCapture</javahClass>
               <javahOutputFilePath>${project.basedir}/src/main/cpp/GdiCapture/GdiCapture.h</javahOutputFilePath>
+            </configuration>
+          </execution>
+          <execution>
+            <id>directx-headers</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>javah</goal>
+            </goals>
+            <configuration>
+              <javahClass>ambibright.engine.jni.DirectXCapture</javahClass>
+              <javahOutputFilePath>${project.basedir}/src/main/cpp/DirectXCapture/DirectXCapture.h</javahOutputFilePath>
             </configuration>
           </execution>
         </executions>

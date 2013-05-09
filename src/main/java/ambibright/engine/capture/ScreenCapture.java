@@ -8,7 +8,7 @@ import java.awt.Rectangle;
 public enum ScreenCapture implements ScreenCaptureMethod
 {
 
-	Robot(new RobotScreenCapture()), GDI(new GdiScreenCapture());
+	Robot(new RobotScreenCapture()), GDI(new GdiScreenCapture()), DirectX(new DirectXScreenCapture());
 
 	private ScreenCaptureMethod screenCapture;
 

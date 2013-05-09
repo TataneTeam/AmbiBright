@@ -37,6 +37,10 @@ public class Factory {
 		return instance;
 	}
 
+	public static Rectangle getBounds(int screenDevice) {
+		return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
+	}
+
 	private final Config config;
 	private final AmbiFont ambiFont;
 	private final MonitoringFrame ambiFrame;
@@ -90,11 +94,7 @@ public class Factory {
 	}
 
 	public Rectangle getBounds() {
-		return getBounds( getConfig().getScreenDevice() );
-	}
-
-	private Rectangle getBounds(int screenDevice) {
-		return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
+		return getBounds(getConfig().getScreenDevice());
 	}
 
 	public MonitoringFrame getAmbiFrame() {

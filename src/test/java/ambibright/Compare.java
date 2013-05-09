@@ -7,12 +7,13 @@ package ambibright;
 import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 
-import ambibright.engine.capture.Image;
-import ambibright.engine.capture.RgbColor;
-import ambibright.engine.capture.ScreenCapture;
-import ambibright.engine.capture.ScreenCaptureMethod;
-import ambibright.engine.squareAnalyser.SquareAnalyser;
 import org.junit.Test;
+
+import ambibright.engine.squareAnalyser.SquareAnalyser;
+import ambibright.engine.capture.ScreenCaptureMethod;
+import ambibright.engine.capture.ScreenCapture;
+import ambibright.engine.capture.RgbColor;
+import ambibright.engine.capture.Image;
 
 public class Compare {
 
@@ -23,10 +24,14 @@ public class Compare {
 
 		testScreenCapture(bounds, nbIteration, ScreenCapture.Robot);
 		testScreenCapture(bounds, nbIteration, ScreenCapture.GDI);
+		testScreenCapture(bounds, nbIteration, ScreenCapture.DirectX );
 	}
 
 	private void testScreenCapture(Rectangle bounds, int nbIteration, ScreenCaptureMethod screenCapture) {
 		Image image;
+
+		// first time to warm up
+		image = screenCapture.captureScreen(bounds);
 
 		long startTime = System.nanoTime();
 		for (int i = 0; i < nbIteration; i++) {
@@ -77,17 +82,21 @@ public class Compare {
 		Image image = screenCapture.captureScreen(bounds);
 		bounds = new Rectangle(0, 0, 100, 50);
 		long startTime, finishTime;
-		int[] color = null;
+		int[] color;
 
 		for (SquareAnalyser squareAnalyser : SquareAnalyser.values()) {
+			// first one to initialize
+			color = squareAnalyser.getColor(image, bounds, 1);
+
 			startTime = System.nanoTime();
-			for (int i = 0; i < 1000; i++) {
+			for (int i = 0; i < 10000; i++) {
 				color = squareAnalyser.getColor(image, bounds, 1);
 			}
 			finishTime = System.nanoTime();
-			long nanotime = (finishTime - startTime) / 1000l;
-			System.out.println("Average square analyser time with " + squareAnalyser + ": " + (nanotime / 1000l) + " " +
-                "" + "µs | color : " + color[0] + "," + color[1] + "," + color[2]);
+
+			long nanotime = (finishTime - startTime) / 10000l;
+
+			System.out.println("Average square analyser time with " + squareAnalyser + ": " + (nanotime / 1000l) + " " + "" + "µs | color : " + color[0] + "," + color[1] + "," + color[2]);
 		}
 	}
 }

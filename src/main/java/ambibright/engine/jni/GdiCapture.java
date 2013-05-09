@@ -11,6 +11,6 @@ public class GdiCapture {
         new NativeResource().load( "GdiCapture" );
     }
 
-	public static native byte[] captureScreen(int top, int left, int width, int height);
+	public static native byte[] captureScreen(int x, int y, int width, int height);
 
 }
