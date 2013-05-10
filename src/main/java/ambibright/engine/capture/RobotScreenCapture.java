@@ -12,8 +12,7 @@ import org.slf4j.LoggerFactory;
  * Default implementation of {@link ScreenCaptureMethod} that uses
  * {@link Robot#createScreenCapture(java.awt.Rectangle)} to capture the screen.
  */
-public class RobotScreenCapture implements ScreenCaptureMethod
-{
+public class RobotScreenCapture implements ScreenCaptureMethod {
 
 	private static class ImageImpl implements Image {
 
@@ -57,7 +56,6 @@ public class RobotScreenCapture implements ScreenCaptureMethod
 	}
 
 	private static final Logger logger = LoggerFactory.getLogger(RobotScreenCapture.class);
-
 	private final Robot robot;
 
 	RobotScreenCapture() {
@@ -70,7 +68,7 @@ public class RobotScreenCapture implements ScreenCaptureMethod
 	}
 
 	@Override
-	public Image captureScreen(Rectangle bounds) {
+	public Image captureScreen(Rectangle bounds, int screenDevice) {
 		return new ImageImpl(robot.createScreenCapture(bounds));
 	}
 }

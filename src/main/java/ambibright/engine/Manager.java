@@ -1,5 +1,6 @@
 package ambibright.engine;
 
+import javax.swing.JOptionPane;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Set;
@@ -8,13 +9,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.JOptionPane;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ambibright.config.Config;
 import ambibright.ressources.Factory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manages the thread of the application.
@@ -104,7 +102,7 @@ public class Manager {
 			Factory.get().getSimpleFPSFrame().setVisible(Factory.get().getConfig().isShowFpsFrame());
 
 			if (Factory.get().getConfig().isBlackOtherScreens()) {
-				Factory.get().getBlackScreenManager().createBlackScreens(Factory.get().getBounds());
+				Factory.get().getBlackScreenManager().createBlackScreens(Factory.get().getCurrentBounds().getFullscreenBounds());
 			}
 
 			isRunning = true;

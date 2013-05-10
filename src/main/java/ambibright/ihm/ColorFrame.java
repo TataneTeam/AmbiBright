@@ -32,12 +32,14 @@ public class ColorFrame extends JDialog implements ChangeListener {
 	private List<JPanel> squares;
 	private CurrentBounds currentBounds;
 
-	public ColorFrame(Rectangle bounds, AmbiFont ambiFont, Config pConfig, CurrentBounds currentBounds) {
+	public ColorFrame(AmbiFont ambiFont, Config pConfig, CurrentBounds currentBounds) {
 		super();
 
 		this.originalConfig = pConfig.cloneConfig();
 		this.config = pConfig;
 		this.currentBounds = currentBounds;
+
+		Rectangle bounds = currentBounds.getFullscreenBounds();
 
 		config.setCheckProcess(false);
 
@@ -108,7 +110,7 @@ public class ColorFrame extends JDialog implements ChangeListener {
 	}
 
 	@Override
-    @SuppressWarnings("deprecation")
+	@SuppressWarnings("deprecation")
 	public void hide() {
 		colorManager.clear();
 		if (null != originalConfig) {
@@ -126,9 +128,10 @@ public class ColorFrame extends JDialog implements ChangeListener {
 			repaint();
 		} else {
 			back.setBackground(Color.black);
-			float frequency = currentBounds.getZones().length / 500f;
+			Rectangle[] zones = currentBounds.getZones();
+			float frequency = zones.length / 500f;
 			int i = 0;
-			for (Rectangle bounds : currentBounds.getZones()) {
+			for (Rectangle bounds : zones) {
 				JPanel jPanel = new JPanel();
 				jPanel.setBackground(new Color((int) (Math.sin(frequency * i + 0) * 127 + 128), (int) (Math.sin(frequency * i + 2) * 127 + 128), (int) (Math.sin(frequency * i + 4) * 127 + 128)));
 				lpane.add(jPanel, JLayeredPane.POPUP_LAYER);

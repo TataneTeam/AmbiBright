@@ -3,9 +3,11 @@ package ambibright.engine.capture;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import ambibright.config.Config;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ambibright.ressources.CurrentBounds;
 import ambibright.engine.jni.DirectXCapture;
-import ambibright.ressources.Factory;
 
 /**
  * Implementation of {@link ambibright.engine.capture.ScreenCaptureMethod} that
@@ -73,25 +75,51 @@ public class DirectXScreenCapture implements ScreenCaptureMethod {
 		}
 	}
 
-	private Object lock = new Object();
+	private static final Logger logger = LoggerFactory.getLogger(DirectXScreenCapture.class);
+	private final Object lock = new Object();
+	private boolean initialized;
+	private int currentScreenDevice = -1;
 	private int deltaX;
 
 	DirectXScreenCapture() {
-		Config config = Config.getInstance();
-		init(config.getScreenDevice());
+		// TODO doesn't work because the config constructor uses the ScreenCapture enum that call this constructor
+		// Config.getInstance().addPropertyChangeListener(Config.CONFIG_SCREEN_CAPTURE,
+		// new PropertyChangeListener() {
+		// @Override
+		// public void propertyChange(PropertyChangeEvent evt) {
+		// if (ScreenCapture.DirectX == evt.getOldValue()) {
+		// synchronized (lock) {
+		// destroy();
+		// }
+		// }
+		// }
+		// });
 	}
 
 	private void init(int screenDevice) {
-		synchronized (lock) {
-            DirectXCapture.destroyDirectX();
-            DirectXCapture.initDirectX(screenDevice);
-			deltaX = Factory.getBounds(screenDevice).x;
+		logger.info("Initialize DirectX screen capture with the screen device {}", screenDevice);
+		DirectXCapture.initDirectX(screenDevice);
+		currentScreenDevice = screenDevice;
+		deltaX = CurrentBounds.getScreenBounds(screenDevice).x;
+		initialized = true;
+	}
+
+	private void destroy() {
+		if (initialized) {
+			logger.info("Destroy DirectX screen capture context");
+			DirectXCapture.destroyDirectX();
+			currentScreenDevice = -1;
+			initialized = false;
 		}
 	}
 
 	@Override
-	public Image captureScreen(Rectangle bounds) {
+	public Image captureScreen(Rectangle bounds, int screenDevice) {
 		synchronized (lock) {
+			if (currentScreenDevice != screenDevice) {
+				destroy();
+				init(screenDevice);
+			}
 			return new ImageImpl(bounds.width, bounds.height, DirectXCapture.captureScreenDirectX(bounds.x - deltaX, bounds.y, bounds.width, bounds.height));
 		}
 	}

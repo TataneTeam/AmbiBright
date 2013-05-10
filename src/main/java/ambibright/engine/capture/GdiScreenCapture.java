@@ -75,7 +75,7 @@ public class GdiScreenCapture implements ScreenCaptureMethod {
 	}
 
 	@Override
-	public Image captureScreen(Rectangle bounds) {
+	public Image captureScreen(Rectangle bounds, int screenDevice) {
 		return new ImageImpl(bounds.width, bounds.height, GdiCapture.captureScreen(bounds.x, bounds.y, bounds.width, bounds.height));
 	}
 }

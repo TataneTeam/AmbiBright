@@ -19,23 +19,24 @@ public class Compare {
 
 	@Test
 	public void testScreenCapture() {
-		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
+		int screenDevice = 0;
+		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
 		int nbIteration = 1000;
 
-		testScreenCapture(bounds, nbIteration, ScreenCapture.Robot);
-		testScreenCapture(bounds, nbIteration, ScreenCapture.GDI);
-		testScreenCapture(bounds, nbIteration, ScreenCapture.DirectX );
+		testScreenCapture(bounds, screenDevice, nbIteration, ScreenCapture.Robot);
+		testScreenCapture(bounds, screenDevice, nbIteration, ScreenCapture.GDI);
+		testScreenCapture(bounds, screenDevice, nbIteration, ScreenCapture.DirectX);
 	}
 
-	private void testScreenCapture(Rectangle bounds, int nbIteration, ScreenCaptureMethod screenCapture) {
+	private void testScreenCapture(Rectangle bounds, int screenDevice, int nbIteration, ScreenCaptureMethod screenCapture) {
 		Image image;
 
 		// first time to warm up
-		image = screenCapture.captureScreen(bounds);
+		image = screenCapture.captureScreen(bounds, screenDevice);
 
 		long startTime = System.nanoTime();
 		for (int i = 0; i < nbIteration; i++) {
-			image = screenCapture.captureScreen(bounds);
+			image = screenCapture.captureScreen(bounds, screenDevice);
 			image.flush();
 		}
 		long finishTime = System.nanoTime();
@@ -47,17 +48,19 @@ public class Compare {
 
 	@Test
 	public void testBrowsePixels() {
-		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
+		int screenDevice = 0;
+		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
 
-		testBrowsePixels(bounds, ScreenCapture.Robot);
-		testBrowsePixels(bounds, ScreenCapture.GDI);
+		testBrowsePixels(bounds, screenDevice, ScreenCapture.Robot);
+		testBrowsePixels(bounds, screenDevice, ScreenCapture.GDI);
+		testBrowsePixels(bounds, screenDevice, ScreenCapture.DirectX);
 	}
 
-	private void testBrowsePixels(Rectangle bounds, ScreenCaptureMethod screenCapture) {
+	private void testBrowsePixels(Rectangle bounds, int screenDevice, ScreenCaptureMethod screenCapture) {
 		Image image = null;
 		RgbColor color = new RgbColor();
 		try {
-			image = screenCapture.captureScreen(bounds);
+			image = screenCapture.captureScreen(bounds, screenDevice);
 			long startTime = System.nanoTime();
 			for (int w = 0; w < bounds.width; w++) {
 				for (int h = 0; h < bounds.height; h++) {
@@ -78,8 +81,9 @@ public class Compare {
 	@Test
 	public void testSquareAnalyser() {
 		ScreenCaptureMethod screenCapture = ScreenCapture.GDI;
-		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDefaultConfiguration().getBounds();
-		Image image = screenCapture.captureScreen(bounds);
+		int screenDevice = 0;
+		Rectangle bounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
+		Image image = screenCapture.captureScreen(bounds, screenDevice);
 		bounds = new Rectangle(0, 0, 100, 50);
 		long startTime, finishTime;
 		int[] color;

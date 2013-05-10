@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import ambibright.engine.capture.ScreenCapture;
 import ambibright.engine.squareAnalyser.SquareAnalyser;
+import ambibright.engine.capture.ScreenCapture;
 
 public class Config {
 
@@ -62,7 +62,7 @@ public class Config {
 	public static final String CONFIG_COLOR_HUE = "CONFIG_COLOR_HUE";
 	public static final String CONFIG_COLOR_SATURATION = "CONFIG_COLOR_SATURATION";
 	public static final String CONFIG_COLOR_BRIGHTNESS = "CONFIG_COLOR_BRIGHTNESS";
-    public static final String CONFIG_SCREEN_CAPTURE = "CONFIG_SCREEN_CAPTURE";
+	public static final String CONFIG_SCREEN_CAPTURE = "CONFIG_SCREEN_CAPTURE";
 	private static final String configFileName = "AmbiBright.properties";
 	private static final Config instance;
 	static {
@@ -134,9 +134,9 @@ public class Config {
 	@Configurable(label = "Brightness", key = CONFIG_COLOR_BRIGHTNESS, defaultValue = "0", group = GROUP_COLOR)
 	@FloatInterval(min = -1f, max = 1f)
 	private volatile float brightness;
-    @Configurable(label = "Screen capture method", key = CONFIG_SCREEN_CAPTURE, defaultValue = "GDI")
-    @PredefinedList(provider = ScreenCaptureProvider.class)
-    private volatile ScreenCapture screenCapture;
+	@Configurable(label = "Screen capture method", key = CONFIG_SCREEN_CAPTURE, defaultValue = "GDI")
+	@PredefinedList(provider = ScreenCaptureProvider.class)
+	private volatile ScreenCapture screenCapture;
 	private Map<String, Field> keyToField = new LinkedHashMap<String, Field>();
 	private Map<Field, String> fieldToKey = new LinkedHashMap<Field, String>();
 	private Map<String, List<Field>> groupToFields = new LinkedHashMap<String, List<Field>>();
@@ -169,7 +169,7 @@ public class Config {
 				} else {
 					value = configurable.defaultValue();
 				}
-				setValue(field, convertStringToFieldValue(field, value));
+				setValue(field, convertStringToFieldValue(field, value), false);
 			}
 		}
 		if (null == properties) {
@@ -177,7 +177,7 @@ public class Config {
 		}
 	}
 
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings("unchecked")
 	private Object convertStringToFieldValue(Field field, String value) {
 		if (String.class == field.getType()) {
 			return value;
@@ -240,13 +240,13 @@ public class Config {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-            if(null != stream){
-                try {
-                    stream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+			if (null != stream) {
+				try {
+					stream.close();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -287,10 +287,16 @@ public class Config {
 	}
 
 	public void setValue(Field field, Object value) {
+		setValue( field, value, true );
+	}
+
+	private void setValue(Field field, Object value, boolean fireEvent) {
 		try {
 			Object oldValue = field.get(this);
 			field.set(this, value);
-			changes.firePropertyChange(fieldToKey.get(field), oldValue, value);
+			if (fireEvent) {
+				changes.firePropertyChange(fieldToKey.get(field), oldValue, value);
+			}
 		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new IllegalArgumentException("Error setting a value", e);
@@ -335,7 +341,7 @@ public class Config {
 		return new PropertyChangeRegistration(this, propertyName, listener);
 	}
 
-	public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+	private void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
 		changes.removePropertyChangeListener(propertyName, listener);
 	}
 
@@ -593,15 +599,13 @@ public class Config {
 		changes.firePropertyChange(CONFIG_COLOR_BRIGHTNESS, oldValue, brightness);
 	}
 
-    public ScreenCapture getScreenCapture()
-    {
-        return screenCapture;
-    }
+	public ScreenCapture getScreenCapture() {
+		return screenCapture;
+	}
 
-    public void setScreenCapture( ScreenCapture screenCapture )
-    {
-        ScreenCapture oldValue = this.screenCapture;
-        this.screenCapture = screenCapture;
-        changes.firePropertyChange(CONFIG_SCREEN_CAPTURE, oldValue, brightness);
-    }
+	public void setScreenCapture(ScreenCapture screenCapture) {
+		ScreenCapture oldValue = this.screenCapture;
+		this.screenCapture = screenCapture;
+		changes.firePropertyChange(CONFIG_SCREEN_CAPTURE, oldValue, brightness);
+	}
 }

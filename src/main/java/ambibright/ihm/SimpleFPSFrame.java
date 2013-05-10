@@ -7,23 +7,26 @@ import java.awt.Rectangle;
 
 import ambibright.engine.ColorsChangeObserver;
 import ambibright.engine.capture.Image;
+import ambibright.ressources.CurrentBounds;
 import ambibright.ressources.Factory;
 import com.sun.awt.AWTUtilities;
 
 public class SimpleFPSFrame extends JDialog implements ColorsChangeObserver {
 
+	private final CurrentBounds currentBounds;
 	private final FpsCounter fpsCounter;
-	private JLabel text;
-	private Rectangle bounds;
+	private final JLabel text;
 
-	public SimpleFPSFrame() {
+	public SimpleFPSFrame(CurrentBounds currentBounds) {
 		super();
+		this.currentBounds = currentBounds;
 		this.fpsCounter = new FpsCounter();
 
 		setUndecorated(true);
 		setAlwaysOnTop(true);
 		setFocusable(false);
-        // a remplacer par setBackground(new Color(0, 0, 0, 0)); si on passe un jour en jdk7+ only
+		// a remplacer par setBackground(new Color(0, 0, 0, 0)); si on passe un
+		// jour en jdk7+ only
 		AWTUtilities.setWindowOpaque(this, false);
 		text = new JLabel();
 		text.setForeground(Color.magenta);
@@ -53,7 +56,7 @@ public class SimpleFPSFrame extends JDialog implements ColorsChangeObserver {
 		int fps = fpsCounter.fps();
 		text.setText(fps + " fps");
 		pack();
-		bounds = Factory.get().getBounds();
+		Rectangle bounds = currentBounds.getFullscreenBounds();
 		setLocation(bounds.x + (bounds.width - getPreferredSize().width) / 2, bounds.y + bounds.height - getPreferredSize().height);
 	}
 }

@@ -4,12 +4,13 @@ import java.awt.Rectangle;
 import java.util.List;
 import java.util.Set;
 
-import ambibright.config.Config;
-import ambibright.engine.capture.Image;
-import ambibright.engine.color.ColorAlgorithm;
-import ambibright.ressources.CurrentBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import ambibright.ressources.CurrentBounds;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.engine.capture.Image;
+import ambibright.config.Config;
 
 /**
  * Compute the colors in screen and sends them to the Arduino
@@ -45,9 +46,23 @@ public class UpdateColorsService implements Runnable {
 		try {
 			logger.debug("Processing colors");
 
-			Image image = config.getScreenCapture().captureScreen(currentBounds.getBounds());
+			// we retrieve the current bounds and zone in the same lock to be
+			// sure we have coherent datas
+			int screenDevice;
+			Rectangle bounds;
+			Rectangle[] zones;
+			currentBounds.readLock();
+			try {
+				screenDevice = currentBounds.getScreenDeviceNoLock();
+				bounds = currentBounds.getBoundsNoLock();
+				zones = currentBounds.getZonesNoLock();
+			} finally {
+				currentBounds.readUnlock();
+			}
 
-			byte[] colors = getColorsToSend(getColors(image));
+			Image image = config.getScreenCapture().captureScreen(bounds, screenDevice);
+
+			byte[] colors = getColorsToSend(getColors(image, zones));
 
 			// Notify the observers
 			for (ColorsChangeObserver observer : observers) {
@@ -64,11 +79,11 @@ public class UpdateColorsService implements Runnable {
 	}
 
 	// L > T > R
-	private int[][] getColors(Image image) {
+	private int[][] getColors(Image image, Rectangle[] zones) {
 		pos = 0;
 
 		// Compute for all screen parts
-		for (Rectangle bound : currentBounds.getZones()) {
+		for (Rectangle bound : zones) {
 			int[] color = config.getSquareAnalyser().getColor(image, bound, config.getAnalysePitch());
 			for (ColorAlgorithm algorithm : colorAlgorithmList) {
 				algorithm.apply(color);

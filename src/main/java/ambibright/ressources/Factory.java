@@ -1,10 +1,8 @@
 package ambibright.ressources;
 
 import javax.swing.ImageIcon;
-import java.awt.GraphicsEnvironment;
 import java.awt.Image;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -37,15 +35,10 @@ public class Factory {
 		return instance;
 	}
 
-	public static Rectangle getBounds(int screenDevice) {
-		return GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[screenDevice].getDefaultConfiguration().getBounds();
-	}
-
 	private final Config config;
 	private final AmbiFont ambiFont;
 	private final MonitoringFrame ambiFrame;
 	private final ArduinoSender arduinoSender;
-	private final Rectangle fullScreenBounds;
 	private final CurrentBounds currentBounds;
 	private final Manager manager;
 	private final SimpleFPSFrame simpleFPSFrame;
@@ -59,14 +52,13 @@ public class Factory {
 
 		this.ambiFont = new AmbiFont();
 
-		this.fullScreenBounds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[getConfig().getScreenDevice()].getDefaultConfiguration().getBounds();
-		this.currentBounds = new CurrentBounds(fullScreenBounds, getConfig().getNbLedLeft(), config.getNbLedTop(), config.getSquareSize());
+		this.currentBounds = new CurrentBounds(config);
 
 		new Tray(getImageIcon(), ambiFont, config);
 		this.ambiFrame = new MonitoringFrame(getConfig().getNbLedLeft(), getConfig().getNbLedTop(), getImageIcon());
 		this.arduinoSender = new ArduinoSender(getConfig());
 		this.manager = new Manager(config);
-		this.simpleFPSFrame = new SimpleFPSFrame();
+		this.simpleFPSFrame = new SimpleFPSFrame(currentBounds);
 		this.blackScreenManager = new BlackScreenManager();
 	}
 
@@ -93,10 +85,6 @@ public class Factory {
 		return config;
 	}
 
-	public Rectangle getBounds() {
-		return getBounds(getConfig().getScreenDevice());
-	}
-
 	public MonitoringFrame getAmbiFrame() {
 		return ambiFrame;
 	}
@@ -106,7 +94,7 @@ public class Factory {
 	}
 
 	public AspectRatioService newAspectRatioService() {
-		return new AspectRatioService(getBounds(), currentBounds, getConfig());
+		return new AspectRatioService(currentBounds, getConfig());
 	}
 
 	public ProcessCheckerService newProcessCheckerService() {
@@ -118,7 +106,7 @@ public class Factory {
 	}
 
 	public ColorFrame getNewColorFrame() {
-		return new ColorFrame(Factory.get().getBounds(), ambiFont, getConfig(), currentBounds);
+		return new ColorFrame(ambiFont, getConfig(), currentBounds);
 	}
 
 	public CurrentBounds getCurrentBounds() {
