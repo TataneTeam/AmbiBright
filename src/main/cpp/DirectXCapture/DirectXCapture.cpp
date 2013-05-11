@@ -33,16 +33,22 @@ JNIEXPORT void JNICALL Java_ambibright_engine_jni_DirectXCapture_initDirectX
 JNIEXPORT jbyteArray JNICALL Java_ambibright_engine_jni_DirectXCapture_captureScreenDirectX
   (JNIEnv *env, jclass clz, jint x, jint y, jint width, jint height){
 	
+	RECT rect = {0};
+	rect.left = x;
+	rect.top = y;
+	rect.right = width + x;
+	rect.bottom = height + y;
+
     g_pd3dDevice->GetFrontBufferData(0, g_pSurface);
 
 	D3DLOCKED_RECT	lockedRect;
-	g_pSurface->LockRect(&lockedRect,NULL,D3DLOCK_NO_DIRTY_UPDATE|D3DLOCK_NOSYSLOCK|D3DLOCK_READONLY);
+	g_pSurface->LockRect(&lockedRect, &rect, D3DLOCK_NO_DIRTY_UPDATE|D3DLOCK_NOSYSLOCK|D3DLOCK_READONLY);
 
 	jbyteArray result = env->NewByteArray(4 * width * height);
 
-	for(int i = y; i < height; i++)
+	for(int i = 0; i < height; i++)
 	{
-		env->SetByteArrayRegion(result, i * width * 32 / 8, width * 32 / 8, (jbyte*) lockedRect.pBits + i * lockedRect.Pitch + (x * 32 / 8));		
+		env->SetByteArrayRegion(result, i * width * 32 / 8, width * 32 / 8, (jbyte*) lockedRect.pBits + i * lockedRect.Pitch);		
 	}
 	g_pSurface->UnlockRect();
 
