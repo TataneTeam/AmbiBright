@@ -1,5 +1,14 @@
 package ambibright.ihm;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
+import javax.swing.JLabel;
+import javax.swing.JSlider;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,21 +23,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFormattedTextField;
-import javax.swing.JLabel;
-import javax.swing.JSlider;
-import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
-
 import ambibright.config.Config;
 import ambibright.config.Configurable;
 import ambibright.config.FloatInterval;
 import ambibright.config.IntInterval;
 import ambibright.config.ListProvider;
+import ambibright.config.ListProviderFactory;
 import ambibright.config.PredefinedList;
 
 /**
@@ -101,32 +101,28 @@ public class ComponentFactory {
 		return checkbox;
 	}
 
-	public JComboBox createComboBox(final Field field, Configurable configurable, Class<? extends ListProvider> providerClass) {
+	public JComboBox createComboBox(final Field field, Configurable configurable,
+                                    Class<? extends ListProvider> providerClass) {
 
-		final ListProvider provider;
-		try {
-			provider = providerClass.newInstance();
-		} catch (Exception e) {
-			throw new IllegalArgumentException(e);
-		}
+		final ListProvider<Object> provider = ListProviderFactory.getProvider( providerClass );
 
 		final JComboBox comboBox = new JComboBox();
 		comboBox.setBorder(null);
-		for (Object object : provider.getPossibleItems()) {
+		for (Object object : provider.getAllDisplayableItems()) {
 			comboBox.addItem(object);
 		}
 		comboBox.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				config.setValue(field, provider.getValueFromItem(comboBox.getSelectedItem()));
+				config.setValue(field, provider.getValueFromDisplayableItem( comboBox.getSelectedItem().toString() ));
 			}
 		});
-		comboBox.setSelectedItem(provider.getItemFromValue(config.getValue(field)));
+		comboBox.setSelectedItem(provider.getDisplayableItemFromValue( config.getValue( field ) ));
 
 		addPropertyChangeListener(configurable.key(), new PropertyChangeListener() {
 			@Override
 			public void propertyChange(PropertyChangeEvent evt) {
-				comboBox.setSelectedItem(provider.getItemFromValue(evt.getNewValue()));
+				comboBox.setSelectedItem(provider.getDisplayableItemFromValue( evt.getNewValue() ));
 			}
 		});
 

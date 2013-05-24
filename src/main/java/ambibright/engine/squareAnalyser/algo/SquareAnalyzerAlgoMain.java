@@ -4,11 +4,12 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Map;
 
-import ambibright.engine.squareAnalyser.SquareAnalyserAlgorithm;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
 import ambibright.engine.capture.RgbColor;
 import ambibright.engine.capture.Image;
 
-public class SquareAnalyzerAlgoMain implements SquareAnalyserAlgorithm {
+public class SquareAnalyzerAlgoMain implements SquareAnalyser
+{
 
 	private class Counter {
 		private int counter = 1;

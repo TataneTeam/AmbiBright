@@ -1,31 +1,52 @@
 package ambibright.config;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import ambibright.engine.squareAnalyser.SquareAnalyser;
+import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoMainAverage;
+import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoMain;
+import ambibright.engine.squareAnalyser.algo.SquareAnalyzerAlgoAverage;
 
-public class SquareAnalyserProvider implements ListProvider {
-	private static final List<Object> list;
-	static {
-		list = new ArrayList<Object>();
-		for (SquareAnalyser c : SquareAnalyser.values()) {
-			list.add(c);
-		}
+public class SquareAnalyserProvider implements ListProvider<SquareAnalyser> {
+
+	private Map<String, LazyInstanceProvider<? extends SquareAnalyser>> stringProviderMap = new HashMap<String, LazyInstanceProvider<? extends SquareAnalyser>>();
+	private Map<Class<? extends SquareAnalyser>, String> screenCaptureToNameMap = new HashMap<Class<? extends SquareAnalyser>, String>();
+
+	public SquareAnalyserProvider() {
+		addSquareAnalyserAlgorithm(SquareAnalyzerAlgoAverage.class, "AverageColors");
+		addSquareAnalyserAlgorithm(SquareAnalyzerAlgoMain.class, "MainColor");
+		addSquareAnalyserAlgorithm(SquareAnalyzerAlgoMainAverage.class, "MainAverageColor");
+	}
+
+	private <T extends SquareAnalyser> void addSquareAnalyserAlgorithm(Class<T> clazz, String name) {
+		stringProviderMap.put(name, new LazyInstanceProvider<T>(clazz));
+		screenCaptureToNameMap.put(clazz, name);
 	}
 
 	@Override
-	public List<Object> getPossibleItems() {
-		return list;
+	public Collection<String> getAllDisplayableItems() {
+		return stringProviderMap.keySet();
 	}
 
 	@Override
-	public Object getValueFromItem(Object item) {
-		return item;
+	public SquareAnalyser getValueFromDisplayableItem(String item) {
+		return stringProviderMap.get(item).getInstance();
 	}
 
 	@Override
-	public Object getItemFromValue(Object value) {
-		return value;
+	public String getDisplayableItemFromValue(SquareAnalyser value) {
+		return screenCaptureToNameMap.get(value.getClass());
+	}
+
+	@Override
+	public SquareAnalyser getValueFromConfig(String configValue) {
+		return getValueFromDisplayableItem(configValue);
+	}
+
+	@Override
+	public String getConfigFromValue(SquareAnalyser value) {
+		return getDisplayableItemFromValue(value);
 	}
 }

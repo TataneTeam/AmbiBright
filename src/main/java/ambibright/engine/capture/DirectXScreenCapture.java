@@ -2,20 +2,23 @@ package ambibright.engine.capture;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ambibright.ressources.CurrentBounds;
 import ambibright.engine.jni.DirectXCapture;
+import ambibright.config.Config;
 
 /**
- * Implementation of {@link ambibright.engine.capture.ScreenCaptureMethod} that
- * uses JNI to invoke natively the GDI capture screen method.
+ * Implementation of {@link ScreenCapture} that uses JNI to invoke natively the
+ * GDI capture screen method.
  *
  * @author Nicolas Morel
  */
-public class DirectXScreenCapture implements ScreenCaptureMethod {
+public class DirectXScreenCapture implements ScreenCapture {
 
 	private static class ImageImpl implements Image {
 
@@ -81,19 +84,18 @@ public class DirectXScreenCapture implements ScreenCaptureMethod {
 	private int currentScreenDevice = -1;
 	private int deltaX;
 
-	DirectXScreenCapture() {
-		// TODO doesn't work because the config constructor uses the ScreenCapture enum that call this constructor
-		// Config.getInstance().addPropertyChangeListener(Config.CONFIG_SCREEN_CAPTURE,
-		// new PropertyChangeListener() {
-		// @Override
-		// public void propertyChange(PropertyChangeEvent evt) {
-		// if (ScreenCapture.DirectX == evt.getOldValue()) {
-		// synchronized (lock) {
-		// destroy();
-		// }
-		// }
-		// }
-		// });
+	public DirectXScreenCapture() {
+		DirectXCapture.load();
+        Config.getInstance().addPropertyChangeListener(Config.CONFIG_SCREEN_CAPTURE, new PropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent evt) {
+                if (DirectXScreenCapture.this == evt.getOldValue()) {
+                    synchronized (lock) {
+                        destroy();
+                    }
+                }
+            }
+        });
 	}
 
 	private void init(int screenDevice) {

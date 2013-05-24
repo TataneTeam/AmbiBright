@@ -16,7 +16,7 @@ import ambibright.config.Config;
  * Class that handles the changes of screen device, aspect ratio, number of leds
  * and generate a list of zone to analyse.
  */
-public final class CurrentBounds {
+public class CurrentBounds {
 
 	private static final Logger logger = LoggerFactory.getLogger(CurrentBounds.class);
 

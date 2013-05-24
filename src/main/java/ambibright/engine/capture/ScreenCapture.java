@@ -3,18 +3,16 @@ package ambibright.engine.capture;
 import java.awt.Rectangle;
 
 /**
- * @author Nicolas Morel
+ * Interface for screen capture
  */
-public enum ScreenCapture implements ScreenCaptureMethod {
-
-	Robot(new RobotScreenCapture()), GDI(new GdiScreenCapture()), DirectX(new DirectXScreenCapture());
-	private ScreenCaptureMethod screenCapture;
-
-	ScreenCapture(ScreenCaptureMethod screenCapture) {
-		this.screenCapture = screenCapture;
-	}
-
-	public Image captureScreen(Rectangle bounds, int screenDevice) {
-		return screenCapture.captureScreen(bounds, screenDevice);
-	}
+public interface ScreenCapture
+{
+	/**
+	 * Capture the screen inside given bounds
+	 *
+	 * @param bounds bounds relative to the principal screen device
+     * @param screenDevice screen device
+	 * @return Captured image
+	 */
+	Image captureScreen(Rectangle bounds, int screenDevice);
 }

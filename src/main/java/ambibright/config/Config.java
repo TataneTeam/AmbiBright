@@ -13,6 +13,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import ambibright.engine.squareAnalyser.SquareAnalyser;
 import ambibright.engine.capture.ScreenCapture;
 
@@ -63,6 +66,7 @@ public class Config {
 	public static final String CONFIG_COLOR_SATURATION = "CONFIG_COLOR_SATURATION";
 	public static final String CONFIG_COLOR_BRIGHTNESS = "CONFIG_COLOR_BRIGHTNESS";
 	public static final String CONFIG_SCREEN_CAPTURE = "CONFIG_SCREEN_CAPTURE";
+	private static final Logger logger = LoggerFactory.getLogger(Config.class);
 	private static final String configFileName = "AmbiBright.properties";
 	private static final Config instance;
 	static {
@@ -134,7 +138,7 @@ public class Config {
 	@Configurable(label = "Brightness", key = CONFIG_COLOR_BRIGHTNESS, defaultValue = "0", group = GROUP_COLOR)
 	@FloatInterval(min = -1f, max = 1f)
 	private volatile float brightness;
-	@Configurable(label = "Screen capture method", key = CONFIG_SCREEN_CAPTURE, defaultValue = "GDI")
+	@Configurable(label = "Screen capture method", key = CONFIG_SCREEN_CAPTURE, defaultValue = "Robot")
 	@PredefinedList(provider = ScreenCaptureProvider.class)
 	private volatile ScreenCapture screenCapture;
 	private Map<String, Field> keyToField = new LinkedHashMap<String, Field>();
@@ -169,7 +173,12 @@ public class Config {
 				} else {
 					value = configurable.defaultValue();
 				}
-				setValue(field, convertStringToFieldValue(field, value), false);
+				try {
+					setValue(field, convertStringToFieldValue(field, value, configurable.defaultValue()), false);
+				} catch (Exception e) {
+					logger.error("Error converting property value {} : {}", configurable.key(), value, e);
+					System.exit(0);
+				}
 			}
 		}
 		if (null == properties) {
@@ -178,17 +187,37 @@ public class Config {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Object convertStringToFieldValue(Field field, String value) {
-		if (String.class == field.getType()) {
+	private Object convertStringToFieldValue(Field field, String value, String fallbackValue) {
+		if (field.isAnnotationPresent(PredefinedList.class)) {
+			PredefinedList predefinedList = field.getAnnotation(PredefinedList.class);
+			ListProvider listProvider = ListProviderFactory.getProvider(predefinedList.provider());
+			Object res = listProvider.getValueFromConfig(value);
+			if (null == res) {
+				res = listProvider.getValueFromConfig(fallbackValue);
+			}
+			return res;
+		} else if (String.class == field.getType()) {
 			return value;
 		} else if (boolean.class == field.getType()) {
 			return Boolean.valueOf(value);
 		} else if (int.class == field.getType()) {
-			return Integer.valueOf(value);
+			try {
+				return Integer.valueOf(value);
+			} catch (NumberFormatException e) {
+				return Integer.valueOf(fallbackValue);
+			}
 		} else if (float.class == field.getType()) {
-			return Float.valueOf(value);
+			try {
+				return Float.valueOf(value);
+			} catch (NumberFormatException e) {
+				return Float.valueOf(fallbackValue);
+			}
 		} else if (field.getType().isEnum()) {
-			return Enum.valueOf((Class<? extends Enum>) field.getType(), value);
+			try {
+				return Enum.valueOf((Class<? extends Enum>) field.getType(), value);
+			} catch (Exception e) {
+				return Enum.valueOf((Class<? extends Enum>) field.getType(), fallbackValue);
+			}
 		} else {
 			throw new IllegalArgumentException("Unknown type");
 		}
@@ -253,7 +282,11 @@ public class Config {
 	private String convertFieldValueToString(Field field) {
 		String value;
 		try {
-			if (String.class == field.getType()) {
+			if (field.isAnnotationPresent(PredefinedList.class)) {
+				PredefinedList predefinedList = field.getAnnotation(PredefinedList.class);
+				ListProvider listProvider = ListProviderFactory.getProvider(predefinedList.provider());
+				value = listProvider.getConfigFromValue(field.get(this));
+			} else if (String.class == field.getType()) {
 				value = (String) field.get(this);
 			} else if (boolean.class == field.getType()) {
 				value = Boolean.toString(field.getBoolean(this));
@@ -287,7 +320,7 @@ public class Config {
 	}
 
 	public void setValue(Field field, Object value) {
-		setValue( field, value, true );
+		setValue(field, value, true);
 	}
 
 	private void setValue(Field field, Object value, boolean fireEvent) {
@@ -333,7 +366,7 @@ public class Config {
 
 	public void resetToDefault(Field field) {
 		String defaultValue = field.getAnnotation(Configurable.class).defaultValue();
-		setValue(field, convertStringToFieldValue(field, defaultValue));
+		setValue(field, convertStringToFieldValue(field, defaultValue, defaultValue));
 	}
 
 	public PropertyChangeRegistration addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {

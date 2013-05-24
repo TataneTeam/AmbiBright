@@ -6,12 +6,12 @@ import java.awt.image.BufferedImage;
 import ambibright.engine.jni.GdiCapture;
 
 /**
- * Implementation of {@link ScreenCaptureMethod} that uses JNI to invoke
- * natively the GDI capture screen method.
+ * Implementation of {@link ScreenCapture} that uses JNI to invoke natively the
+ * GDI capture screen method.
  *
  * @author Nicolas Morel
  */
-public class GdiScreenCapture implements ScreenCaptureMethod {
+public class GdiScreenCapture implements ScreenCapture {
 
 	private static class ImageImpl implements Image {
 
@@ -71,7 +71,8 @@ public class GdiScreenCapture implements ScreenCaptureMethod {
 		}
 	}
 
-	GdiScreenCapture() {
+	public GdiScreenCapture() {
+		GdiCapture.load();
 	}
 
 	@Override

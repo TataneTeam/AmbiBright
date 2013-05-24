@@ -6,10 +6,10 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class ScreenDeviceProvider implements ListProvider {
+public class ScreenDeviceProvider implements ListProvider<Integer> {
 
-	private final Map<Object, Object> itemToValue = new LinkedHashMap<Object, Object>();
-	private final Map<Object, Object> valueToItem = new LinkedHashMap<Object, Object>();
+	private final Map<String, Integer> itemToValue = new LinkedHashMap<String, Integer>();
+	private final Map<Integer, String> valueToItem = new LinkedHashMap<Integer, String>();
 
 	public ScreenDeviceProvider() {
 		int i = 0;
@@ -22,17 +22,27 @@ public class ScreenDeviceProvider implements ListProvider {
 	}
 
 	@Override
-	public Collection<Object> getPossibleItems() {
+	public Collection<String> getAllDisplayableItems() {
 		return valueToItem.values();
 	}
 
 	@Override
-	public Object getValueFromItem(Object item) {
+	public Integer getValueFromDisplayableItem(String item) {
 		return itemToValue.get(item);
 	}
 
 	@Override
-	public Object getItemFromValue(Object value) {
+	public String getDisplayableItemFromValue(Integer value) {
 		return valueToItem.get(value);
+	}
+
+	@Override
+	public Integer getValueFromConfig(String configValue) {
+		return Integer.parseInt(configValue);
+	}
+
+	@Override
+	public String getConfigFromValue(Integer value) {
+		return Integer.toString(value);
 	}
 }

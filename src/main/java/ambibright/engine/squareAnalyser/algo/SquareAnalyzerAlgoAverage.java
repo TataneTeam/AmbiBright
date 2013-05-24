@@ -2,11 +2,12 @@ package ambibright.engine.squareAnalyser.algo;
 
 import java.awt.Rectangle;
 
-import ambibright.engine.squareAnalyser.SquareAnalyserAlgorithm;
+import ambibright.engine.squareAnalyser.SquareAnalyser;
 import ambibright.engine.capture.RgbColor;
 import ambibright.engine.capture.Image;
 
-public class SquareAnalyzerAlgoAverage implements SquareAnalyserAlgorithm {
+public class SquareAnalyzerAlgoAverage implements SquareAnalyser
+{
 
 	@Override
 	public int[] getColor(Image image, Rectangle bound, int screenAnalysePitch) {

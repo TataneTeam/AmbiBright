@@ -2,10 +2,16 @@ package ambibright.config;
 
 import java.util.Collection;
 
-public interface ListProvider {
-	Collection<Object> getPossibleItems();
+public interface ListProvider<T> {
 
-	Object getValueFromItem(Object item);
+	Collection<String> getAllDisplayableItems();
 
-	Object getItemFromValue(Object value);
+	T getValueFromDisplayableItem(String item);
+
+    String getDisplayableItemFromValue(T value);
+
+    T getValueFromConfig(String configValue);
+
+    String getConfigFromValue(T value);
+
 }
