@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import ambibright.ressources.CurrentBounds;
+import ambibright.ihm.AspectRatioDebugFrame;
 import ambibright.engine.capture.RgbColor;
 import ambibright.engine.capture.Image;
 import ambibright.config.Config;
@@ -16,12 +17,13 @@ import ambibright.config.Config;
 public class AspectRatioService implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(AspectRatioService.class);
-    // With some br iso, the ratio of the video is 16:9 but there are black
-    // bands included in it and the main black color used is (16, 16,
-    // 16) with the last few lines with varying dark color.
-    private static final int blackLimit = 60;
+	// With some br iso, the ratio of the video is 16:9 but there are black
+	// bands included in it and the main black color used is (16, 16,
+	// 16) with the last few lines with varying dark color.
+	private static final int blackLimit = 60;
 	private final CurrentBounds currentBounds;
 	private final Config config;
+	private final AspectRatioDebugFrame debugFrame;
 	/**
 	 * RgbColor used to store the value. We create only one instance and update
 	 * it to avoid the creation of million of objects.
@@ -33,6 +35,7 @@ public class AspectRatioService implements Runnable {
 		this.currentBounds = currentBounds;
 		this.config = config;
 		this.lastScreenBounds = currentBounds.getFullscreenBounds();
+		this.debugFrame = new AspectRatioDebugFrame();
 	}
 
 	@Override
@@ -85,6 +88,9 @@ public class AspectRatioService implements Runnable {
 			logger.info("Aspect ratio changed. New bounds : {}", newBounds);
 			lastScreenBounds = newBounds;
 			currentBounds.updateBounds(newBounds);
+			if (config.isAspectRatioDebug()) {
+				debugFrame.showAspectRatioChange(newBounds);
+			}
 		} else {
 			logger.debug("Aspect ratio didn't change");
 		}

@@ -66,6 +66,7 @@ public class Config {
 	public static final String CONFIG_COLOR_SATURATION = "CONFIG_COLOR_SATURATION";
 	public static final String CONFIG_COLOR_BRIGHTNESS = "CONFIG_COLOR_BRIGHTNESS";
 	public static final String CONFIG_SCREEN_CAPTURE = "CONFIG_SCREEN_CAPTURE";
+    public static final String CONFIG_ASPECT_RATIO_DEBUG = "CONFIG_ASPECT_RATIO_DEBUG";
 	private static final Logger logger = LoggerFactory.getLogger(Config.class);
 	private static final String configFileName = "AmbiBright.properties";
 	private static final Config instance;
@@ -141,6 +142,8 @@ public class Config {
 	@Configurable(label = "Screen capture method", key = CONFIG_SCREEN_CAPTURE, defaultValue = "Robot")
 	@PredefinedList(provider = ScreenCaptureProvider.class)
 	private volatile ScreenCapture screenCapture;
+    @Configurable(label = "Notify when aspect ratio change", key = CONFIG_ASPECT_RATIO_DEBUG, defaultValue = "false")
+    private volatile boolean aspectRatioDebug;
 	private Map<String, Field> keyToField = new LinkedHashMap<String, Field>();
 	private Map<Field, String> fieldToKey = new LinkedHashMap<Field, String>();
 	private Map<String, List<Field>> groupToFields = new LinkedHashMap<String, List<Field>>();
@@ -641,4 +644,16 @@ public class Config {
 		this.screenCapture = screenCapture;
 		changes.firePropertyChange(CONFIG_SCREEN_CAPTURE, oldValue, brightness);
 	}
+
+    public boolean isAspectRatioDebug()
+    {
+        return aspectRatioDebug;
+    }
+
+    public void setAspectRatioDebug( boolean aspectRatioDebug )
+    {
+        boolean oldValue = this.aspectRatioDebug;
+        this.aspectRatioDebug = aspectRatioDebug;
+        changes.firePropertyChange(CONFIG_ASPECT_RATIO_DEBUG, oldValue, aspectRatioDebug);
+    }
 }
