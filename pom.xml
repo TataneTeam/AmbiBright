@@ -66,6 +66,7 @@
 
     <!-- Test dependencies version -->
     <junit.version>4.11</junit.version>
+    <mockito.version>1.9.5</mockito.version>
   </properties>
 
   <dependencies>
@@ -95,6 +96,12 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>${junit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-core</artifactId>
+      <version>${mockito.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -175,7 +182,7 @@
             </goals>
             <configuration>
               <tasks>
-                <echo file="lastcompiled.txt" append="false" message="${timestamp}" />
+                <echo file="lastcompiled.txt" append="false" message="${timestamp}"/>
               </tasks>
             </configuration>
           </execution>

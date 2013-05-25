@@ -16,7 +16,10 @@ import ambibright.config.Config;
 public class AspectRatioService implements Runnable {
 
 	private static final Logger logger = LoggerFactory.getLogger(AspectRatioService.class);
-	private static final int blackLimit = 6;
+    // With some br iso, the ratio of the video is 16:9 but there are black
+    // bands included in it and the main black color used is (16, 16,
+    // 16) with the last few lines with varying dark color.
+    private static final int blackLimit = 60;
 	private final CurrentBounds currentBounds;
 	private final Config config;
 	/**
@@ -67,7 +70,7 @@ public class AspectRatioService implements Runnable {
 		int x = fullscreenBounds.width / 4;
 		for (int testY = 0; testY < fullscreenBounds.height; testY += fullscreenBounds.height / 5) {
 			for (int testX = 0; testX < fullscreenBounds.width / 4; testX++) {
-				if (!isBlack(image.getRGB(testX, testY, color)) && !isBlack(image.getRGB(fullscreenBounds.width - testX - 1, testY, color))) {
+				if (!isBlack(image.getRGB(testX, testY, color)) || !isBlack(image.getRGB(fullscreenBounds.width - testX - 1, testY, color))) {
 					x = Math.min(x, testX);
 					break;
 				}
