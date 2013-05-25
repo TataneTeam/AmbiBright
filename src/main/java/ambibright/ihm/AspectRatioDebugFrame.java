@@ -52,7 +52,7 @@ public class AspectRatioDebugFrame extends JDialog {
 				currentTask = null;
 			}
 		};
-		timer.schedule(currentTask, 3000);
+		timer.schedule(currentTask, 2000);
 
 		pack();
 		setVisible(true);
