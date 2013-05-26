@@ -20,7 +20,7 @@ public class AspectRatioService implements Runnable {
 	// With some br iso, the ratio of the video is 16:9 but there are black
 	// bands included in it and the main black color used is (16, 16,
 	// 16) with the last few lines with varying dark color.
-	private static final int blackLimit = 60;
+	private static final int blackLimit = 19;
 	private final CurrentBounds currentBounds;
 	private final Config config;
 	private final AspectRatioDebugFrame debugFrame;
@@ -97,6 +97,6 @@ public class AspectRatioService implements Runnable {
 	}
 
 	private boolean isBlack(RgbColor color) {
-		return (color.red() + color.blue() + color.green()) <= blackLimit;
+		return color.red() <= blackLimit && color.blue() <= blackLimit && color.green() <= blackLimit;
 	}
 }
