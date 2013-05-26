@@ -44,7 +44,7 @@ public class UpdateColorsService implements Runnable {
 	@Override
 	public void run() {
 		try {
-			logger.debug("Processing colors");
+			logger.trace("Processing colors");
 
 			// we retrieve the current bounds and zone in the same lock to be
 			// sure we have coherent datas
@@ -72,7 +72,7 @@ public class UpdateColorsService implements Runnable {
 			// Flushing the image
 			image.flush();
 
-			logger.debug("Colors processed");
+			logger.trace("Colors processed");
 		} catch (Exception e) {
 			logger.error("Error while processing the colors", e);
 		}

@@ -109,7 +109,7 @@ public class Config {
 	private volatile int analysePitch;
 	@Configurable(label = "FPS", key = CONFIG_FPS, defaultValue = "24")
 	private volatile int fps;
-	@Configurable(label = "Delay check ratio", key = CONFIG_DELAY_CHECK_RATIO, defaultValue = "1000")
+	@Configurable(label = "Delay check ratio", key = CONFIG_DELAY_CHECK_RATIO, defaultValue = "750")
 	private volatile int checkRatioDelay;
 	@Configurable(label = "Delay check process", key = CONFIG_DELAY_CHECK_PROCESS, defaultValue = "5000")
 	private volatile int checkProcessDelay;
