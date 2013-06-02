@@ -52,7 +52,7 @@ public class AspectRatioServiceTest {
 		resetCurrentBounds();
 		when(screenCapture.captureScreen(fullscreenBounds, 0)).thenReturn(new ImageMock("Format4_3.png"));
 		service.run();
-        service.run();
+		service.run();
 		verify(currentBounds, times(1)).updateBounds(new Rectangle(240, 0, 1440, 1080));
 
 		// We call run multiple times to be sure we don't call the update bounds
@@ -66,39 +66,46 @@ public class AspectRatioServiceTest {
 		resetCurrentBounds();
 		when(screenCapture.captureScreen(fullscreenBounds, 0)).thenReturn(new ImageMock("Format16_9.png"));
 		service.run();
-        service.run();
+		service.run();
 		verify(currentBounds, times(1)).updateBounds(new Rectangle(0, 0, 1920, 1080));
 
 		// Test with a 2:40:1 image
 		resetCurrentBounds();
 		when(screenCapture.captureScreen(fullscreenBounds, 0)).thenReturn(new ImageMock("Format2_40_1.png"));
 		service.run();
-        service.run();
+		service.run();
 		verify(currentBounds, times(1)).updateBounds(new Rectangle(0, 140, 1920, 800));
 
 		// Test with a 2:35:1 image
 		resetCurrentBounds();
 		when(screenCapture.captureScreen(fullscreenBounds, 0)).thenReturn(new ImageMock("Format2_35_1.png"));
 		service.run();
-        service.run();
+		service.run();
 		verify(currentBounds, times(1)).updateBounds(new Rectangle(0, 132, 1920, 816));
 
 		// Test with a 1:85:1 image
 		resetCurrentBounds();
 		when(screenCapture.captureScreen(fullscreenBounds, 0)).thenReturn(new ImageMock("Format1_85_1.png"));
 		service.run();
-        service.run();
+		service.run();
 		verify(currentBounds, times(1)).updateBounds(new Rectangle(0, 20, 1920, 1040));
 
 		// Test with a 16:9 image now
 		resetCurrentBounds();
 		when(screenCapture.captureScreen(fullscreenBounds, 0)).thenReturn(new ImageMock("Format16_9-LeftBlack.png"));
 		service.run();
-        service.run();
+		service.run();
 		verify(currentBounds, times(1)).updateBounds(new Rectangle(0, 0, 1920, 1080));
+
+        // Test with a 2:40:1 image with subtitles on top
+        resetCurrentBounds();
+        when(screenCapture.captureScreen(fullscreenBounds, 0)).thenReturn(new ImageMock("Format2_40_1-SubTop.png"));
+        service.run();
+        service.run();
+        verify(currentBounds, times(1)).updateBounds(new Rectangle(0, 140, 1920, 800));
 	}
 
-	// @Test
+//	@Test
 	public void perf() {
 		resetCurrentBounds();
 		when(currentBounds.getFullscreenBounds()).thenReturn(fullscreenBounds);
