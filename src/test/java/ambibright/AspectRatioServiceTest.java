@@ -103,6 +103,13 @@ public class AspectRatioServiceTest {
         service.run();
         service.run();
         verify(currentBounds, times(1)).updateBounds(new Rectangle(0, 140, 1920, 800));
+
+        // Test with a 2:40:1 image with a different size on top/bottom black strip
+        resetCurrentBounds();
+        when(screenCapture.captureScreen(fullscreenBounds, 0)).thenReturn(new ImageMock("Format2_40_1-DiffSize.png"));
+        service.run();
+        service.run();
+        verify(currentBounds, times(1)).updateBounds(new Rectangle(0, 141, 1920, 798));
 	}
 
 //	@Test

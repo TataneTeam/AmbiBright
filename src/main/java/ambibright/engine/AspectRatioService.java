@@ -46,8 +46,12 @@ public class AspectRatioService implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(AspectRatioService.class);
 	// With some br iso, the ratio of the video is 16:9 but there are black
 	// bands included in it and the main black color used is (16, 16,
-	// 16) with the last few lines with varying dark color that go up to 23.
-	private static final int blackLimit = 23;
+	// 16) with the last few lines with varying dark color that go up to 24.
+	private static final int blackLimit = 24;
+	// maximal diff between top/bottom or left/right strip sizes to be
+	// considered
+	// as equals
+	private static final int maxDiffSize = 1;
 	private final CurrentBounds currentBounds;
 	private final Config config;
 	private final AspectRatioDebugFrame debugFrame;
@@ -181,7 +185,7 @@ public class AspectRatioService implements Runnable {
 			return new Result(0);
 		}
 
-		if (topCornerSize != bottomCornerSize) {
+		if (Math.abs(topCornerSize - bottomCornerSize) > maxDiffSize) {
 			// ambiguous
 			return new Result();
 		}
@@ -204,12 +208,12 @@ public class AspectRatioService implements Runnable {
 			// we may have subtitles on top
 			if (bottomCornerSize == bottomRestSize) {
 				// bottom size == top corner size, we have a winner
-				return new Result(bottomCornerSize);
+				return new Result(Math.max(topCornerSize, bottomCornerSize));
 			} else {
 				return new Result();
 			}
 		} else {
-			return new Result(topRestSize);
+			return new Result(Math.max(topCornerSize, bottomCornerSize));
 		}
 	}
 
@@ -328,8 +332,8 @@ public class AspectRatioService implements Runnable {
 			return new Result(0);
 		}
 
-		if (rightSize == leftSize) {
-			return new Result(leftSize);
+		if (Math.abs(rightSize - leftSize) <= maxDiffSize) {
+			return new Result(Math.max(leftSize, rightSize));
 		} else {
 			// ambiguous
 			return new Result();
