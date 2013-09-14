@@ -33,7 +33,7 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyser
 	}
 
 	@Override
-	public int[] getColor(Image image, Rectangle bound, int screenAnalysePitch) {
+	public void getColor(Image image, Rectangle bound, int screenAnalysePitch, int[] holder) {
 		map.clear();
 		int counter = -1;
         int red = 0;
@@ -64,6 +64,9 @@ public class SquareAnalyzerAlgoMain implements SquareAnalyser
 				}
 			}
 		}
-		return new int[] { red, green, blue };
+
+        holder[0] = red;
+        holder[1] = green;
+        holder[2] = blue;
 	}
 }

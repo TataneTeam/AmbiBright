@@ -23,7 +23,6 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyser
 			return counter;
 		}
 	}
-
 	private static final int mainColorPourcentage = 40;
 	private final Map<RgbColor, Counter> map;
 	private final RgbColor colorHolder;
@@ -34,7 +33,7 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyser
 	}
 
 	@Override
-	public int[] getColor(Image image, Rectangle bound, int screenAnalysePitch) {
+	public void getColor(Image image, Rectangle bound, int screenAnalysePitch, int[] holder) {
 
 		// Reset vars
 		map.clear();
@@ -83,9 +82,13 @@ public class SquareAnalyzerAlgoMainAverage implements SquareAnalyser
 		}
 
 		if (counter > threshold) {
-			return new int[] { redMain, greenMain, blueMain };
+            holder[0] = redMain;
+            holder[1] = greenMain;
+            holder[2] = blueMain;
 		} else {
-			return new int[] { redAverage / nbPixel, greenAverage / nbPixel, blueAverage / nbPixel };
+            holder[0] = redAverage / nbPixel;
+            holder[1] = greenAverage / nbPixel;
+            holder[2] = blueAverage / nbPixel;
 		}
 
 	}

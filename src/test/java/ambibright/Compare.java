@@ -96,11 +96,12 @@ public class Compare {
 
 	private void testSquareAnalyser(SquareAnalyser squareAnalyser, Image image, Rectangle bounds) {
 		// first one to initialize
-		int[] color = squareAnalyser.getColor(image, bounds, 1);
+        int[] color = new int[3];
+		squareAnalyser.getColor(image, bounds, 1, color);
 
 		long startTime = System.nanoTime();
 		for (int i = 0; i < 10000; i++) {
-			color = squareAnalyser.getColor(image, bounds, 1);
+			squareAnalyser.getColor(image, bounds, 1, color);
 		}
 		long finishTime = System.nanoTime();
 

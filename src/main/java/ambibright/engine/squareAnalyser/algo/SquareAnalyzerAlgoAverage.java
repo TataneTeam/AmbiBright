@@ -10,7 +10,7 @@ public class SquareAnalyzerAlgoAverage implements SquareAnalyser
 {
 
 	@Override
-	public int[] getColor(Image image, Rectangle bound, int screenAnalysePitch) {
+	public void getColor(Image image, Rectangle bound, int screenAnalysePitch, int[] holder) {
 		// RgbColor used to store the value. We create only one instance and
 		// update it to avoid the creation of million of objects.
 		RgbColor colorHolder = new RgbColor();
@@ -28,6 +28,9 @@ public class SquareAnalyzerAlgoAverage implements SquareAnalyser
 				nbPixel++;
 			}
 		}
-		return new int[] { red / nbPixel, green / nbPixel, blue / nbPixel };
+
+        holder[0] = red / nbPixel;
+        holder[1] = green / nbPixel;
+        holder[2] = blue / nbPixel;
 	}
 }

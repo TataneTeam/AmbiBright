@@ -7,6 +7,6 @@ import ambibright.engine.capture.Image;
 public interface SquareAnalyser
 {
 
-	int[] getColor(Image image, Rectangle bound, int screenAnalysePitch);
+	void getColor(Image image, Rectangle bound, int screenAnalysePitch, int[] holder);
 
 }

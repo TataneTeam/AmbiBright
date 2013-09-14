@@ -4,8 +4,6 @@ import javax.swing.ImageIcon;
 import java.awt.Image;
 import java.awt.Point;
 import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 import ambibright.config.Config;
@@ -43,12 +41,12 @@ public class Factory {
 	private final Manager manager;
 	private final SimpleFPSFrame simpleFPSFrame;
 	private final BlackScreenManager blackScreenManager;
-	private final List<? extends ColorAlgorithm> colorAlgorithmList;
+	private final ColorAlgorithm[] colorAlgorithms;
 
 	private Factory() {
 		this.config = Config.getInstance();
 
-		colorAlgorithmList = Arrays.asList(new ColorAlgorithmGamma(config), new ColorAlgorithmHSB(config));
+		colorAlgorithms = new ColorAlgorithm[]{new ColorAlgorithmGamma(config), new ColorAlgorithmHSB(config)};
 
 		this.ambiFont = new AmbiFont();
 
@@ -102,7 +100,7 @@ public class Factory {
 	}
 
 	public UpdateColorsService newUpdateColorsService(Set<ColorsChangeObserver> observers) {
-		return new UpdateColorsService(getConfig(), observers, colorAlgorithmList, currentBounds, getArduinoSender().getArray());
+		return new UpdateColorsService(getConfig(), observers, colorAlgorithms, currentBounds, getArduinoSender().getArray());
 	}
 
 	public ColorFrame getNewColorFrame() {

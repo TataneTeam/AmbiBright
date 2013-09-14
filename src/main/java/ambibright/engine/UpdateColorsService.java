@@ -1,16 +1,14 @@
 package ambibright.engine;
 
 import java.awt.Rectangle;
-import java.util.List;
 import java.util.Set;
 
+import ambibright.config.Config;
+import ambibright.engine.capture.Image;
+import ambibright.engine.color.ColorAlgorithm;
+import ambibright.ressources.CurrentBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ambibright.ressources.CurrentBounds;
-import ambibright.engine.color.ColorAlgorithm;
-import ambibright.engine.capture.Image;
-import ambibright.config.Config;
 
 /**
  * Compute the colors in screen and sends them to the Arduino
@@ -20,17 +18,17 @@ public class UpdateColorsService implements Runnable {
 	private static final Logger logger = LoggerFactory.getLogger(UpdateColorsService.class);
 	private final Config config;
 	private final Set<ColorsChangeObserver> observers;
-	private final List<? extends ColorAlgorithm> colorAlgorithmList;
+	private final ColorAlgorithm[] colorAlgorithms;
 	private final int[][] result;
 	private final int[][] old;
 	private final byte[] arduinoArray;
 	private final CurrentBounds currentBounds;
-	private int pos;
 
-	public UpdateColorsService(Config config, Set<ColorsChangeObserver> observers, List<? extends ColorAlgorithm> colorAlgorithmList, CurrentBounds currentBounds, byte[] arduinoArray) {
+    public UpdateColorsService(Config config, Set<ColorsChangeObserver> observers, ColorAlgorithm[] colorAlgorithms,
+                               CurrentBounds currentBounds, byte[] arduinoArray) {
 		this.config = config;
 		this.observers = observers;
-		this.colorAlgorithmList = colorAlgorithmList;
+		this.colorAlgorithms = colorAlgorithms;
 		this.currentBounds = currentBounds;
 
 		// TODO see if we can recreate them on property change to keep a
@@ -80,15 +78,15 @@ public class UpdateColorsService implements Runnable {
 
 	// L > T > R
 	private int[][] getColors(Image image, Rectangle[] zones) {
-		pos = 0;
+        int pos = 0;
 
 		// Compute for all screen parts
 		for (Rectangle bound : zones) {
-			int[] color = config.getSquareAnalyser().getColor(image, bound, config.getAnalysePitch());
-			for (ColorAlgorithm algorithm : colorAlgorithmList) {
+            int[] color = result[pos++];
+			config.getSquareAnalyser().getColor(image, bound, config.getAnalysePitch(), color);
+			for (ColorAlgorithm algorithm : colorAlgorithms ) {
 				algorithm.apply(color);
 			}
-			result[pos++] = color;
 		}
 
 		return result;
